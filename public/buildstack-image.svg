@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0" y1="0" x2="1200" y2="800" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="blueGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <linearGradient id="purpleGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#EC4899"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="url(#bgGradient)"/>
+
+  <!-- Grid Pattern -->
+  <pattern id="grid" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
+    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+  </pattern>
+  <rect width="1200" height="800" fill="url(#grid)"/>
+
+  <!-- Main Building Structure -->
+  <g transform="translate(300, 200)">
+    <!-- Building Base -->
+    <rect x="0" y="0" width="600" height="400" fill="#334155" rx="8"/>
+    
+    <!-- AI Processing Overlay -->
+    <rect x="0" y="0" width="600" height="400" fill="url(#blueGradient)" opacity="0.1"/>
+    
+    <!-- Grid Lines -->
+    <g stroke="rgba(255,255,255,0.1)" stroke-width="1">
+      <line x1="0" y1="100" x2="600" y2="100"/>
+      <line x1="0" y1="200" x2="600" y2="200"/>
+      <line x1="0" y1="300" x2="600" y2="300"/>
+      <line x1="150" y1="0" x2="150" y2="400"/>
+      <line x1="300" y1="0" x2="300" y2="400"/>
+      <line x1="450" y1="0" x2="450" y2="400"/>
+    </g>
+
+    <!-- AI Processing Elements -->
+    <g transform="translate(50, 50)">
+      <!-- Neural Network Nodes -->
+      <circle cx="0" cy="0" r="8" fill="#3B82F6"/>
+      <circle cx="100" cy="0" r="8" fill="#8B5CF6"/>
+      <circle cx="200" cy="0" r="8" fill="#EC4899"/>
+      <circle cx="0" cy="100" r="8" fill="#3B82F6"/>
+      <circle cx="100" cy="100" r="8" fill="#8B5CF6"/>
+      <circle cx="200" cy="100" r="8" fill="#EC4899"/>
+      
+      <!-- Connection Lines -->
+      <g stroke="url(#blueGradient)" stroke-width="2" opacity="0.6">
+        <line x1="0" y1="0" x2="100" y2="0"/>
+        <line x1="100" y1="0" x2="200" y2="0"/>
+        <line x1="0" y1="100" x2="100" y2="100"/>
+        <line x1="100" y1="100" x2="200" y2="100"/>
+        <line x1="0" y1="0" x2="0" y2="100"/>
+        <line x1="100" y1="0" x2="100" y2="100"/>
+        <line x1="200" y1="0" x2="200" y2="100"/>
+      </g>
+    </g>
+
+    <!-- Construction Elements -->
+    <g transform="translate(400, 50)">
+      <!-- Blueprint Style Elements -->
+      <rect x="0" y="0" width="150" height="100" fill="none" stroke="#3B82F6" stroke-width="2"/>
+      <circle cx="75" cy="50" r="30" fill="none" stroke="#3B82F6" stroke-width="2"/>
+      <line x1="0" y1="50" x2="150" y2="50" stroke="#3B82F6" stroke-width="2"/>
+      <line x1="75" y1="0" x2="75" y2="100" stroke="#3B82F6" stroke-width="2"/>
+    </g>
+
+    <!-- AI Processing Status -->
+    <g transform="translate(50, 300)">
+      <rect x="0" y="0" width="500" height="40" fill="#1E293B" rx="20"/>
+      <rect x="10" y="10" width="300" height="20" fill="url(#blueGradient)" rx="10"/>
+      <circle cx="320" cy="20" r="10" fill="#10B981"/>
+    </g>
+  </g>
+
+  <!-- Decorative Elements -->
+  <g transform="translate(100, 100)">
+    <rect x="0" y="0" width="100" height="100" fill="none" stroke="url(#purpleGradient)" stroke-width="2" opacity="0.3"/>
+  </g>
+  <g transform="translate(1000, 600)">
+    <rect x="0" y="0" width="100" height="100" fill="none" stroke="url(#blueGradient)" stroke-width="2" opacity="0.3"/>
+  </g>
+
+  <!-- Floating Elements -->
+  <g transform="translate(200, 600)">
+    <circle cx="0" cy="0" r="50" fill="url(#blueGradient)" opacity="0.1"/>
+  </g>
+  <g transform="translate(1000, 200)">
+    <circle cx="0" cy="0" r="50" fill="url(#purpleGradient)" opacity="0.1"/>
+  </g>
+</svg> 
