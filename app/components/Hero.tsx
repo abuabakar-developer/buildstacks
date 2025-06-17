@@ -44,8 +44,6 @@ const Hero = () => {
               transition={{ duration: 0.5 }}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 mb-8"
             >
-              <span className="text-blue-400 font-medium text-sm">New Feature</span>
-              <span className="text-slate-400 text-sm">•</span>
               <span className="text-slate-300 text-sm">AI-Powered Document Analysis</span>
               <ChevronRight className="w-4 h-4 text-slate-400" />
             </motion.div>
@@ -88,7 +86,6 @@ const Hero = () => {
                 className="group relative px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl font-semibold hover:opacity-90 transition-all duration-200 flex items-center justify-center gap-2 text-[15px] hover:scale-105"
               >
                 <span className="relative z-10 flex items-center gap-2">
-                  <Rocket className="w-5 h-5" />
                   Launch Now
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
                 </span>

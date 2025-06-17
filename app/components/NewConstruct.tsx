@@ -81,9 +81,11 @@ const NewConstruct = () => {
             <Award className="w-4 h-4" />
             <span>Trusted by Leading Construction Platform</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 font-poppins leading-tight">
-            Next-Generation Construction Management Platform
-          </h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 font-poppins leading-tight max-w-3xl mx-auto text-center">
+  Next-Generation Construction <br />
+  Management Platform
+</h1>
+
           <p className="text-slate-400 text-lg mb-8 max-w-2xl mx-auto">
             Transform your construction workflow with AI-powered project management, automated documentation, and real-time collaboration tools.
           </p>

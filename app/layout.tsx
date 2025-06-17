@@ -1,14 +1,17 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import Construct from "./components/Construct";
-import Pricing from "./components/Pricing";
-import FAQ from "./components/FAQ";
-import NewConstruct from "./components/NewConstruct";
-import Footer from "./components/Footer";
+'use client';
 
+import { Toaster } from 'react-hot-toast';
+import './globals.css';
+import { Inter } from 'next/font/google';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import Construct from './components/Construct';
+import Pricing from './components/Pricing';
+import FAQ from './components/FAQ';
+import NewConstruct from './components/NewConstruct';
+import Footer from './components/Footer';
+
+const inter = Inter({ subsets: ['latin'] });
 
 const autoSave = {
   enabled: true,
@@ -30,29 +33,47 @@ if (autoSave.enabled) {
   setInterval(autoSave.onSave, autoSave.interval);
 }
 
-const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-  title: "Construction Documentation SaaS",
-  description: "Modern construction documentation platform",
-};
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className={inter.className}>
+      <body className="overflow-x-hidden min-h-screen flex flex-col">
         <Navbar />
-        <Hero />
-        <Construct />
-        <NewConstruct />
-        <Pricing />
-        <FAQ />
+        <div className="flex-grow">
+          <Hero />
+          <Construct />
+          <NewConstruct />
+          <Pricing />
+          <FAQ />
         <Footer />
         {children}
+        </div>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#1e293b',
+              color: '#fff',
+              border: '1px solid #334155',
+            },
+            success: {
+              iconTheme: {
+                primary: '#22c55e',
+                secondary: '#fff',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#fff',
+              },
+            },
+          }}
+        />
       </body>
     </html>
   );

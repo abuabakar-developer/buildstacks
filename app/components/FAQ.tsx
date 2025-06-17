@@ -108,7 +108,7 @@ const FAQ = () => {
               <Building2 className="w-4 h-4" />
               <span>Construction Document Management</span>
             </motion.div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-poppins">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 font-poppins">
               Frequently Asked Questions
             </h2>
             <p className="text-slate-400">Find answers to common questions about our platform</p>
