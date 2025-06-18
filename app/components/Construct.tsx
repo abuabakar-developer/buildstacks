@@ -110,9 +110,8 @@ const Construct = () => {
             <span>Comprehensive Construction Solutions</span>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 font-poppins leading-tight max-w-3xl mx-auto text-center">
-  Everything You Need <br className="hidden xs:inline" />
-  for Modern Construction Management
-</h2>
+         Everything Need for Modern Construction Management
+           </h2>
 
           <p className="text-slate-400 text-lg mb-8 max-w-2xl mx-auto">
             Streamline your construction workflow with our comprehensive suite of tools designed specifically for the construction industry.

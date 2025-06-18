@@ -40,17 +40,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.className}>
-      <body className="overflow-x-hidden min-h-screen flex flex-col">
+      <body className="min-h-screen flex flex-col bg-slate-900">
         <Navbar />
-        <div className="flex-grow">
+        <main className="flex-grow">
           <Hero />
           <Construct />
           <NewConstruct />
           <Pricing />
           <FAQ />
-        <Footer />
-        {children}
-        </div>
+          <Footer />
+          {children}
+        </main>
         <Toaster
           position="top-right"
           toastOptions={{
