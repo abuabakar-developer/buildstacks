@@ -1,223 +1,186 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Search, FileText, Shield, Users, Zap, Building2, ArrowRight, MessageCircle } from 'lucide-react';
+import { ChevronDown, ChevronUp, FileText, Shield, Users, Zap, Building2, ArrowRight, MessageCircle, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
-import { Inter, Poppins } from 'next/font/google';
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const poppins = Poppins({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  variable: '--font-poppins'
-});
 
 const FAQ = () => {
-  const [openFaq, setOpenFaq] = useState<string | null>(null); // ✅ FIXED HERE
-  const [searchQuery, setSearchQuery] = useState('');
-  const [hoveredCategory, setHoveredCategory] = useState<number | null>(null);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const faqCategories = [
+  const faqs = [
     {
-      icon: <FileText className="w-5 h-5" />,
-      title: "Document Management",
-      description: "Everything about managing your construction documents",
-      faqs: [
-        {
-          question: "How does the document version control work?",
-          answer: "Our system automatically tracks all document changes, maintains version history, and allows you to revert to previous versions. Each change is timestamped and attributed to the team member who made it."
-        },
-        {
-          question: "Can I set up automated document approvals?",
-          answer: "Yes, you can create custom approval workflows with multiple levels of authorization. The system will automatically route documents to the appropriate stakeholders and track the approval status."
-        }
-      ]
+      question: "How does the document version control work?",
+      answer: "Our system automatically tracks all document changes, maintains version history, and allows you to revert to previous versions. Each change is timestamped and attributed to the team member who made it."
     },
     {
-      icon: <Shield className="w-5 h-5" />,
-      title: "Security & Compliance",
-      description: "Keeping your construction data secure and compliant",
-      faqs: [
-        {
-          question: "What security measures protect our construction documents?",
-          answer: "We implement end-to-end encryption, role-based access control, and audit trails. All documents are backed up in multiple secure locations with regular security audits and compliance checks."
-        },
-        {
-          question: "How do you ensure compliance with construction regulations?",
-          answer: "Our platform is regularly updated to comply with the latest construction regulations. We maintain compliance documentation and provide tools to ensure your projects meet all regulatory requirements."
-        }
-      ]
+      question: "Can I set up automated document approvals?",
+      answer: "Yes, you can create custom approval workflows with multiple levels of authorization. The system will automatically route documents to the appropriate stakeholders and track the approval status."
     },
     {
-      icon: <Users className="w-5 h-5" />,
-      title: "Team Collaboration",
-      description: "Tools for seamless team collaboration",
-      faqs: [
-        {
-          question: "How can multiple team members work on the same document?",
-          answer: "Our real-time collaboration features allow multiple team members to view and edit documents simultaneously. Changes are synchronized instantly, and you can see who's working on what in real-time."
-        },
-        {
-          question: "Can I set different access levels for team members?",
-          answer: "Yes, you can create custom roles with specific permissions for viewing, editing, and approving documents. This ensures that team members only have access to the documents they need."
-        }
-      ]
+      question: "What security measures protect our construction documents?",
+      answer: "We implement end-to-end encryption, role-based access control, and audit trails. All documents are backed up in multiple secure locations with regular security audits and compliance checks."
     },
+    {
+      question: "How can multiple team members work on the same document?",
+      answer: "Our real-time collaboration features allow multiple team members to view and edit documents simultaneously. Changes are synchronized instantly, and you can see who's working on what in real-time."
+    },
+    {
+      question: "Can I integrate with my existing construction software?",
+      answer: "Absolutely! We offer API integrations with popular construction management software, accounting systems, and project management tools. Our team can also create custom integrations for your specific needs."
+    },
+    {
+      question: "What kind of support do you offer?",
+      answer: "We provide 24/7 customer support through multiple channels including live chat, email, and phone. Our dedicated support team includes construction industry experts who understand your specific challenges."
+    }
   ];
 
-  const allFaqs = faqCategories.flatMap(category =>
-    category.faqs.map(faq => ({
-      ...faq,
-      category: category.title
-    }))
-  );
-
-  const filteredFaqs = allFaqs.filter(faq =>
-    faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   return (
-    <section className={`relative bg-slate-900 py-16 ${inter.variable} ${poppins.variable}`}>
+    <section className="relative font-sans">
       {/* Background */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800"></div>
+      <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)`,
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0,0,0,0.02) 1px, transparent 0)`,
           backgroundSize: "40px 40px"
         }}></div>
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-4xl mx-auto"
-        >
-          <div className="text-center mb-12">
+      <div className="relative z-10 container mx-auto px-4 py-16 md:py-20">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 md:gap-12 lg:gap-16 items-start">
+            {/* Left Side - FAQ Section */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 text-blue-500 text-sm font-medium mb-6"
+              className="lg:col-span-3 space-y-3 md:space-y-4 order-1 lg:order-1"
             >
-              <Building2 className="w-4 h-4" />
-              <span>Construction Document Management</span>
-            </motion.div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 font-poppins">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-slate-400">Find answers to common questions about our platform</p>
-          </div>
-
-          {/* Search */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="relative mb-12"
-          >
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search className="w-5 h-5 text-slate-400" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search questions..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200"
-            />
-          </motion.div>
-
-          {/* FAQs */}
-          <div className="space-y-8">
-            {faqCategories.map((category, categoryIndex) => (
+              {/* Mobile FAQ Heading */}
               <motion.div
-                key={categoryIndex}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: categoryIndex * 0.1 }}
-                className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-colors duration-200"
-                onMouseEnter={() => setHoveredCategory(categoryIndex)}
-                onMouseLeave={() => setHoveredCategory(null)}
+                transition={{ delay: 0.1 }}
+                className="lg:hidden mb-6"
               >
-                <div className="px-6 py-4 border-b border-slate-700/50">
-                  <div className="flex items-center gap-3">
-                    <motion.div
-                      animate={{
-                        scale: hoveredCategory === categoryIndex ? 1.1 : 1,
-                        rotate: hoveredCategory === categoryIndex ? 5 : 0
-                      }}
-                      transition={{ duration: 0.2 }}
-                      className="text-blue-500"
-                    >
-                      {category.icon}
-                    </motion.div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-white font-poppins">{category.title}</h3>
-                      <p className="text-slate-400 text-sm">{category.description}</p>
-                    </div>
-                  </div>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/5 border border-black/10 text-black text-sm font-medium mb-4">
+                  <CheckCircle className="w-4 h-4 text-black/70" />
+                  <span className='tracking-wide text-xs font-semibold'>FAQ</span>
                 </div>
-                <div className="divide-y divide-slate-700/50">
-                  {category.faqs.map((faq, faqIndex) => (
-                    <div key={faqIndex}>
-                      <motion.button
-                        onClick={() => setOpenFaq(openFaq === `${categoryIndex}-${faqIndex}` ? null : `${categoryIndex}-${faqIndex}`)}
-                        className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-800/70 transition-colors duration-200 group"
-                        whileHover={{ x: 4 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <span className="text-white font-medium group-hover:text-blue-400 transition-colors duration-200">
-                          {faq.question}
-                        </span>
-                        <ChevronDown
-                          className={`w-5 h-5 text-slate-400 transition-all duration-200 ${
-                            openFaq === `${categoryIndex}-${faqIndex}` ? 'transform rotate-180 text-blue-500' : ''
-                          }`}
-                        />
-                      </motion.button>
-                      <AnimatePresence>
-                        {openFaq === `${categoryIndex}-${faqIndex}` && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            className="overflow-hidden"
-                          >
-                            <div className="px-6 py-4 text-slate-400">
-                              {faq.answer}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  ))}
-                </div>
+                <h2 className="text-3xl sm:text-4xl font-bold text-black/60 mb-4 font-sans leading-tight">
+                  Frequently Asked Questions
+                </h2>
               </motion.div>
-            ))}
-          </div>
 
-          {/* Contact Support */}
-          <div className="mt-12 text-center">
-            <p className="text-slate-400 mb-4">Still have questions? We're here to help.</p>
-            <button className="group relative px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl font-semibold hover:opacity-90 transition-all duration-200 flex items-center justify-center gap-2 text-[15px] hover:scale-105 mx-auto">
-              <span className="relative z-10 flex items-center gap-2">
-                Contact Support
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur opacity-0 group-hover:opacity-50 transition-opacity duration-200"></div>
-            </button>
+              {faqs.map((faq, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 * index }}
+                  className="bg-white border border-gray-400 rounded-xl md:rounded-2xl overflow-hidden hover:border-black/20 transition-all duration-300 group"
+                >
+                  <motion.button
+                    onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                    className="w-full px-4 md:px-6 py-4 md:py-5 flex items-center justify-between text-left hover:bg-black/2 transition-colors duration-200 group"
+                    whileHover={{ x: 4 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <span className="text-black/80 font-semibold text-base md:text-lg group-hover:text-black/80 transition-colors duration-200 font-sans pr-4 leading-relaxed">
+                      {faq.question}
+                    </span>
+                    <div className="flex-shrink-0">
+                      <ChevronDown
+                        className={`w-4 h-4 md:w-5 md:h-5 text-black/40 transition-all duration-300 ${
+                          openFaq === index ? 'transform rotate-180 text-black/70' : ''
+                        }`}
+                      />
+                    </div>
+                  </motion.button>
+                  
+                  <AnimatePresence>
+                    {openFaq === index && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-4 md:px-6 pb-4 md:pb-5 text-black/70 font-sans font-semibold leading-relaxed text-sm md:text-base">
+                          {faq.answer}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Right Side - Heading Section */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="lg:col-span-2 order-2 lg:order-2"
+            >
+              <div className="mb-6">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 }}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/5 border border-black/10 text-black text-sm font-medium mb-6"
+                >
+                  <CheckCircle className="w-4 h-4 text-black/70" />
+                  <span className='tracking-wider'>FAQ</span>
+                </motion.div>
+              </div>
+              
+              <motion.h2 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-black/60 mb-6 font-sans leading-tight"
+              >
+                Everything<br />
+               You <span className="bg-black text-white px-2 rounded">Need</span> <br />
+                To Know
+              </motion.h2>
+              
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4 }}
+                className="text-base text-black/70 font-semibold md:text-lg font-sans leading-relaxed max-w-lg mb-8"
+              >
+                Get clear and concise answers to all your questions about our features, pricing, and how it works.
+              </motion.p>
+
+              {/* Ask Us Anything Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5 }}
+              >
+                <motion.button
+                  className="group relative px-6 py-3 md:px-8 md:py-4 text-sm md:text-base font-semibold rounded-full bg-black text-white hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 md:gap-3 border-0 outline-none focus:ring-4 focus:ring-black/10 shadow-md hover:shadow-lg"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    Ask Us Anything
+                    <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform duration-200" />
+                  </span>
+                </motion.button>
+              </motion.div>
+            </motion.div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

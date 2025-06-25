@@ -14,12 +14,14 @@ import {
   CheckCircle2,
   DollarSign,
   User,
-  Phone,
   Mail,
   Building,
   Globe,
   Loader2,
-  Lock
+  Lock,
+  FileText,
+  Users,
+  Shield
 } from 'lucide-react';
 import { Inter, Poppins } from 'next/font/google';
 import { toast } from 'react-hot-toast';
@@ -71,6 +73,9 @@ const volumeRanges = [
   { value: '10m+', label: '$10M+', description: 'Large enterprise' }
 ];
 
+// Add a helper class for body text
+const bodyTextClass = "font-inter tracking-wide text-sm font-semibold text-gray-700";
+
 export default function SignupPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -80,7 +85,7 @@ export default function SignupPage() {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    phone: '',
+    email: '',
     company: '',
     password: '',
     confirmPassword: '',
@@ -168,349 +173,601 @@ export default function SignupPage() {
     </div>
   );
 
-  const renderBusinessTypeStep = () => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
-    >
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-white mb-2">What best describes your business?</h2>
-        <p className="text-slate-400">Select the option that best matches your construction business</p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {businessTypes.map((type) => (
-          <motion.button
-            key={type.id}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setSelectedType(type.id)}
-            className={`p-6 rounded-xl border-2 transition-all duration-200 ${
-              selectedType === type.id
-                ? 'border-blue-500 bg-slate-700/50'
-                : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
-            }`}
-          >
-            <div className="flex items-start gap-4">
-              <div className={`p-3 rounded-lg bg-gradient-to-r ${type.color}`}>
-                {type.icon}
-              </div>
-              <div className="text-left">
-                <h3 className="text-white font-semibold mb-1">{type.title}</h3>
-                <p className="text-slate-400 text-sm">{type.description}</p>
-              </div>
-            </div>
-          </motion.button>
-        ))}
-      </div>
-
-      <div className="flex justify-between items-center mt-8">
-        <Link
-          href="/login"
-          className="text-slate-400 hover:text-white transition-colors duration-200"
-        >
-          Already have an account?
-        </Link>
-        <button
-          onClick={handleNext}
-          disabled={!selectedType}
-          className="group relative px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl font-semibold hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <span className="relative z-10 flex items-center gap-2">
-            Next
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
-          </span>
-        </button>
-      </div>
-    </motion.div>
-  );
-
-  const renderVolumeStep = () => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
-    >
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-white mb-2">What is your average construction volume?</h2>
-        <p className="text-slate-400">Select the range that best represents your annual construction volume</p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {volumeRanges.map((range) => (
-          <motion.button
-            key={range.value}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setSelectedVolume(range.value)}
-            className={`p-6 rounded-xl border-2 transition-all duration-200 ${
-              selectedVolume === range.value
-                ? 'border-blue-500 bg-slate-700/50'
-                : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
-            }`}
-          >
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-lg bg-slate-700">
-                <DollarSign className="w-6 h-6 text-blue-400" />
-              </div>
-              <div className="text-left">
-                <h3 className="text-white font-semibold mb-1">{range.label}</h3>
-                <p className="text-slate-400 text-sm">{range.description}</p>
-              </div>
-            </div>
-          </motion.button>
-        ))}
-      </div>
-
-      <div className="flex justify-between items-center mt-8">
-        <button
-          onClick={handlePrev}
-          className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors duration-200"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Previous
-        </button>
-        <button
-          onClick={handleNext}
-          disabled={!selectedVolume}
-          className="group relative px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl font-semibold hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <span className="relative z-10 flex items-center gap-2">
-            Next
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
-          </span>
-        </button>
-      </div>
-    </motion.div>
-  );
-
-  const renderFormStep = () => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
-    >
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-white mb-2">Fill out your information</h2>
-        <p className="text-slate-400">Complete your profile to get started</p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              First Name
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="h-5 w-5 text-slate-400" />
-              </div>
-              <input
-                type="text"
-                required
-                value={formData.firstName}
-                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                className="block w-full pl-10 pr-3 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your first name"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Last Name
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="h-5 w-5 text-slate-400" />
-              </div>
-              <input
-                type="text"
-                required
-                value={formData.lastName}
-                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                className="block w-full pl-10 pr-3 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your last name"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Phone Number
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Phone className="h-5 w-5 text-slate-400" />
-              </div>
-              <input
-                type="tel"
-                required
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="block w-full pl-10 pr-3 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your phone number"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Company Name
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Building className="h-5 w-5 text-slate-400" />
-              </div>
-              <input
-                type="text"
-                required
-                value={formData.company}
-                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                className="block w-full pl-10 pr-3 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your company name"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Password
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-slate-400" />
-              </div>
-              <input
-                type="password"
-                required
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="block w-full pl-10 pr-3 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                placeholder="Create a password"
-              />
-            </div>
-            <p className="mt-1 text-xs text-slate-400">
-              Must be at least 8 characters with 1 uppercase, 1 number, and 1 special character
-            </p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Confirm Password
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-slate-400" />
-              </div>
-              <input
-                type="password"
-                required
-                value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                className="block w-full pl-10 pr-3 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                placeholder="Confirm your password"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Country
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Globe className="h-5 w-5 text-slate-400" />
-              </div>
-              <input
-                type="text"
-                required
-                value={formData.country}
-                onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                className="block w-full pl-10 pr-3 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your country"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-between items-center mt-8">
-          <button
-            type="button"
-            onClick={handlePrev}
-            className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors duration-200"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Previous
-          </button>
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="group relative px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl font-semibold hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <span className="relative z-10 flex items-center gap-2">
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  Submit
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
-                </>
-              )}
-            </span>
-          </button>
-        </div>
-      </form>
-    </motion.div>
-  );
-
   return (
-    <div className={`min-h-screen bg-slate-900 ${inter.variable} ${poppins.variable}`}>
-      <div className="min-h-screen flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-4xl">
-          {/* Logo */}
-          <div className="text-center mb-8">
-            <Link href="/" className="inline-flex items-center space-x-2 text-white font-bold text-2xl group">
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 w-12 h-12 flex items-center justify-center rounded-xl font-black text-white transform transition-transform duration-300 group-hover:scale-110">
-                <Building2 size={24} />
-              </div>
-              <span className="tracking-wide">BuildStack</span>
-            </Link>
+    <div className={`min-h-screen bg-gray-50 ${inter.variable} ${poppins.variable}`}>
+      {/* Enhanced Top Hero/Promo Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-black via-gray-900 to-black">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          {/* Gradient Mesh */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-90"></div>
+          
+          {/* Animated Grid Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `
+                linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+              `,
+              backgroundSize: '50px 50px'
+            }}></div>
           </div>
+          
+          {/* Floating Orbs */}
+          <motion.div
+            className="absolute top-20 left-10 w-32 h-32 bg-green-500/20 rounded-full blur-3xl"
+            animate={{
+              x: [0, 30, 0],
+              y: [0, -20, 0],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div
+            className="absolute top-40 right-20 w-24 h-24 bg-blue-500/20 rounded-full blur-3xl"
+            animate={{
+              x: [0, -25, 0],
+              y: [0, 15, 0],
+              scale: [1, 0.9, 1],
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2
+            }}
+          />
+          <motion.div
+            className="absolute bottom-20 left-1/4 w-20 h-20 bg-yellow-500/20 rounded-full blur-3xl"
+            animate={{
+              x: [0, 20, 0],
+              y: [0, -10, 0],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: 7,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1
+            }}
+          />
+        </div>
 
-          {/* Registration Card */}
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-8">
-            {renderStepIndicator()}
+        {/* Main Content Container */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-14">
+          <div className="flex flex-col lg:flex-row items-center justify-between min-h-[150px] md:min-h-[180px] lg:min-h-[220px] py-6 md:py-8">
+            
+            {/* Left Content */}
+            <motion.div 
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="flex-1 text-center lg:text-left mb-6 lg:mb-0"
+            >
+              {/* Smart Headline with Typing Effect */}
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+                className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl mt-4 xl:text-5xl font-black leading-relaxed text-white mb-2 md:mb-3"
+              >
+                <span className="block font-inter">Grow Your Profits From $$ to $$$$</span>
+              </motion.h1>
 
-            <AnimatePresence mode="wait">
-              {isLoading ? (
+              {/* Smart Subtitle */}
+              <motion.p 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+                className="text-sm sm:text-sm md:text-base lg:text-lg text-white font-semibold mb-3 md:mb-4 max-w-xl mx-auto lg:mx-0 leading-relaxed font-inter"
+              >
+                Join thousands of construction professionals who've revolutionized their workflow with BuildStack's all-in-one platform.
+              </motion.p>
+
+              {/* Smart Feature List with Hover Effects */}
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.7 }}
+                className="flex flex-col sm:flex-row items-start justify-start lg:justify-start gap-1.5 md:gap-3 lg:gap-4 mb-3 md:mb-4"
+              >
+                {[
+                  { icon: "👥", text: "Unlimited Users", color: "text-white mb-3 mt-2", delay: 0.8 },
+                  { icon: "🏗️", text: "Unlimited Projects", color: "text-white mb-2", delay: 0.9 },
+                  { icon: "📈", text: "Unlimited Growth", color: "text-white mb-2", delay: 1.0 }
+                ].map((feature, index) => (
+                  <motion.div
+                    key={feature.text}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: feature.delay }}
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    className="flex items-center gap-1 md:gap-1.5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg px-2 py-1 md:px-2.5 md:py-1.5 hover:bg-white/10 transition-all duration-300 cursor-pointer group shadow-lg hover:shadow-xl"
+                  >
+                    <span className="text-xs md:text-sm group-hover:scale-110 transition-transform duration-300">{feature.icon}</span>
+                    <span className={`font-semibold text-xs ${feature.color} font-inter`}>{feature.text}</span>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            {/* Smart Right Visual Element */}
+            <motion.div 
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="flex-1 flex justify-center lg:justify-end"
+            >
+              <div className="relative">
+                {/* Smart Main Icon with Enhanced Animation */}
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex flex-col items-center justify-center py-12"
+                  animate={{ 
+                    y: [0, -3, 0],
+                    rotate: [0, 0.5, -0.5, 0]
+                  }}
+                  transition={{ 
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="relative z-10"
                 >
-                  <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
-                  <p className="text-slate-400">Loading...</p>
+                  <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-green-500/20 to-blue-500/20 rounded-xl border border-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl">
+                    <Building2 className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-white" />
+                  </div>
                 </motion.div>
-              ) : (
-                <>
-                  {step === 1 && renderBusinessTypeStep()}
-                  {step === 2 && renderVolumeStep()}
-                  {step === 3 && renderFormStep()}
-                </>
-              )}
-            </AnimatePresence>
+
+                {/* Smart Decorative Elements */}
+                <motion.div
+                  className="absolute -top-1 -right-1 md:-top-2 md:-right-2 w-6 h-6 md:w-8 md:h-8 bg-yellow-500/20 rounded-full blur-md"
+                  animate={{
+                    scale: [1, 1.1, 1],
+                    opacity: [0.4, 0.6, 0.4],
+                  }}
+                  transition={{
+                    duration: 2.5,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
+                <motion.div
+                  className="absolute -bottom-1 -left-1 md:-bottom-2 md:-left-2 w-4 h-4 md:w-6 md:h-6 bg-purple-500/20 rounded-full blur-md"
+                  animate={{
+                    scale: [1, 0.9, 1],
+                    opacity: [0.3, 0.5, 0.3],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1
+                  }}
+                />
+                
+                {/* Smart Floating Elements */}
+                <motion.div
+                  className="absolute top-0 left-0 w-2 h-2 bg-green-400/30 rounded-full"
+                  animate={{
+                    y: [0, -10, 0],
+                    opacity: [0.5, 1, 0.5],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 0.5
+                  }}
+                />
+                <motion.div
+                  className="absolute top-2 right-0 w-1.5 h-1.5 bg-blue-400/30 rounded-full"
+                  animate={{
+                    y: [0, -8, 0],
+                    opacity: [0.3, 0.8, 0.3],
+                  }}
+                  transition={{
+                    duration: 2.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1.5
+                  }}
+                />
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Smart Bottom Wave */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 60" className="w-full h-8 md:h-10 lg:h-12" preserveAspectRatio="none">
+            <path 
+              fill="#f9fafb" 
+              d="M0,48L60,44C120,40,240,32,360,30.7C480,29,600,35,720,40C840,45,960,49,1080,48.7C1200,48,1320,43,1380,40.7L1440,38L1440,60L1380,60C1320,60,1200,60,1080,60C960,60,840,60,720,60C600,60,480,60,360,60C240,60,120,60,60,60L0,60Z"
+            />
+          </svg>
+        </div>
+      </section>
+      {/* End Enhanced Top Hero/Promo Section */}
+      <div className="flex min-h-screen flex-col lg:flex-row">
+        {/* Left Side - Signup Form */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center px-4 py-12 bg-white">
+          <div className="w-full max-w-xl">
+            {/* Logo */}
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center mb-8"
+            >
+              <Link href="/" className="inline-flex items-center space-x-2 text-black font-bold text-2xl group">
+                <div className="bg-black w-12 h-12 flex items-center justify-center rounded-xl font-black text-white transform transition-transform duration-300 group-hover:scale-110">
+                  <Building2 size={24} />
+                </div>
+                <span className="tracking-wide">BuildStack</span>
+              </Link>
+            </motion.div>
+            {/* Step Indicator */}
+            {renderStepIndicator()}
+            {/* Step Content */}
+            <div className="rounded-2xl border border-gray-200 p-8 shadow-lg">
+              <AnimatePresence mode="wait" initial={false}>
+                {step === 1 && (
+                  <div key="step1">
+                    {/* Business Type Step - Light Theme */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      className="space-y-6"
+                    >
+                      <div className="text-center mb-8">
+                        <h2 className="text-2xl font-bold text-black mb-2">What best describes your business?</h2>
+                        <p className={bodyTextClass}>Select the option that best matches your construction business</p>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {businessTypes.map((type) => (
+                          <motion.button
+                            key={type.id}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => setSelectedType(type.id)}
+                            className={`p-6 rounded-xl border-2 transition-all duration-200 text-left ${
+                              selectedType === type.id
+                                ? 'border-blue-500 bg-blue-50'
+                                : 'border-gray-200 hover:border-gray-300 bg-gray-50'
+                            }`}
+                          >
+                            <div className="flex items-start gap-4">
+                              <div className={`p-3 rounded-lg bg-gradient-to-r ${type.color} text-white`}>
+                                {type.icon}
+                              </div>
+                              <div className="text-left">
+                                <h3 className="font-semibold mb-1 text-black">{type.title}</h3>
+                                <p className={bodyTextClass}>{type.description}</p>
+                              </div>
+                            </div>
+                          </motion.button>
+                        ))}
+                      </div>
+                      <div className="flex justify-between items-center mt-8">
+                        <Link
+                          href="/login"
+                          className="text-gray-500 hover:text-black transition-colors duration-200 font-semibold"
+                        >
+                          Already have an account?
+                        </Link>
+                        <button
+                          onClick={handleNext}
+                          disabled={!selectedType}
+                          className="group relative px-6 py-3 bg-black text-white rounded-lg font-semibold hover:bg-black/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <span className="relative z-10 flex items-center gap-2">
+                            Next
+                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+                          </span>
+                        </button>
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+                {step === 2 && (
+                  <div key="step2">
+                    {/* Volume Step - Light Theme */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      className="space-y-6"
+                    >
+                      <div className="text-center mb-8">
+                        <h2 className="text-2xl font-bold text-black mb-2">What is your average construction volume?</h2>
+                        <p className={bodyTextClass}>Select the range that best represents your annual construction volume</p>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {volumeRanges.map((range) => (
+                          <motion.button
+                            key={range.value}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => setSelectedVolume(range.value)}
+                            className={`p-6 rounded-xl border-2 transition-all duration-200 text-left ${
+                              selectedVolume === range.value
+                                ? 'border-blue-500 bg-blue-50'
+                                : 'border-gray-200 hover:border-gray-300 bg-gray-50'
+                            }`}
+                          >
+                            <div className="flex items-center gap-4">
+                              <div className="p-3 rounded-lg bg-gray-100">
+                                <DollarSign className="w-6 h-6 text-blue-500" />
+                              </div>
+                              <div className="text-left">
+                                <h3 className="font-semibold mb-1 text-black">{range.label}</h3>
+                                <p className={bodyTextClass}>{range.description}</p>
+                              </div>
+                            </div>
+                          </motion.button>
+                        ))}
+                      </div>
+                      <div className="flex justify-between items-center mt-8">
+                        <button
+                          onClick={handlePrev}
+                          className="flex items-center gap-2 text-gray-500 hover:text-black transition-colors duration-200 font-semibold"
+                        >
+                          <ArrowLeft className="w-4 h-4" />
+                          Previous
+                        </button>
+                        <button
+                          onClick={handleNext}
+                          disabled={!selectedVolume}
+                          className="group relative px-6 py-3 bg-black text-white rounded-lg font-semibold hover:bg-black/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <span className="relative z-10 flex items-center gap-2">
+                            Next
+                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+                          </span>
+                        </button>
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+                {step === 3 && (
+                  <div key="step3">
+                    {/* Form Step - Light Theme */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      className="space-y-6"
+                    >
+                      <div className="text-center mb-8">
+                        <h2 className="text-2xl font-bold text-black mb-2">Fill out your information</h2>
+                        <p className={bodyTextClass}>Complete your profile to get started</p>
+                      </div>
+                      <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              First Name
+                            </label>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <User className="h-5 w-5 text-gray-400" />
+                              </div>
+                              <input
+                                type="text"
+                                required
+                                value={formData.firstName}
+                                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
+                                placeholder="Enter your first name"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Last Name
+                            </label>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <User className="h-5 w-5 text-gray-400" />
+                              </div>
+                              <input
+                                type="text"
+                                required
+                                value={formData.lastName}
+                                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
+                                placeholder="Enter your last name"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Email
+                            </label>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Mail className="h-5 w-5 text-gray-400" />
+                              </div>
+                              <input
+                                type="email"
+                                required
+                                value={formData.email}
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
+                                placeholder="Enter your email"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Company Name
+                            </label>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Building className="h-5 w-5 text-gray-400" />
+                              </div>
+                              <input
+                                type="text"
+                                required
+                                value={formData.company}
+                                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
+                                placeholder="Enter your company name"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Password
+                            </label>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Lock className="h-5 w-5 text-gray-400" />
+                              </div>
+                              <input
+                                type="password"
+                                required
+                                value={formData.password}
+                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
+                                placeholder="Create a password"
+                              />
+                            </div>
+                            <p className={`mt-1 text-xs text-gray-500 ${bodyTextClass}`}>
+                              Must be at least 8 characters with 1 uppercase, 1 number, and 1 special character
+                            </p>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Confirm Password
+                            </label>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Lock className="h-5 w-5 text-gray-400" />
+                              </div>
+                              <input
+                                type="password"
+                                required
+                                value={formData.confirmPassword}
+                                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
+                                placeholder="Confirm your password"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Country
+                            </label>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Globe className="h-5 w-5 text-gray-400" />
+                              </div>
+                              <input
+                                type="text"
+                                required
+                                value={formData.country}
+                                onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
+                                placeholder="Enter your country"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          type="submit"
+                          className="w-full py-3 px-4 bg-black text-white rounded-full font-semibold text-base shadow hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : 'Sign Up'}
+                        </button>
+                      </form>
+                      <div className="mt-6 text-center">
+                        <span className={`text-gray-500 ${bodyTextClass}`}>Already have an account?</span>{' '}
+                        <Link href="/login" className="text-black font-semibold hover:underline">Sign in</Link>
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+        {/* Right Side - Feature/Illustration Section */}
+        <div className="hidden lg:flex lg:w-1/2 relative bg-gray-50 border-l border-gray-200">
+          <div className="absolute inset-0 flex items-center justify-center">
+            {/* You can add an illustration or image here if desired */}
+            <Building2 className="w-32 h-32 text-gray-200" />
+          </div>
+          <div className="relative z-10 h-full flex flex-col justify-center px-16 py-12 text-gray-800">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="max-w-lg"
+            >
+              <h1 className="text-4xl font-bold mb-6 text-black">
+                Join BuildStack Today
+              </h1>
+              <p className={`text-xl text-gray-700 mb-12 leading-relaxed ${bodyTextClass}`}>
+                Create your account and streamline your construction workflow with our all-in-one document management platform.
+              </p>
+              {/* Feature Grid */}
+              <div className="grid grid-cols-2 gap-6">
+                {[
+                  {
+                    icon: <FileText className="w-6 h-6" />,
+                    title: "Document Control",
+                    description: "Manage blueprints and permits"
+                  },
+                  {
+                    icon: <Users className="w-6 h-6" />,
+                    title: "Team Collaboration",
+                    description: "Coordinate across departments"
+                  },
+                  {
+                    icon: <Shield className="w-6 h-6" />,
+                    title: "Secure Access",
+                    description: "Role-based permissions"
+                  },
+                  {
+                    icon: <DollarSign className="w-6 h-6 text-blue-500" />,
+                    title: "Project Analytics",
+                    description: "Track progress and metrics"
+                  }
+                ].map((feature, index) => (
+                  <motion.div
+                    key={feature.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="bg-white rounded-xl p-4 border border-gray-200 shadow"
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="p-2 bg-gray-100 rounded-lg">
+                        {feature.icon}
+                      </div>
+                      <h3 className="font-semibold text-black text-base">{feature.title}</h3>
+                    </div>
+                    <p className={`text-sm text-gray-600 ${bodyTextClass}`}>{feature.description}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>
     </div>
   );
 } 
+
+
+
+
+
+
+

@@ -14,6 +14,7 @@ const config: Config = {
         'inter': ['var(--font-inter)'],
         'space-grotesk': ['var(--font-space-grotesk)'],
         'outfit': ['var(--font-outfit)'],
+       'sans': ['Inter', 'ui-sans-serif', 'system-ui'],
       },
       animation: {
         'slow-spin': 'spin 20s linear infinite',

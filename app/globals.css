@@ -3,6 +3,9 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
 @theme inline {
@@ -32,10 +35,71 @@ html, body {
 }
 
 body {
-  background: var(--background);
+  background: #ffffff;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
+  background-attachment: fixed;
+  position: relative;
+}
+
+/* Modern SaaS-style background with ultra-light white design */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  /* Ultra-light white geometric SVG pattern with minimal construction elements */
+  background-image: url('data:image/svg+xml;utf8,<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="pureWhite" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%23ffffff;stop-opacity:1" /><stop offset="100%" style="stop-color:%23ffffff;stop-opacity:1" /></linearGradient></defs><rect width="400" height="400" fill="url(%23pureWhite)"/><g opacity="0.03"><circle cx="100" cy="100" r="2" fill="%23f3f4f6" stroke="%23f9fafb" stroke-width="0.3"/><circle cx="300" cy="300" r="1.5" fill="%23f9fafb" stroke="%23fafafa" stroke-width="0.2"/><circle cx="200" cy="200" r="3" fill="%23e5e7eb" stroke="%23f3f4f6" stroke-width="0.3"/><rect x="60" y="60" width="60" height="40" rx="5" fill="%23fafafa" stroke="%23f3f4f6" stroke-width="0.3" opacity="0.4"/><rect x="280" y="280" width="45" height="30" rx="3" fill="%23f9fafb" stroke="%23e5e7eb" stroke-width="0.2" opacity="0.3"/><path d="M80 150 L105 150 L105 170 L80 170 Z" fill="%23f3f4f6" stroke="%23e5e7eb" stroke-width="0.2" opacity="0.3"/><path d="M260 220 L285 220 L285 240 L260 240 Z" fill="%23f9fafb" stroke="%23f3f4f6" stroke-width="0.2" opacity="0.2"/><line x1="0" y1="200" x2="400" y2="200" stroke="%23f9fafb" stroke-width="0.3" opacity="0.15"/><line x1="200" y1="0" x2="200" y2="400" stroke="%23f9fafb" stroke-width="0.3" opacity="0.15"/><line x1="0" y1="0" x2="400" y2="400" stroke="%23fafafa" stroke-width="0.2" opacity="0.1"/><line x1="400" y1="0" x2="0" y2="400" stroke="%23fafafa" stroke-width="0.2" opacity="0.1"/><circle cx="70" cy="270" r="1" fill="%23f3f4f6" opacity="0.2"/><circle cx="330" cy="70" r="0.8" fill="%23f9fafb" opacity="0.15"/><rect x="150" y="150" width="25" height="18" rx="2" fill="%23fafafa" stroke="%23f3f4f6" stroke-width="0.1" opacity="0.2"/></g></svg>');
+  background-size: 400px 400px;
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: -3;
+}
+
+/* Ultra-subtle floating geometric elements for modern SaaS feel */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.008) 0%, transparent 80%),
+    radial-gradient(circle at 75% 75%, rgba(168, 85, 247, 0.008) 0%, transparent 80%),
+    radial-gradient(circle at 45% 65%, rgba(34, 197, 94, 0.006) 0%, transparent 80%),
+    radial-gradient(circle at 65% 45%, rgba(251, 146, 60, 0.006) 0%, transparent 80%),
+    radial-gradient(circle at 15% 55%, rgba(59, 130, 246, 0.004) 0%, transparent 70%),
+    radial-gradient(circle at 85% 35%, rgba(139, 92, 246, 0.004) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -2;
+}
+
+/* Additional animated background elements */
+body {
+  position: relative;
+}
+
+body::before {
+  animation: backgroundFloat 25s ease-in-out infinite;
+}
+
+/* Modern gradient overlay for depth and premium feel */
+#__next::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: 
+    linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(250,250,250,0.01) 50%, rgba(245,245,245,0.015) 100%),
+    linear-gradient(45deg, rgba(99, 102, 241, 0.002) 0%, rgba(168, 85, 247, 0.002) 100%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 #__next {
@@ -44,6 +108,7 @@ body {
   position: relative;
 }
 
+/* Enhanced animations for modern SaaS feel */
 @keyframes gradient {
   0% {
     background-position: 0% 50%;
@@ -56,15 +121,156 @@ body {
   }
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(1deg);
+  }
+}
+
+@keyframes backgroundFloat {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(-3px, -3px) scale(1.01);
+  }
+  50% {
+    transform: translate(3px, -6px) scale(0.99);
+  }
+  75% {
+    transform: translate(-2px, 3px) scale(1.005);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
 .animate-gradient {
   animation: gradient 8s ease infinite;
 }
 
-/* Fix for mobile viewport */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Modern scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #f3f4f6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+  border-radius: 6px;
+  border: 1px solid #f3f4f6;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
+}
+
+/* Premium selection styling */
+::selection {
+  background: rgba(99, 102, 241, 0.15);
+  color: #1e293b;
+}
+
+::-moz-selection {
+  background: rgba(99, 102, 241, 0.15);
+  color: #1e293b;
+}
+
+/* Modern focus styles */
+*:focus {
+  outline: 2px solid rgba(99, 102, 241, 0.2);
+  outline-offset: 2px;
+}
+
+/* Enhanced mobile responsiveness */
 @media screen and (max-width: 768px) {
   html, body {
     width: 100%;
     overflow-x: hidden;
     position: relative;
   }
+  
+  body {
+    background: #ffffff;
+  }
+  
+  body::before {
+    background-size: 200px 200px;
+    opacity: 0.3;
+  }
+  
+  body::after {
+    background-image: 
+      radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.006) 0%, transparent 60%),
+      radial-gradient(circle at 75% 75%, rgba(168, 85, 247, 0.006) 0%, transparent 60%);
+  }
 }
+
+/* Tablet optimizations */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  body::before {
+    background-size: 300px 300px;
+    opacity: 0.35;
+  }
+}
+
+/* High-resolution displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  body::before {
+    background-size: 200px 200px;
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  body::before {
+    animation: none;
+  }
+  
+  .animate-gradient,
+  .animate-float,
+  .animate-pulse-slow,
+  .animate-shimmer {
+    animation: none;
+  }
+}
+

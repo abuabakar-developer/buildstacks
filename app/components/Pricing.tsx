@@ -3,13 +3,18 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Building2, Users, Shield, Award, ArrowRight, Star } from 'lucide-react';
-import { Inter, Poppins } from 'next/font/google';
+import { Plus_Jakarta_Sans, Inter } from 'next/font/google';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const poppins = Poppins({
+const plusJakarta = Plus_Jakarta_Sans({
   weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
-  variable: '--font-poppins'
+  variable: '--font-plusjakarta',
+});
+
+const inter = Inter({
+  weight: ['400', '500', '600'],
+  subsets: ['latin'],
+  variable: '--font-inter',
 });
 
 const Pricing = () => {
@@ -39,7 +44,7 @@ const Pricing = () => {
     {
       name: 'Starter',
       description: 'Perfect for small teams',
-      price: { monthly: 49, annual: 39 },
+      price: { monthly: 0, annual: 0 },
       features: features.starter,
       icon: <Building2 className="w-6 h-6" />,
       popular: false,
@@ -47,7 +52,7 @@ const Pricing = () => {
     {
       name: 'Professional',
       description: 'Great for growing companies',
-      price: { monthly: 99, annual: 79 },
+      price: { monthly: 39, annual: 49 },
       features: features.professional,
       icon: <Users className="w-6 h-6" />,
       popular: true,
@@ -55,7 +60,7 @@ const Pricing = () => {
     {
       name: 'Enterprise',
       description: 'Tailored for enterprises',
-      price: { monthly: 299, annual: 249 },
+      price: { monthly: 79, annual: 99 },
       features: features.enterprise,
       icon: <Shield className="w-6 h-6" />,
       popular: false,
@@ -63,51 +68,50 @@ const Pricing = () => {
   ];
 
   return (
-    <section className={`relative bg-slate-900 py-16 ${inter.variable} ${poppins.variable}`}>
+    <section id="pricing" className={`relative py-16 ${plusJakarta.variable} ${inter.variable}`}>
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-900"></div>
         <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)`,
-          backgroundSize: "40px 40px"
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0,0,0,0.03) 1px, transparent 0)`,
+          backgroundSize: "36px 36px"
         }}></div>
-        {/* Gradient Orbs */}
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4">
+      <div className="relative z-10 container mx-auto px-4 font-inter">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center max-w-3xl mx-auto mb-12"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 text-blue-500 text-sm font-medium mb-3">
-            <Star className="w-4 h-4" />
-            <span>Most Popular Choice</span>
+          >
+          <div className="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-black/5 border border-black/10 text-black text-sm font-medium mb-6">
+            <Star className="w-4 h-4 text-black/70" />
+            <span className='font-xs font-semibold text-black/70'>Best Simple_Price</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 font-poppins">
-            Simple, Transparent Pricing
-          </h2>
-          <p className="text-slate-400 text-lg mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-4xl font-extrabold text-black/70 mb-4 font-plusjakarta leading-tight">
+           Simple, Transparent 
+          <br className="block sm:hidden" /> 
+          <span className="hidden sm:inline"> </span>
+           Pricing
+         </h2>
+
+          <p className="text-lg md:text-xl leading-relaxed font-medium tracking-wide text-black/70 font-inter mb-8">
             Choose your perfect plan. All plans include a 14-day free trial.
           </p>
-
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <span className={`text-sm ${isAnnual ? 'text-slate-400' : 'text-white'}`}>Monthly</span>
+          <div className="flex items-center justify-center gap-4 mb-2">
+            <span className={`text-sm font-medium ${!isAnnual ? 'text-black' : 'text-black/70'}`}>Monthly</span>
             <button
+              type="button"
+              className="relative w-14 h-7 bg-black/10 rounded-full p-1 flex items-center focus:outline-none"
               onClick={() => setIsAnnual(!isAnnual)}
-              className="relative w-14 h-7 bg-slate-800 rounded-full p-1"
+              aria-label="Toggle annual pricing"
             >
               <motion.div
-                className="w-5 h-5 bg-blue-500 rounded-full"
+                className="w-5 h-5 bg-black rounded-full"
                 animate={{ x: isAnnual ? 28 : 0 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
               />
             </button>
-            <span className={`text-sm ${isAnnual ? 'text-white' : 'text-slate-400'}`}>
-              Annual <span className="text-blue-500">(Save 20%)</span>
-            </span>
+            <span className={`text-sm font-medium ${isAnnual ? 'text-black' : 'text-black/70'}`}>Annual <span className="text-black font-semibold font-base">(Save 20%)</span></span>
           </div>
         </motion.div>
 
@@ -119,24 +123,26 @@ const Pricing = () => {
             hidden: { opacity: 0 },
             visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
           }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto"
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 lg:gap-8 max-w-7xl mx-auto"
         >
-          {plans.map((plan) => (
+          {plans.map((plan, idx) => (
             <motion.div
               key={plan.name}
               variants={{
                 hidden: { y: 20, opacity: 0 },
                 visible: { y: 0, opacity: 1, transition: { duration: 0.5 } },
               }}
-              className={`relative rounded-2xl p-6 flex flex-col justify-between ${
+              className={`relative rounded-2xl p-6 flex flex-col justify-between bg-white transition-all duration-300 ${
                 plan.popular
-                  ? 'bg-gradient-to-b from-slate-800 to-slate-900 border border-blue-500/20'
-                  : 'bg-slate-800/50 backdrop-blur-sm'
+                  ? 'border-2 border-gray-600 shadow-lg hover:shadow-xl hover:border-gray-600 scale-105'
+                  : (idx === 0 || idx === 2
+                      ? 'border border-gray-400'
+                      : 'border border-black/10 hover:border-black/20')
               }`}
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-sm font-medium px-4 py-1 rounded-full">
+                  <div className="bg-black text-white text-sm font-medium px-4 py-1 rounded-full shadow-md">
                     Most Popular
                   </div>
                 </div>
@@ -144,44 +150,39 @@ const Pricing = () => {
 
               <div className="flex-1 flex flex-col">
                 <div className="mb-4">
-                  <div className="text-blue-500 mb-3">{plan.icon}</div>
-                  <h3 className="text-xl font-bold text-white mb-1 font-poppins">{plan.name}</h3>
-                  <p className="text-slate-400 text-sm mb-4">{plan.description}</p>
+                  <div className={`mb-3 ${plan.popular ? 'text-black' : 'text-black/70'}`}>{plan.icon}</div>
+                  <h3 className={`text-xl font-bold mb-1 font-plusjakarta ${plan.popular ? 'text-black' : 'text-black/80'}`}>{plan.name}</h3>
+                  <p className="text-black/70 font-semibold text-base mb-4 font-inter">{plan.description}</p>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-white">
+                    <span className={`text-3xl font-bold ${plan.popular ? 'text-black' : 'text-black/80'}`}>
                       ${isAnnual ? plan.price.annual : plan.price.monthly}
                     </span>
-                    <span className="text-slate-400 text-sm">/month</span>
+                    <span className="text-black/60 text-base">/mo</span>
                   </div>
                 </div>
 
                 <ul className="space-y-3 mb-4">
                   {plan.features.map((feature, index) => (
                     <li key={index} className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-blue-500 mt-1" />
-                      <span className="text-slate-300 text-sm">{feature}</span>
+                      <Check className={`w-4 h-4 mt-1 ${plan.popular ? 'text-black' : 'text-black/70'}`} />
+                      <span className="text-black/80 text-sm font-inter tracking-wide font-semibold">{feature}</span>
                     </li>
                   ))}
                 </ul>
 
                 <div className="mt-auto">
                   <button
-                    className={`group relative w-full py-2.5 px-6 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
-                      plan.popular
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:opacity-90'
-                        : 'bg-slate-700 text-white hover:bg-slate-600'
+                    className={`group relative w-full py-3 px-6 rounded-full text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 border outline-none focus:ring-4 focus:ring-black/10 ${
+                      plan.popular 
+                        ? 'bg-black text-white hover:bg-black/90 border-gray-600 shadow-md hover:shadow-lg' 
+                        : (idx === 0 || idx === 2
+                            ? 'bg-white text-black hover:bg-black/10 hover:text-black border-gray-400'
+                            : 'bg-white text-black hover:bg-black/10 hover:text-black border-black/10 hover:border-black')
                     }`}
                   >
                     <span className="relative z-10 flex items-center gap-2">
                       Get Started
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
                     </span>
-                    {plan.popular && (
-                      <>
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur opacity-0 group-hover:opacity-50 transition-opacity duration-200"></div>
-                      </>
-                    )}
                   </button>
                 </div>
               </div>
@@ -189,18 +190,6 @@ const Pricing = () => {
           ))}
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-12 text-center"
-        >
-          <p className="text-slate-400 mb-4">Have questions? We're here to help.</p>
-          <button className="inline-flex items-center gap-2 px-6 py-2.5 bg-slate-800 text-white text-sm rounded-lg hover:bg-slate-700 transition duration-200">
-            <Award className="w-5 h-5" />
-            Contact Sales
-          </button>
-        </motion.div>
       </div>
     </section>
   );

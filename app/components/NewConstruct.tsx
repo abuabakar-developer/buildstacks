@@ -2,13 +2,12 @@
 
 import { motion } from 'framer-motion';
 import { Award, CheckCircle, Shield, Users, Star } from 'lucide-react';
-import { Inter, Poppins } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const poppins = Poppins({
+const plusJakarta = Plus_Jakarta_Sans({
   weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
-  variable: '--font-poppins'
+  variable: '--font-plusjakarta',
 });
 
 const NewConstruct = () => {
@@ -56,17 +55,13 @@ const NewConstruct = () => {
   };
 
   return (
-    <section className={`relative bg-slate-900 py-16 ${inter.variable} ${poppins.variable}`}>
+    <section className={`relative py-16 ${plusJakarta.variable}`}>
       {/* Background */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-900"></div>
         <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)`,
-          backgroundSize: "40px 40px"
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0,0,0,0.03) 1px, transparent 0)`,
+          backgroundSize: "36px 36px"
         }}></div>
-        {/* Gradient Orbs */}
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
       </div>
 
       <div className="relative z-10 container mx-auto px-4">
@@ -77,31 +72,31 @@ const NewConstruct = () => {
           viewport={{ once: true }}
           className="text-center max-w-4xl mx-auto mb-20"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 text-blue-500 text-sm font-medium mb-6">
-            <Award className="w-4 h-4" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/5 border border-black/10 text-black text-xs md:text-sm font-medium mb-6">
+            <Award className="w-4 h-4 text-black/70" />
             <span>Trusted by Leading Construction Platform</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 font-poppins leading-tight max-w-3xl mx-auto text-center bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black/70 mb-6 font-plusjakarta leading-tight max-w-3xl mx-auto text-center">
             Next-Generation Construction <br />
             Management Platform
           </h1>
 
-          <p className="text-slate-400 text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-black/70 text-lg mb-8 max-w-2xl mx-auto font-plusjakarta">
             Transform your construction workflow with AI-powered project management, automated documentation, and real-time collaboration tools.
           </p>
-          <div className="flex items-center justify-center gap-4 text-slate-400">
+          <div className="flex items-center justify-center gap-4 text-black/70">
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-blue-500" />
+              <CheckCircle className="w-5 h-5 text-black/70" />
               <span>AI-Powered Solutions</span>
             </div>
-            <div className="w-1 h-1 rounded-full bg-slate-600"></div>
+            <div className="w-1 h-1 rounded-full bg-black/20"></div>
             <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-blue-500" />
+              <Shield className="w-5 h-5 text-black/70" />
               <span>Enterprise Security</span>
             </div>
-            <div className="w-1 h-1 rounded-full bg-slate-600"></div>
+            <div className="w-1 h-1 rounded-full bg-black/20"></div>
             <div className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-blue-500" />
+              <Users className="w-5 h-5 text-black/70" />
               <span>Team Collaboration</span>
             </div>
           </div>
@@ -117,8 +112,8 @@ const NewConstruct = () => {
         >
           {stats.map((stat, index) => (
             <motion.div key={index} variants={itemVariants} className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-white mb-2 font-poppins">{stat.number}</div>
-              <div className="text-slate-400">{stat.label}</div>
+              <div className="text-3xl md:text-4xl font-bold text-black mb-2 font-plusjakarta">{stat.number}</div>
+              <div className="text-black/70 font-plusjakarta">{stat.label}</div>
             </motion.div>
           ))}
         </motion.div>
@@ -131,8 +126,8 @@ const NewConstruct = () => {
           className="max-w-4xl mx-auto"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4 font-poppins">What Our Clients Say</h2>
-            <p className="text-slate-400">Trusted by construction professionals worldwide</p>
+            <h2 className="text-3xl font-bold text-black mb-4 font-plusjakarta">What Our Clients Say</h2>
+            <p className="text-black/70 font-plusjakarta">Trusted by construction professionals worldwide</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {testimonials.map((testimonial, index) => (
@@ -142,17 +137,17 @@ const NewConstruct = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6"
+                className="bg-black/5 border border-black/10 rounded-xl p-6"
               >
                 <div className="flex gap-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star key={i} className="w-5 h-5 text-yellow-500 fill-yellow-500" />
                   ))}
                 </div>
-                <p className="text-slate-300 mb-4">"{testimonial.quote}"</p>
+                <p className="text-black/80 mb-4 font-plusjakarta">"{testimonial.quote}"</p>
                 <div>
-                  <div className="font-semibold text-white">{testimonial.author}</div>
-                  <div className="text-slate-400 text-sm">{testimonial.role}</div>
+                  <div className="font-semibold text-black font-plusjakarta">{testimonial.author}</div>
+                  <div className="text-black/70 text-sm font-plusjakarta">{testimonial.role}</div>
                 </div>
               </motion.div>
             ))}
