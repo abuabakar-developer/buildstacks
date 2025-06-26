@@ -154,7 +154,7 @@ export default function LoginPage() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="text-center mb-10"
           >
-            <Link href="/" className="inline-flex items-center space-x-3 text-black font-bold text-3xl md:text-4xl group">
+            <Link href="/" className="inline-flex items-center space-x-3 text-black font-bold text-3xl md:text-3xl group">
               <motion.div 
                 className="bg-black w-14 h-14 flex items-center justify-center rounded-2xl font-black text-white transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-black/20"
                 whileHover={{ rotate: 5 }}
@@ -293,8 +293,12 @@ export default function LoginPage() {
             transition={{ duration: 0.8, delay: 1 }}
             className="mt-8 text-center"
           >
-            <p className="text-gray-700 text-base font-semibold font-inter">
-              Secure • Fast • Reliable
+            <p className="text-black text-base font-bold font-inter tracking-wide flex items-center justify-center gap-2">
+              <span>Secure</span>
+              <span className="text-gray-400">•</span>
+              <span>Fast</span>
+              <span className="text-gray-400">•</span>
+              <span>Reliable</span>
             </p>
           </motion.div>
         </div>

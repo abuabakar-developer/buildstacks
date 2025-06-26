@@ -70,7 +70,7 @@ const Footer = () => {
                   <div className="bg-black w-11 h-11 flex items-center justify-center rounded-lg text-white transform transition-all duration-300 group-hover:scale-110 shadow-md">
                     <HardHat size={22} />
                   </div>
-                  <span className="tracking-wide font-semibold font-plusjakarta">BuildStack</span>
+                  <span className="tracking-wide font-semibold">BuildStack</span>
                 </Link>
                 <p className="text-black/80 mb-6 leading-relaxed tracking-wide font-semibold font-plusjakarta text-sm">
                   Transform your construction workflow with AI-powered document management.

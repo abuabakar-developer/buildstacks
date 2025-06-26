@@ -21,7 +21,9 @@ import {
   Lock,
   FileText,
   Users,
-  Shield
+  Shield,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { Inter, Poppins } from 'next/font/google';
 import { toast } from 'react-hot-toast';
@@ -91,6 +93,8 @@ export default function SignupPage() {
     confirmPassword: '',
     country: ''
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleNext = () => {
     setIsLoading(true);
@@ -394,8 +398,7 @@ export default function SignupPage() {
       <div className="flex min-h-screen flex-col lg:flex-row">
         {/* Left Side - Signup Form */}
         <div className="w-full lg:w-1/2 flex items-center justify-center px-4 py-12 bg-white">
-          <div className="w-full max-w-xl">
-            {/* Logo */}
+          <div className="w-full max-w-xl z-10 flex flex-col h-full justify-center">
             <motion.div 
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -409,41 +412,53 @@ export default function SignupPage() {
                 <span className="tracking-wide">BuildStack</span>
               </Link>
             </motion.div>
-            {/* Step Indicator */}
             {renderStepIndicator()}
-            {/* Step Content */}
-            <div className="rounded-2xl border border-gray-200 p-8 shadow-lg">
+            <div className="rounded-2xl border border-gray-200 p-6 md:p-10 shadow-lg bg-white max-w-lg mx-auto flex-1 flex flex-col justify-center">
               <AnimatePresence mode="wait" initial={false}>
                 {step === 1 && (
-                  <div key="step1">
-                    {/* Business Type Step - Light Theme */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      className="space-y-6"
-                    >
-                      <div className="text-center mb-8">
-                        <h2 className="text-2xl font-bold text-black mb-2">What best describes your business?</h2>
-                        <p className={bodyTextClass}>Select the option that best matches your construction business</p>
+                  <motion.div
+                    key="step1"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="space-y-6"
+                  >
+                    <div className="text-center mb-8">
+                      <h2 className="text-2xl font-bold text-black mb-2">What best describes your business?</h2>
+                      <p className={bodyTextClass}>Select the option that best matches your construction business</p>
+                    </div>
+                    {/* Responsive business type options */}
+                    <div>
+                      {/* Large screens: vertical radio list */}
+                      <div className="hidden md:block space-y-3">
+                        {businessTypes.map((type) => (
+                          <button
+                            key={type.id}
+                            type="button"
+                            onClick={() => setSelectedType(type.id)}
+                            className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg border-2 transition-all duration-200 text-left focus:outline-none ${selectedType === type.id ? 'border-black bg-black/5' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}
+                          >
+                            <span className={`p-2 rounded-lg bg-gradient-to-r ${type.color} text-white`}>{type.icon}</span>
+                            <span className="flex-1">
+                              <span className="block font-semibold text-base text-black">{type.title}</span>
+                              <span className="block text-xs text-gray-600">{type.description}</span>
+                            </span>
+                            <span className={`w-5 h-5 border-2 rounded-full flex items-center justify-center ${selectedType === type.id ? 'border-black' : 'border-gray-300'}`}>{selectedType === type.id && <span className="w-3 h-3 bg-black rounded-full"></span>}</span>
+                          </button>
+                        ))}
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Small screens: card style */}
+                      <div className="md:hidden grid grid-cols-1 gap-4">
                         {businessTypes.map((type) => (
                           <motion.button
                             key={type.id}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setSelectedType(type.id)}
-                            className={`p-6 rounded-xl border-2 transition-all duration-200 text-left ${
-                              selectedType === type.id
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-gray-200 hover:border-gray-300 bg-gray-50'
-                            }`}
+                            className={`p-6 rounded-xl border-2 transition-all duration-200 text-left ${selectedType === type.id ? 'border-black bg-black/5' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}
                           >
                             <div className="flex items-start gap-4">
-                              <div className={`p-3 rounded-lg bg-gradient-to-r ${type.color} text-white`}>
-                                {type.icon}
-                              </div>
+                              <div className={`p-3 rounded-lg bg-gradient-to-r ${type.color} text-white`}>{type.icon}</div>
                               <div className="text-left">
                                 <h3 className="font-semibold mb-1 text-black">{type.title}</h3>
                                 <p className={bodyTextClass}>{type.description}</p>
@@ -452,57 +467,71 @@ export default function SignupPage() {
                           </motion.button>
                         ))}
                       </div>
-                      <div className="flex justify-between items-center mt-8">
-                        <Link
-                          href="/login"
-                          className="text-gray-500 hover:text-black transition-colors duration-200 font-semibold"
-                        >
-                          Already have an account?
-                        </Link>
-                        <button
-                          onClick={handleNext}
-                          disabled={!selectedType}
-                          className="group relative px-6 py-3 bg-black text-white rounded-lg font-semibold hover:bg-black/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <span className="relative z-10 flex items-center gap-2">
-                            Next
-                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
-                          </span>
-                        </button>
-                      </div>
-                    </motion.div>
-                  </div>
+                    </div>
+                    <div className="flex justify-between items-center mt-8">
+                      <Link
+                        href="/login"
+                        className="text-gray-500 hover:text-black transition-colors duration-200 font-semibold"
+                      >
+                        Already have an account?
+                      </Link>
+                      <button
+                        onClick={handleNext}
+                        disabled={!selectedType}
+                        className="group relative px-8 py-3 bg-black text-white rounded-full font-semibold hover:bg-black/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow"
+                      >
+                        <span className="relative z-10 flex items-center gap-2">
+                          Next
+                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+                        </span>
+                      </button>
+                    </div>
+                  </motion.div>
                 )}
                 {step === 2 && (
-                  <div key="step2">
-                    {/* Volume Step - Light Theme */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      className="space-y-6"
-                    >
-                      <div className="text-center mb-8">
-                        <h2 className="text-2xl font-bold text-black mb-2">What is your average construction volume?</h2>
-                        <p className={bodyTextClass}>Select the range that best represents your annual construction volume</p>
+                  <motion.div
+                    key="step2"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="space-y-6"
+                  >
+                    <div className="text-center mb-8">
+                      <h2 className="text-2xl font-bold text-black mb-2">What is your average construction volume?</h2>
+                      <p className={bodyTextClass}>Select the range that best represents your annual construction volume</p>
+                    </div>
+                    {/* Responsive volume options */}
+                    <div>
+                      {/* Large screens: vertical radio list */}
+                      <div className="hidden md:block space-y-3">
+                        {volumeRanges.map((range) => (
+                          <button
+                            key={range.value}
+                            type="button"
+                            onClick={() => setSelectedVolume(range.value)}
+                            className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg border-2 transition-all duration-200 text-left focus:outline-none ${selectedVolume === range.value ? 'border-black bg-black/5' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}
+                          >
+                            <span className="p-2 rounded-lg bg-gray-100"><DollarSign className="w-6 h-6 text-black" /></span>
+                            <span className="flex-1">
+                              <span className="block font-semibold text-base text-black">{range.label}</span>
+                              <span className="block text-xs text-gray-600">{range.description}</span>
+                            </span>
+                            <span className={`w-5 h-5 border-2 rounded-full flex items-center justify-center ${selectedVolume === range.value ? 'border-black' : 'border-gray-300'}`}>{selectedVolume === range.value && <span className="w-3 h-3 bg-black rounded-full"></span>}</span>
+                          </button>
+                        ))}
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Small screens: card style */}
+                      <div className="md:hidden grid grid-cols-1 gap-4">
                         {volumeRanges.map((range) => (
                           <motion.button
                             key={range.value}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setSelectedVolume(range.value)}
-                            className={`p-6 rounded-xl border-2 transition-all duration-200 text-left ${
-                              selectedVolume === range.value
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-gray-200 hover:border-gray-300 bg-gray-50'
-                            }`}
+                            className={`p-6 rounded-xl border-2 transition-all duration-200 text-left ${selectedVolume === range.value ? 'border-black bg-black/5' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}
                           >
                             <div className="flex items-center gap-4">
-                              <div className="p-3 rounded-lg bg-gray-100">
-                                <DollarSign className="w-6 h-6 text-blue-500" />
-                              </div>
+                              <div className="p-3 rounded-lg bg-gray-100"><DollarSign className="w-6 h-6 text-black" /></div>
                               <div className="text-left">
                                 <h3 className="font-semibold mb-1 text-black">{range.label}</h3>
                                 <p className={bodyTextClass}>{range.description}</p>
@@ -511,187 +540,208 @@ export default function SignupPage() {
                           </motion.button>
                         ))}
                       </div>
+                    </div>
+                    <div className="flex justify-between items-center mt-8">
+                      <button
+                        onClick={handlePrev}
+                        type="button"
+                        className="group flex items-center gap-2 px-6 py-3 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 hover:text-black transition-all duration-200 font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                      >
+                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" />
+                        Previous
+                      </button>
+                      <button
+                        onClick={handleNext}
+                        disabled={!selectedVolume}
+                        className="group relative px-8 py-3 bg-black text-white rounded-full font-semibold hover:bg-black/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow"
+                      >
+                        <span className="relative z-10 flex items-center gap-2">
+                          Next
+                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+                        </span>
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+                {step === 3 && (
+                  <motion.div
+                    key="step3"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="space-y-6"
+                  >
+                    <div className="text-center mb-8">
+                      <h2 className="text-2xl font-bold text-black mb-2">Fill out your information</h2>
+                      <p className={bodyTextClass}>Complete your profile to get started</p>
+                    </div>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            First Name
+                          </label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <User className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                              type="text"
+                              required
+                              value={formData.firstName}
+                              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                              className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
+                              placeholder="Enter your first name"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Last Name
+                          </label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <User className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                              type="text"
+                              required
+                              value={formData.lastName}
+                              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                              className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
+                              placeholder="Enter your last name"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Email
+                          </label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <Mail className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                              type="email"
+                              required
+                              value={formData.email}
+                              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                              className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
+                              placeholder="Enter your email"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Company Name
+                          </label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <Building className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                              type="text"
+                              required
+                              value={formData.company}
+                              onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                              className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
+                              placeholder="Enter your company name"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Password
+                          </label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <Lock className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                              type={showPassword ? 'text' : 'password'}
+                              required
+                              value={formData.password}
+                              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                              className={`block w-full pl-10 pr-12 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
+                              placeholder="Create a password"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowPassword((prev) => !prev)}
+                              className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                              tabIndex={-1}
+                            >
+                              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                            </button>
+                          </div>
+                          <p className={`mt-1 text-xs text-gray-500 ${bodyTextClass}`}>
+                            Must be at least 8 characters with 1 uppercase, 1 number, and 1 special character
+                          </p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Confirm Password
+                          </label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <Lock className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                              type={showConfirmPassword ? 'text' : 'password'}
+                              required
+                              value={formData.confirmPassword}
+                              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                              className={`block w-full pl-10 pr-12 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
+                              placeholder="Confirm your password"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowConfirmPassword((prev) => !prev)}
+                              className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                              tabIndex={-1}
+                            >
+                              {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                            </button>
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Country
+                          </label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <Globe className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                              type="text"
+                              required
+                              value={formData.country}
+                              onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                              className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
+                              placeholder="Enter your country"
+                            />
+                          </div>
+                        </div>
+                      </div>
                       <div className="flex justify-between items-center mt-8">
                         <button
                           onClick={handlePrev}
-                          className="flex items-center gap-2 text-gray-500 hover:text-black transition-colors duration-200 font-semibold"
+                          type="button"
+                          className="group flex items-center gap-2 px-6 py-3 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 hover:text-black transition-all duration-200 font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
                         >
-                          <ArrowLeft className="w-4 h-4" />
+                          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" />
                           Previous
                         </button>
                         <button
-                          onClick={handleNext}
-                          disabled={!selectedVolume}
-                          className="group relative px-6 py-3 bg-black text-white rounded-lg font-semibold hover:bg-black/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <span className="relative z-10 flex items-center gap-2">
-                            Next
-                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
-                          </span>
-                        </button>
-                      </div>
-                    </motion.div>
-                  </div>
-                )}
-                {step === 3 && (
-                  <div key="step3">
-                    {/* Form Step - Light Theme */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      className="space-y-6"
-                    >
-                      <div className="text-center mb-8">
-                        <h2 className="text-2xl font-bold text-black mb-2">Fill out your information</h2>
-                        <p className={bodyTextClass}>Complete your profile to get started</p>
-                      </div>
-                      <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              First Name
-                            </label>
-                            <div className="relative">
-                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <User className="h-5 w-5 text-gray-400" />
-                              </div>
-                              <input
-                                type="text"
-                                required
-                                value={formData.firstName}
-                                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
-                                placeholder="Enter your first name"
-                              />
-                            </div>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Last Name
-                            </label>
-                            <div className="relative">
-                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <User className="h-5 w-5 text-gray-400" />
-                              </div>
-                              <input
-                                type="text"
-                                required
-                                value={formData.lastName}
-                                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
-                                placeholder="Enter your last name"
-                              />
-                            </div>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Email
-                            </label>
-                            <div className="relative">
-                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Mail className="h-5 w-5 text-gray-400" />
-                              </div>
-                              <input
-                                type="email"
-                                required
-                                value={formData.email}
-                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
-                                placeholder="Enter your email"
-                              />
-                            </div>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Company Name
-                            </label>
-                            <div className="relative">
-                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Building className="h-5 w-5 text-gray-400" />
-                              </div>
-                              <input
-                                type="text"
-                                required
-                                value={formData.company}
-                                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
-                                placeholder="Enter your company name"
-                              />
-                            </div>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Password
-                            </label>
-                            <div className="relative">
-                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Lock className="h-5 w-5 text-gray-400" />
-                              </div>
-                              <input
-                                type="password"
-                                required
-                                value={formData.password}
-                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
-                                placeholder="Create a password"
-                              />
-                            </div>
-                            <p className={`mt-1 text-xs text-gray-500 ${bodyTextClass}`}>
-                              Must be at least 8 characters with 1 uppercase, 1 number, and 1 special character
-                            </p>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Confirm Password
-                            </label>
-                            <div className="relative">
-                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Lock className="h-5 w-5 text-gray-400" />
-                              </div>
-                              <input
-                                type="password"
-                                required
-                                value={formData.confirmPassword}
-                                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
-                                placeholder="Confirm your password"
-                              />
-                            </div>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Country
-                            </label>
-                            <div className="relative">
-                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Globe className="h-5 w-5 text-gray-400" />
-                              </div>
-                              <input
-                                type="text"
-                                required
-                                value={formData.country}
-                                onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30 transition-all duration-200 ${bodyTextClass}`}
-                                placeholder="Enter your country"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <button
                           type="submit"
-                          className="w-full py-3 px-4 bg-black text-white rounded-full font-semibold text-base shadow hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                          className="w-40 py-3 px-4 bg-black text-white rounded-full font-semibold text-base shadow hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                           disabled={isLoading}
                         >
-                          {isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : 'Sign Up'}
+                          {isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : "Sign Up"}
                         </button>
-                      </form>
-                      <div className="mt-6 text-center">
-                        <span className={`text-gray-500 ${bodyTextClass}`}>Already have an account?</span>{' '}
-                        <Link href="/login" className="text-black font-semibold hover:underline">Sign in</Link>
                       </div>
-                    </motion.div>
-                  </div>
+                    </form>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </div>

@@ -7,7 +7,7 @@ import {
   Menu, X, ChevronDown, Building2, FileText,
   Users, Shield, Home, Briefcase, BookOpen,
   HelpCircle, LogIn, ArrowRight, Search, FileCheck,
-  ClipboardList, HardHat, Settings, Bell, Rocket
+  ClipboardList, HardHat, Settings, Bell, Rocket, Hammer, Wrench
 } from 'lucide-react';
 import { Plus_Jakarta_Sans, Inter } from 'next/font/google';
 import { useRouter, usePathname } from 'next/navigation';
@@ -32,6 +32,7 @@ const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [selectedBuilder, setSelectedBuilder] = useState('home-builder');
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -87,12 +88,44 @@ const Navbar = () => {
     { name: 'Resources', href: '#', icon: <BookOpen size={18} /> },
   ];
 
-  const solutions = [
-    { title: 'Project Management', description: 'Organize and track construction projects', icon: <Building2 size={18} />, href: '#' },
-    { title: 'Document Control', description: 'Manage blueprints, permits, and specs', icon: <FileText size={18} />, href: '#' },
-    { title: 'Team Collaboration', description: 'Coordinate across your entire team', icon: <Users size={18} />, href: '#' },
-    { title: 'Security & Compliance', description: 'Ensure document safety and access', icon: <Shield size={18} />, href: '#' },
+  const builderTypes = [
+    {
+      id: 'home-builder',
+      title: 'Home Builder',
+      icon: <Home size={20} />,
+    },
+    {
+      id: 'remodeler',
+      title: 'Home Remodeler',
+      icon: <Hammer size={20} />,
+    },
+    {
+      id: 'specialty-contractor',
+      title: 'Specialty Contractor',
+      icon: <Wrench size={20} />,
+    },
   ];
+
+  const builderFeatures = {
+    'home-builder': [
+      { title: 'Project Management', description: 'Organize and track construction projects', icon: <Building2 size={18} /> },
+      { title: 'Document Control', description: 'Manage blueprints, permits, and specs', icon: <FileText size={18} /> },
+      { title: 'Team Collaboration', description: 'Coordinate across your entire team', icon: <Users size={18} /> },
+      { title: 'Security & Compliance', description: 'Ensure document safety and access', icon: <Shield size={18} /> },
+    ],
+    'remodeler': [
+      { title: 'Remodel Project Tools', description: 'Specialized tools for remodels', icon: <Hammer size={18} /> },
+      { title: 'Document Control', description: 'Manage permits and plans', icon: <FileText size={18} /> },
+      { title: 'Team Collaboration', description: 'Coordinate with subcontractors', icon: <Users size={18} /> },
+      { title: 'Compliance', description: 'Stay up to code', icon: <Shield size={18} /> },
+    ],
+    'specialty-contractor': [
+      { title: 'Trade Scheduling', description: 'Manage trade-specific schedules', icon: <ClipboardList size={18} /> },
+      { title: 'Document Control', description: 'Specs and compliance docs', icon: <FileText size={18} /> },
+      { title: 'Team Collaboration', description: 'Work with GCs and teams', icon: <Users size={18} /> },
+      { title: 'Security', description: 'Protect sensitive info', icon: <Shield size={18} /> },
+    ],
+  };
 
   const handleLoginClick = () => {
     router.push('/login');
@@ -144,21 +177,33 @@ const Navbar = () => {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
-                    className="absolute top-full mt-2 left-0 w-[32rem] bg-white/95 backdrop-blur-md rounded-xl shadow-lg border border-black/10 p-6 z-50"
+                    className="absolute top-full mt-2 left-0 w-[38rem] bg-white/95 backdrop-blur-md rounded-xl shadow-lg border border-black/10 p-0 flex z-50 min-h-[18rem]"
                   >
-                    <div className="grid grid-cols-2 gap-4">
-                      {solutions.map((item) => (
-                        <Link 
-                          key={item.title} 
-                          href={item.href} 
-                          className="flex items-start gap-3 p-4 rounded-lg hover:bg-black/5 transition-all duration-200 group/item font-inter cursor-pointer"
+                    {/* Left Panel: Builder Types */}
+                    <div className="w-56 py-6 px-4 border-r border-black/10 flex flex-col gap-2 bg-white/90">
+                      <div className="mb-4 text-xs font-bold text-black/60 tracking-widest uppercase font-inter text-left">Builder Type</div>
+                      {builderTypes.map((type) => (
+                        <button
+                          key={type.id}
+                          onClick={() => setSelectedBuilder(type.id)}
+                          className={`flex items-center gap-3 px-3 py-3 rounded-lg font-inter font-semibold text-base text-left transition-all duration-200 border-2 ${selectedBuilder === type.id ? 'border-black bg-black/5 text-black' : 'border-transparent text-black/70 hover:bg-black/5 hover:text-black'} focus:outline-none`}
+                          style={{ boxShadow: selectedBuilder === type.id ? '0 2px 8px 0 rgba(0,0,0,0.04)' : undefined }}
                         >
+                          <span className="text-black/80">{type.icon}</span>
+                          <span>{type.title}</span>
+                        </button>
+                      ))}
+                    </div>
+                    {/* Right Panel: Features */}
+                    <div className="flex-1 py-6 px-6 grid grid-cols-2 gap-4">
+                      {builderFeatures[selectedBuilder].map((item, idx) => (
+                        <div key={idx} className="flex items-start gap-3 p-4 rounded-lg hover:bg-black/5 transition-all duration-200 group/item font-inter cursor-pointer">
                           <div className="text-black group-hover/item:text-black/80 transition-colors">{item.icon}</div>
                           <div>
                             <h4 className="text-black font-semibold group-hover/item:text-black/80 transition-colors font-inter text-base">{item.title}</h4>
                             <p className="text-black/60 text-sm font-inter font-semibold">{item.description}</p>
                           </div>
-                        </Link>
+                        </div>
                       ))}
                     </div>
                   </motion.div>
@@ -170,18 +215,18 @@ const Navbar = () => {
           {/* Desktop Right Section */}
           <div className="hidden md:flex items-center space-x-6">
             <button 
-              onClick={handleLoginClick}
+              onClick={() => router.push('/signup')}
               className="text-black/70 hover:text-black transition-colors duration-200 hover:scale-105 transform font-inter font-semibold text-base cursor-pointer"
             >
-              Log in
+              Sign up
             </button>
 
             <Link 
-              href="/signup" 
+              href="/book-demo" 
               className="group relative px-6 py-2.5 bg-black text-white rounded-full font-inter font-semibold hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 text-base hover:scale-105 shadow-md cursor-pointer"
             >
               <span className="relative z-10 flex items-center gap-2">
-                Launch Now
+                Get a Demo
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
               </span>
             </Link>
@@ -282,10 +327,10 @@ const Navbar = () => {
                             className="pl-4 pr-4 py-2"
                           >
                             <div className="grid grid-cols-1 gap-2">
-                              {solutions.map((item) => (
+                              {builderFeatures[selectedBuilder].map((item) => (
                                 <Link
                                   key={item.title}
-                                  href={item.href}
+                                  href="#"
                                   className="group flex items-start gap-3 p-4 bg-black/5 rounded-xl hover:bg-black/10 transition-all duration-200 font-inter cursor-pointer"
                                   onClick={() => setIsOpen(false)}
                                 >
@@ -309,18 +354,18 @@ const Navbar = () => {
                 {/* Mobile Action Buttons */}
                 <div className="sticky bottom-0 p-6 bg-white/95 backdrop-blur-sm border-t border-black/10 space-y-3">
                   <button 
-                    onClick={handleLoginClick}
+                    onClick={() => router.push('/signup')}
                     className="block w-full px-4 py-4 text-center text-black/70 hover:text-black hover:bg-black/5 rounded-xl transition-colors duration-200 text-base font-inter font-semibold cursor-pointer"
                   >
-                    Log in
+                    Sign up
                   </button>
                   <Link
-                    href="/signup"
+                    href="/book-demo"
                     className="group relative block w-full px-4 py-4 bg-black text-white rounded-full font-inter font-semibold hover:bg-black/90 transition-all duration-200 text-center text-base shadow-md cursor-pointer"
                     onClick={() => setIsOpen(false)}
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
-                      Launch Now
+                      Get a Demo
                       <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
                     </span>
                   </Link>

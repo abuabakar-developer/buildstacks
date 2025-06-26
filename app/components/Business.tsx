@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, Play, CheckCircle } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const Business = () => {
   return (
@@ -45,9 +46,9 @@ const Business = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.3 }}
-                className="text-3xl sm:text-4xl md:text-5xl font-bold text-black/60 mb-6 font-sans leading-tight text-left"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-black/60 mb-6 font-sans leading-tight text-left"
               >
-                Everything Your <span className="bg-black text-white px-2 rounded">Business</span> Needs
+                Everything Your <span className="bg-black text-white px-2 rounded">Construction</span> Needs
               </motion.h2>
 
               {/* Subheading */}
@@ -67,15 +68,16 @@ const Business = () => {
                 viewport={{ once: true }}
                 transition={{ delay: 0.5 }}
               >
-                <motion.button
-                  className="group relative px-6 py-3 md:px-8 md:py-4 text-sm md:text-base font-semibold rounded-full bg-black text-white hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 md:gap-3 border-0 outline-none focus:ring-4 focus:ring-black/10 shadow-md hover:shadow-lg font-sans mt-4 md:mt-0"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span className="relative z-10 flex items-center gap-2">
-                    <Play className="w-4 h-4 md:w-5 md:h-5" />
-                    View Pricing
-                  </span>
+                <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Link
+                    href="/book-demo"
+                    className="group relative px-6 py-3 md:px-8 md:py-4 text-sm md:text-base font-semibold rounded-full bg-black text-white hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 md:gap-3 border-0 outline-none focus:ring-4 focus:ring-black/10 shadow-md hover:shadow-lg font-sans mt-4 md:mt-0"
+                  >
+                    <span className="relative z-10 flex items-center gap-2">
+                      <Play className="w-4 h-4 md:w-5 md:h-5" />
+                      See a Demo
+                    </span>
+                  </Link>
                 </motion.button>
               </motion.div>
             </motion.div>

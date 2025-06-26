@@ -1,3 +1,5 @@
+
+
 'use client';
 
 import { motion } from 'framer-motion';
@@ -48,12 +50,11 @@ const Hero = () => {
               <span className="font-xs font-semibold text-black/70">AI Document_Analysis</span>
               <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-black/60" />
             </motion.div>
-
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="font-plusjakarta font-bold text-black/70 mb-4 md:mb-6 text-3xl md:text-4xl md:font-extrabold lg:text-6xl leading-normal"
+              className="font-plusjakarta font-bold sm:leading-[3rem] text-black/70 mb-4 md:mb-6 text-3xl md:text-4xl md:font-extrabold lg:text-6xl leading-loose"
               style={{
                 lineHeight: 1.1,
                 maxWidth: '100%',
@@ -63,11 +64,12 @@ const Hero = () => {
               Docs Management
             </motion.h1>
 
+
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-xl md:text-2xl text-black/70 font-inter font-semibold md:leading-normal mb-12 max-w-3xl mx-auto text-center"
+              className="text-xl sm:text-medium md:text-2xl text-black/70 font-inter font-semibold md:leading-normal mb-12 max-w-3xl mx-auto text-center"
             >
               Streamline your construction projects with our all-in-one document management platform.
             </motion.p>
@@ -79,7 +81,7 @@ const Hero = () => {
               className="flex flex-col sm:flex-row justify-center items-center gap-3 md:gap-4 px-4 sm:px-0"
             >
               <Link 
-                href="#"
+                href="/book-demo"
                 className="group relative w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 text-sm md:text-lg font-semibold rounded-full bg-black text-white hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 md:gap-3 border-0 outline-none focus:ring-4 focus:ring-black/10 shadow-md hover:shadow-lg font-inter"
                 style={{
                   letterSpacing: '0.01em',
@@ -89,12 +91,12 @@ const Hero = () => {
                 }}
               >
                 <span className="relative z-10 flex items-center gap-2">
-                  Launch Now
+                  Book a Demo
                   <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform duration-200" />
                 </span>
               </Link>
               <Link
-                href="#"
+                href="#pricing"
                 className="group relative w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 text-sm md:text-lg font-semibold rounded-full border border-black text-black bg-white hover:bg-black hover:text-white transition-all duration-200 flex items-center justify-center gap-2 md:gap-3 outline-none focus:ring-4 focus:ring-black/10 shadow-md hover:shadow-lg font-inter"
                 style={{
                   letterSpacing: '0.01em',

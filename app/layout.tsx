@@ -42,12 +42,42 @@ export default function RootLayout({
 }) {
   const pathname = usePathname();
   const isAuthPage = pathname === '/login' || pathname === '/signup';
+  const isBookDemoPage = pathname === '/book-demo';
   return (
     <html lang="en" className={inter.className}>
       <body className="min-h-screen flex flex-col bg-slate-900">
         {isAuthPage ? (
           <>
             {children}
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 3000,
+                style: {
+                  background: '#1e293b',
+                  color: '#fff',
+                  border: '1px solid #334155',
+                },
+                success: {
+                  iconTheme: {
+                    primary: '#22c55e',
+                    secondary: '#fff',
+                  },
+                },
+                error: {
+                  iconTheme: {
+                    primary: '#ef4444',
+                    secondary: '#fff',
+                  },
+                },
+              }}
+            />
+          </>
+        ) : isBookDemoPage ? (
+          <>
+            <Navbar />
+            <main className="flex-grow">{children}</main>
+            <Footer />
             <Toaster
               position="top-right"
               toastOptions={{
