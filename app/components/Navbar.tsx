@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { Plus_Jakarta_Sans, Inter } from 'next/font/google';
 import { useRouter, usePathname } from 'next/navigation';
+import React from 'react';
 
 const plusJakarta = Plus_Jakarta_Sans({
   weight: ['400', '500', '600', '700'],
@@ -32,7 +33,7 @@ const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [selectedBuilder, setSelectedBuilder] = useState('home-builder');
+  const [selectedBuilder, setSelectedBuilder] = useState<keyof typeof builderFeatures>('home-builder');
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -185,7 +186,7 @@ const Navbar = () => {
                       {builderTypes.map((type) => (
                         <button
                           key={type.id}
-                          onClick={() => setSelectedBuilder(type.id)}
+                          onClick={() => setSelectedBuilder(type.id as keyof typeof builderFeatures)}
                           className={`flex items-center gap-3 px-3 py-3 rounded-lg font-inter font-semibold text-base text-left transition-all duration-200 border-2 ${selectedBuilder === type.id ? 'border-black bg-black/5 text-black' : 'border-transparent text-black/70 hover:bg-black/5 hover:text-black'} focus:outline-none`}
                           style={{ boxShadow: selectedBuilder === type.id ? '0 2px 8px 0 rgba(0,0,0,0.04)' : undefined }}
                         >
@@ -196,7 +197,7 @@ const Navbar = () => {
                     </div>
                     {/* Right Panel: Features */}
                     <div className="flex-1 py-6 px-6 grid grid-cols-2 gap-4">
-                      {builderFeatures[selectedBuilder].map((item, idx) => (
+                      {builderFeatures[selectedBuilder as keyof typeof builderFeatures].map((item: { title: string; description: string; icon: React.ReactNode }, idx: number) => (
                         <div key={idx} className="flex items-start gap-3 p-4 rounded-lg hover:bg-black/5 transition-all duration-200 group/item font-inter cursor-pointer">
                           <div className="text-black group-hover/item:text-black/80 transition-colors">{item.icon}</div>
                           <div>
@@ -327,7 +328,7 @@ const Navbar = () => {
                             className="pl-4 pr-4 py-2"
                           >
                             <div className="grid grid-cols-1 gap-2">
-                              {builderFeatures[selectedBuilder].map((item) => (
+                              {builderFeatures[selectedBuilder as keyof typeof builderFeatures].map((item: { title: string; description: string; icon: React.ReactNode }) => (
                                 <Link
                                   key={item.title}
                                   href="#"
