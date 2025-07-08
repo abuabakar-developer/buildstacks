@@ -2,21 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Building2, FileText, Users, Shield, Award, ArrowRight } from 'lucide-react';
-import { Plus_Jakarta_Sans } from 'next/font/google';
-import { Inter } from 'next/font/google';
 import { useState } from 'react';
-
-const plusJakarta = Plus_Jakarta_Sans({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  variable: '--font-plusjakarta',
-});
-
-const inter = Inter({
-  weight: ['400', '500', '600',],
-  subsets: ['latin'],
-  variable: '--font-inter',
-});
 
 const Construct = () => {
   const features = [
@@ -53,7 +39,7 @@ const Construct = () => {
   const [activeCard, setActiveCard] = useState<number | null>(null);
 
   return (
-    <section className={`relative ${plusJakarta.variable} ${inter.variable}`}>
+    <section className="relative">
       {/* Background Elements */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0" style={{
@@ -74,7 +60,7 @@ const Construct = () => {
             <Award className="w-4 h-4 text-black/70" />
             <span className='font-xs font-semibold text-black/70'>Best Construction_Solutions</span>
           </div>
-          <h2 className="text-3xl text-black/70 sm:text-4xl md:text-4xl font-extrabold text-black mb-6 font-plusjakarta leading-tight max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl text-black/70 sm:text-4xl md:text-4xl font-extrabold text-black mb-6 font-plus-jakarta leading-tight max-w-3xl mx-auto text-center">
             Powerful Features
           </h2>
 
@@ -128,7 +114,7 @@ const Construct = () => {
 
                   {/* Content */}
                   <div className="flex-1">
-                    <h3 className="text-xl md:text-2xl font-semibold text-black font-plusjakarta leading-tight mb-4 transition-colors duration-500">
+                    <h3 className="text-xl md:text-2xl font-semibold text-black font-plus-jakarta leading-tight mb-4 transition-colors duration-500">
                       {feature.title}
                     </h3>
                     <p className="text-black/70 font-semibold text-base leading-relaxed font-inter transition-colors duration-500">

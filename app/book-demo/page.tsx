@@ -18,15 +18,14 @@ import {
   Globe,
   Loader2,
 } from "lucide-react";
-import { Inter, Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const poppins = Poppins({
-  weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
-  variable: "--font-poppins",
+const inter = Inter({ 
+  subsets: ["latin"], 
+  variable: "--font-inter",
+  display: 'swap',
 });
 
 const businessTypes = [
@@ -69,7 +68,7 @@ const volumeRanges = [
   { value: "10m+", label: "$10M+", description: "Large enterprise" },
 ];
 
-const bodyTextClass = "font-inter text-sm font-semibold text-gray-700";
+const bodyTextClass = "font-sans text-sm font-semibold text-gray-700";
 
 export default function BookDemoPage() {
   const [step, setStep] = useState(1);
@@ -159,7 +158,7 @@ export default function BookDemoPage() {
   );
 
   return (
-    <div className={`min-h-screen flex mt-14 ${inter.variable} ${poppins.variable}`}>
+    <div className={`min-h-screen flex mt-14 ${inter.variable}`}>
       {/* Left Side - Book a Demo Info (matching signup promo bg) */}
       <div className="hidden lg:flex w-1/2 flex-col justify-center items-center px-16 py-20 relative overflow-hidden bg-gradient-to-br from-black via-gray-900 to-black text-white shadow-2xl">
         {/* Animated Background Elements (copied from signup promo) */}
@@ -199,8 +198,8 @@ export default function BookDemoPage() {
           transition={{ duration: 0.7 }}
           className="max-w-lg text-left relative z-10"
         >
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight drop-shadow-2xl font-poppins tracking-tight">Book a Personalized Demo</h1>
-          <p className="text-lg md:text-xl mb-8 font-poppins opacity-90 font-medium">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight drop-shadow-2xl font-sans tracking-tight">Book a Personalized Demo</h1>
+          <p className="text-lg md:text-xl mb-8 font-sans opacity-90 font-medium">
             See how <span className="text-blue-300 font-bold">BuildStack</span> can transform your construction document management. Our team will walk you through the platform, answer your questions, and show you how to streamline your workflow.
           </p>
           <div className="flex justify-center my-6">
@@ -213,7 +212,7 @@ export default function BookDemoPage() {
               priority
             />
           </div>
-          <div className="text-sm opacity-80">Already have an account? <Link href="/login" className="underline hover:text-blue-200">Sign in</Link></div>
+          <div className="text-sm opacity-80 font-sans">Already have an account? <Link href="/login" className="underline hover:text-blue-200">Sign in</Link></div>
         </motion.div>
       </div>
       {/* Right Side - Multi-step Form (black/white theme, matching signup) */}
@@ -225,7 +224,8 @@ export default function BookDemoPage() {
             transition={{ duration: 0.5 }}
             className="text-center mb-8"
           >
-            <h2 className="text-2xl md:text-3xl font-bold text-black mb-2 font-poppins tracking-tight">Get Started</h2>
+            <h2 className="text-2xl font-bold text-black mb-2 font-sans tracking-tight block md:hidden">Book a Personalized Demo</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-black mb-2 font-sans tracking-tight hidden md:block">Get Started</h2>
             <p className={bodyTextClass + " text-gray-700 font-medium"}>Answer a few quick questions and we'll schedule your personalized demo</p>
           </motion.div>
           {renderStepIndicator()}
@@ -243,7 +243,7 @@ export default function BookDemoPage() {
                     className="space-y-6"
                   >
                     <div className="text-center mb-8">
-                      <h3 className="text-xl font-bold text-black mb-2">What best describes your business?</h3>
+                      <h3 className="text-xl font-bold text-black mb-2 font-sans">What best describes your business?</h3>
                       <p className={bodyTextClass}>Select the option that best matches your construction business</p>
                     </div>
                     {/* Responsive business type options */}
@@ -255,7 +255,7 @@ export default function BookDemoPage() {
                             key={type.id}
                             type="button"
                             onClick={() => setSelectedType(type.id)}
-                            className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg border-2 transition-all duration-200 text-left focus:outline-none ${selectedType === type.id ? 'border-black bg-black/5' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}
+                            className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg border-2 transition-all duration-200 text-left focus:outline-none font-sans ${selectedType === type.id ? 'border-black bg-black/5' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}
                           >
                             <span className={`p-2 rounded-lg bg-gradient-to-r ${type.color} text-white`}>{type.icon}</span>
                             <span className="flex-1">
@@ -274,7 +274,7 @@ export default function BookDemoPage() {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setSelectedType(type.id)}
-                            className={`p-6 rounded-xl border-2 transition-all duration-200 text-left ${selectedType === type.id ? 'border-black bg-black/5' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}
+                            className={`p-6 rounded-xl border-2 transition-all duration-200 text-left font-sans ${selectedType === type.id ? 'border-black bg-black/5' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}
                           >
                             <div className="flex items-start gap-4">
                               <div className={`p-3 rounded-lg bg-gradient-to-r ${type.color} text-white`}>{type.icon}</div>
@@ -291,7 +291,7 @@ export default function BookDemoPage() {
                       <button
                         onClick={handleNext}
                         disabled={!selectedType || isLoading}
-                        className="group relative px-8 py-3 bg-black text-white rounded-full font-semibold hover:bg-black/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow"
+                        className="group relative px-8 py-3 bg-black text-white rounded-full font-semibold hover:bg-black/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow font-sans"
                       >
                         <span className="relative z-10 flex items-center gap-2">
                           Next
@@ -310,7 +310,7 @@ export default function BookDemoPage() {
                     className="space-y-6"
                   >
                     <div className="text-center mb-8">
-                      <h3 className="text-xl font-bold text-black mb-2">What is your average construction volume?</h3>
+                      <h3 className="text-xl font-bold text-black mb-2 font-sans">What is your average construction volume?</h3>
                       <p className={bodyTextClass}>Select the range that best represents your annual construction volume</p>
                     </div>
                     {/* Responsive volume options */}
@@ -322,7 +322,7 @@ export default function BookDemoPage() {
                             key={range.value}
                             type="button"
                             onClick={() => setSelectedVolume(range.value)}
-                            className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg border-2 transition-all duration-200 text-left focus:outline-none ${selectedVolume === range.value ? 'border-black bg-black/5' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}
+                            className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg border-2 transition-all duration-200 text-left focus:outline-none font-sans ${selectedVolume === range.value ? 'border-black bg-black/5' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}
                           >
                             <span className="p-2 rounded-lg bg-gray-100"><DollarSign className="w-6 h-6 text-black" /></span>
                             <span className="flex-1">
@@ -341,7 +341,7 @@ export default function BookDemoPage() {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setSelectedVolume(range.value)}
-                            className={`p-6 rounded-xl border-2 transition-all duration-200 text-left ${selectedVolume === range.value ? 'border-black bg-black/5' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}
+                            className={`p-6 rounded-xl border-2 transition-all duration-200 text-left font-sans ${selectedVolume === range.value ? 'border-black bg-black/5' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}
                           >
                             <div className="flex items-center gap-4">
                               <div className="p-3 rounded-lg bg-gray-100"><DollarSign className="w-6 h-6 text-black" /></div>
@@ -358,7 +358,7 @@ export default function BookDemoPage() {
                       <button
                         onClick={handlePrev}
                         type="button"
-                        className="group flex items-center gap-2 px-6 py-3 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 hover:text-black transition-all duration-200 font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                        className="group flex items-center gap-2 px-6 py-3 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 hover:text-black transition-all duration-200 font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200 font-sans"
                       >
                         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" />
                         Previous
@@ -366,7 +366,7 @@ export default function BookDemoPage() {
                       <button
                         onClick={handleNext}
                         disabled={!selectedVolume || isLoading}
-                        className="group relative px-8 py-3 bg-black text-white rounded-full font-semibold hover:bg-black/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow"
+                        className="group relative px-8 py-3 bg-black text-white rounded-full font-semibold hover:bg-black/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow font-sans"
                       >
                         <span className="relative z-10 flex items-center gap-2">
                           Next
@@ -385,13 +385,13 @@ export default function BookDemoPage() {
                     className="space-y-6"
                   >
                     <div className="text-center mb-8">
-                      <h3 className="text-xl font-bold text-black mb-2">Tell us about yourself</h3>
+                      <h3 className="text-xl font-bold text-black mb-2 font-sans">Tell us about yourself</h3>
                       <p className={bodyTextClass}>Complete your details so we can schedule your demo</p>
                     </div>
                     <form onSubmit={handleSubmit} className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">First Name</label>
                           <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                               <User className="h-5 w-5 text-gray-400" />
@@ -401,13 +401,13 @@ export default function BookDemoPage() {
                               required
                               value={formData.firstName}
                               onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                              className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all duration-200 ${bodyTextClass}`}
+                              className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all duration-200 font-sans ${bodyTextClass}`}
                               placeholder="Enter your first name"
                             />
                           </div>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Last Name</label>
                           <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                               <User className="h-5 w-5 text-gray-400" />
@@ -417,13 +417,13 @@ export default function BookDemoPage() {
                               required
                               value={formData.lastName}
                               onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                              className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all duration-200 ${bodyTextClass}`}
+                              className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all duration-200 font-sans ${bodyTextClass}`}
                               placeholder="Enter your last name"
                             />
                           </div>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Email</label>
                           <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                               <Mail className="h-5 w-5 text-gray-400" />
@@ -433,13 +433,13 @@ export default function BookDemoPage() {
                               required
                               value={formData.email}
                               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                              className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all duration-200 ${bodyTextClass}`}
+                              className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all duration-200 font-sans ${bodyTextClass}`}
                               placeholder="Enter your email"
                             />
                           </div>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Company Name</label>
                           <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                               <Building className="h-5 w-5 text-gray-400" />
@@ -449,13 +449,13 @@ export default function BookDemoPage() {
                               required
                               value={formData.company}
                               onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                              className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all duration-200 ${bodyTextClass}`}
+                              className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all duration-200 font-sans ${bodyTextClass}`}
                               placeholder="Enter your company name"
                             />
                           </div>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2 font-sans">Country</label>
                           <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                               <Globe className="h-5 w-5 text-gray-400" />
@@ -465,7 +465,7 @@ export default function BookDemoPage() {
                               required
                               value={formData.country}
                               onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                              className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all duration-200 ${bodyTextClass}`}
+                              className={`block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all duration-200 font-sans ${bodyTextClass}`}
                               placeholder="Enter your country"
                             />
                           </div>
@@ -475,14 +475,14 @@ export default function BookDemoPage() {
                         <button
                           onClick={handlePrev}
                           type="button"
-                          className="group flex items-center gap-2 px-6 py-3 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 hover:text-black transition-all duration-200 font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                          className="group flex items-center gap-2 px-6 py-3 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 hover:text-black transition-all duration-200 font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200 font-sans"
                         >
                           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" />
                           Previous
                         </button>
                         <button
                           type="submit"
-                          className="w-40 py-3 px-4 bg-black text-white rounded-full font-semibold text-base shadow hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                          className="w-40 py-3 px-4 bg-black text-white rounded-full font-semibold text-base shadow hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed font-sans"
                           disabled={isLoading}
                         >
                           {isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : "Book Demo"}

@@ -11,7 +11,7 @@ const config: Config = {
       fontFamily: {
         'plus-jakarta': ['var(--font-plus-jakarta)'],
         'syne': ['var(--font-syne)'],
-        'inter': ['var(--font-inter)'],
+        'inter': ['var(--font-inter)', 'Inter', 'ui-sans-serif', 'system-ui'],
         'space-grotesk': ['var(--font-space-grotesk)'],
         'outfit': ['var(--font-outfit)'],
        'sans': ['Inter', 'ui-sans-serif', 'system-ui'],
@@ -46,3 +46,9 @@ const config: Config = {
 };
 
 export default config; 
+
+
+
+
+
+

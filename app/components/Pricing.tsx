@@ -3,26 +3,14 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Building2, Users, Shield, Award, ArrowRight, Star } from 'lucide-react';
-import { Plus_Jakarta_Sans, Inter } from 'next/font/google';
-
-const plusJakarta = Plus_Jakarta_Sans({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  variable: '--font-plusjakarta',
-});
-
-const inter = Inter({
-  weight: ['400', '500', '600'],
-  subsets: ['latin'],
-  variable: '--font-inter',
-});
+import Link from 'next/link';
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(true);
 
   const features = {
     starter: [
-      'Up to 5 projects',
+      'Up to 2 projects',
       'Basic project management',
       'Email support',
     ],
@@ -68,7 +56,7 @@ const Pricing = () => {
   ];
 
   return (
-    <section id="pricing" className={`relative py-16 ${plusJakarta.variable} ${inter.variable}`}>
+    <section id="pricing" className={`relative py-16`}>
       <div className="absolute inset-0">
         <div className="absolute inset-0" style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0,0,0,0.03) 1px, transparent 0)`,
@@ -76,7 +64,7 @@ const Pricing = () => {
         }}></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 font-inter">
+      <div className="relative z-10 container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -87,12 +75,14 @@ const Pricing = () => {
             <Star className="w-4 h-4 text-black/70" />
             <span className='font-xs font-semibold text-black/70'>Best Simple_Price</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-4xl font-extrabold text-black/70 mb-4 font-plusjakarta leading-tight">
-           Simple, Transparent 
-          <br className="block sm:hidden" /> 
-          <span className="hidden sm:inline"> </span>
-           Pricing
-         </h2>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-3xl sm:text-4xl md:text-4xl font-extrabold text-black/70 mb-4 font-plus-jakarta leading-tight"
+          >
+            Simple, Transparent Pricing
+          </motion.h2>
 
           <p className="text-lg md:text-xl leading-relaxed font-medium tracking-wide text-black/70 font-inter mb-8">
             Choose your perfect plan. All plans include a 14-day free trial.
@@ -151,7 +141,14 @@ const Pricing = () => {
               <div className="flex-1 flex flex-col">
                 <div className="mb-4">
                   <div className={`mb-3 ${plan.popular ? 'text-black' : 'text-black/70'}`}>{plan.icon}</div>
-                  <h3 className={`text-xl font-bold mb-1 font-plusjakarta ${plan.popular ? 'text-black' : 'text-black/80'}`}>{plan.name}</h3>
+                  <motion.h3 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                    className={`text-xl font-bold mb-1 font-plus-jakarta ${plan.popular ? 'text-black' : 'text-black/80'}`}
+                  >
+                    {plan.name}
+                  </motion.h3>
                   <p className="text-black/70 font-semibold text-base mb-4 font-inter">{plan.description}</p>
                   <div className="flex items-baseline gap-2">
                     <span className={`text-3xl font-bold ${plan.popular ? 'text-black' : 'text-black/80'}`}>

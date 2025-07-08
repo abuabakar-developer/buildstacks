@@ -1,29 +1,13 @@
-
-
 'use client';
 
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronRight } from 'lucide-react';
-import { Plus_Jakarta_Sans } from 'next/font/google';
-import { Inter } from 'next/font/google';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const plusJakarta = Plus_Jakarta_Sans({
-  weight: ['400', '500', '600', '700', '800'],
-  subsets: ['latin'],
-  variable: '--font-plusjakarta',
-});
-
-const inter = Inter({
-  weight: ['400', '500', '600'],
-  subsets: ['latin'],
-  variable: '--font-inter',
-});
-
 const Hero = () => {
   return (
-    <div className={`relative min-h-screen overflow-hidden ${plusJakarta.variable} ${inter.variable}`}>
+    <div className="relative min-h-screen overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute inset-0" style={{
@@ -54,7 +38,7 @@ const Hero = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="font-plusjakarta font-bold sm:leading-[3rem] text-black/70 mb-4 md:mb-6 text-3xl md:text-4xl md:font-extrabold lg:text-6xl leading-loose"
+              className="font-plus-jakarta font-bold sm:leading-[3rem] text-black/70 mb-4 md:mb-6 text-3xl md:text-4xl md:font-extrabold lg:text-6xl leading-loose"
               style={{
                 lineHeight: 1.1,
                 maxWidth: '100%',

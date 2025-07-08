@@ -9,21 +9,8 @@ import {
   HelpCircle, LogIn, ArrowRight, Search, FileCheck,
   ClipboardList, HardHat, Settings, Bell, Rocket, Hammer, Wrench
 } from 'lucide-react';
-import { Plus_Jakarta_Sans, Inter } from 'next/font/google';
 import { useRouter, usePathname } from 'next/navigation';
 import React from 'react';
-
-const plusJakarta = Plus_Jakarta_Sans({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  variable: '--font-plusjakarta',
-});
-
-const inter = Inter({
-  weight: ['400', '500', '600'],
-  subsets: ['latin'],
-  variable: '--font-inter',
-});
 
 const Navbar = () => {
   const router = useRouter();
@@ -34,6 +21,7 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [selectedBuilder, setSelectedBuilder] = useState<keyof typeof builderFeatures>('home-builder');
+  const [isAuthenticated, setIsAuthenticated] = useState<null | boolean>(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -69,6 +57,13 @@ const Navbar = () => {
       document.body.style.overflowX = '';
     };
   }, [isOpen, isSearchOpen]);
+
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then(res => res.ok)
+      .then(ok => setIsAuthenticated(ok))
+      .catch(() => setIsAuthenticated(false));
+  }, []);
 
   const handlePricingClick = (e: React.MouseEvent) => {
     if (pathname === '/' && typeof window !== 'undefined') {
@@ -128,13 +123,9 @@ const Navbar = () => {
     ],
   };
 
-  const handleLoginClick = () => {
-    router.push('/login');
-  };
-
   return (
-    <div className={`overflow-x-hidden w-full ${plusJakarta.variable} ${inter.variable}`}>
-      <nav className={`fixed top-0 left-0 bg-white w-full z-50 border-b border-gray-400 transition-all duration-300 font-plusjakarta ${
+    <div className="overflow-x-hidden w-full">
+      <nav className={`fixed top-0 left-0 bg-white w-full z-50 border-b border-gray-400 transition-all duration-300 font-plus-jakarta ${
         isScrolled ? 'bg-white/60 backdrop-blur-md border-b shadow-sm border-white/20' : 'bg-transparent'
       }`}>
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
@@ -198,6 +189,63 @@ const Navbar = () => {
                     {/* Right Panel: Features */}
                     <div className="flex-1 py-6 px-6 grid grid-cols-2 gap-4">
                       {builderFeatures[selectedBuilder as keyof typeof builderFeatures].map((item: { title: string; description: string; icon: React.ReactNode }, idx: number) => (
+                        item.title === 'Project Management' ? (
+                          <Link
+                            key={idx}
+                            href="/solutions/project-management"
+                            className="flex items-start gap-3 p-4 rounded-lg hover:bg-blue-50 transition-all duration-200 group/item font-inter cursor-pointer border border-transparent hover:border-blue-200"
+                            style={{ textDecoration: 'none' }}
+                            onClick={() => setActiveDropdown(null)} // Close dropdown on click
+                          >
+                            <div className="text-black group-hover/item:text-blue-700 transition-colors">{item.icon}</div>
+                            <div>
+                              <h4 className="text-black font-semibold group-hover/item:text-blue-700 transition-colors font-inter text-base">{item.title}</h4>
+                              <p className="text-black/60 text-sm font-inter font-semibold">{item.description}</p>
+                            </div>
+                          </Link>
+                        ) : item.title === 'Team Collaboration' ? (
+                          <Link
+                            key={idx}
+                            href="/solutions/team-collaboration"
+                            className="flex items-start gap-3 p-4 rounded-lg hover:bg-purple-50 transition-all duration-200 group/item font-inter cursor-pointer border border-transparent hover:border-purple-200"
+                            style={{ textDecoration: 'none' }}
+                            onClick={() => setActiveDropdown(null)}
+                          >
+                            <div className="text-black group-hover/item:text-purple-700 transition-colors">{item.icon}</div>
+                            <div>
+                              <h4 className="text-black font-semibold group-hover/item:text-purple-700 transition-colors font-inter text-base">{item.title}</h4>
+                              <p className="text-black/60 text-sm font-inter font-semibold">{item.description}</p>
+                            </div>
+                          </Link>
+                        ) : item.title === 'Document Control' ? (
+                          <Link
+                            key={idx}
+                            href="/solutions/document-control"
+                            className="flex items-start gap-3 p-4 rounded-lg hover:bg-orange-50 transition-all duration-200 group/item font-inter cursor-pointer border border-transparent hover:border-orange-200"
+                            style={{ textDecoration: 'none' }}
+                            onClick={() => setActiveDropdown(null)}
+                          >
+                            <div className="text-black group-hover/item:text-orange-700 transition-colors">{item.icon}</div>
+                            <div>
+                              <h4 className="text-black font-semibold group-hover/item:text-orange-700 transition-colors font-inter text-base">{item.title}</h4>
+                              <p className="text-black/60 text-sm font-inter font-semibold">{item.description}</p>
+                            </div>
+                          </Link>
+                        ) : item.title === 'Security & Compliance' ? (
+                          <Link
+                            key={idx}
+                            href="/solutions/security-compliance"
+                            className="flex items-start gap-3 p-4 rounded-lg hover:bg-green-50 transition-all duration-200 group/item font-inter cursor-pointer border border-transparent hover:border-green-200"
+                            style={{ textDecoration: 'none' }}
+                            onClick={() => setActiveDropdown(null)}
+                          >
+                            <div className="text-black group-hover/item:text-green-700 transition-colors">{item.icon}</div>
+                            <div>
+                              <h4 className="text-black font-semibold group-hover/item:text-green-700 transition-colors font-inter text-base">{item.title}</h4>
+                              <p className="text-black/60 text-sm font-inter font-semibold">{item.description}</p>
+                            </div>
+                          </Link>
+                        ) : (
                         <div key={idx} className="flex items-start gap-3 p-4 rounded-lg hover:bg-black/5 transition-all duration-200 group/item font-inter cursor-pointer">
                           <div className="text-black group-hover/item:text-black/80 transition-colors">{item.icon}</div>
                           <div>
@@ -205,6 +253,7 @@ const Navbar = () => {
                             <p className="text-black/60 text-sm font-inter font-semibold">{item.description}</p>
                           </div>
                         </div>
+                        )
                       ))}
                     </div>
                   </motion.div>
@@ -215,13 +264,22 @@ const Navbar = () => {
 
           {/* Desktop Right Section */}
           <div className="hidden md:flex items-center space-x-6">
+            {isAuthenticated === false && (
             <button 
               onClick={() => router.push('/signup')}
               className="text-black/70 hover:text-black transition-colors duration-200 hover:scale-105 transform font-inter font-semibold text-base cursor-pointer"
             >
               Sign up
             </button>
-
+            )}
+            {isAuthenticated === true && (
+              <button 
+                onClick={() => router.push('/login')}
+                className="text-black/70 hover:text-black transition-colors duration-200 hover:scale-105 transform font-inter font-semibold text-base cursor-pointer"
+              >
+                Sign in
+              </button>
+            )}
             <Link 
               href="/book-demo" 
               className="group relative px-6 py-2.5 bg-black text-white rounded-full font-inter font-semibold hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 text-base hover:scale-105 shadow-md cursor-pointer"
@@ -329,11 +387,25 @@ const Navbar = () => {
                           >
                             <div className="grid grid-cols-1 gap-2">
                               {builderFeatures[selectedBuilder as keyof typeof builderFeatures].map((item: { title: string; description: string; icon: React.ReactNode }) => (
+                                item.title === 'Project Management' ? (
                                 <Link
                                   key={item.title}
-                                  href="#"
-                                  className="group flex items-start gap-3 p-4 bg-black/5 rounded-xl hover:bg-black/10 transition-all duration-200 font-inter cursor-pointer"
+                                    href="/solutions/project-management"
+                                    className="group flex items-start gap-3 p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-all duration-200 font-inter cursor-pointer border border-transparent hover:border-blue-200"
                                   onClick={() => setIsOpen(false)}
+                                  >
+                                    <div className="text-black group-hover:text-blue-700 transition-colors">
+                                      {item.icon}
+                                    </div>
+                                    <div>
+                                      <span className="text-black text-base font-inter font-semibold group-hover:text-blue-700">{item.title}</span>
+                                      <p className="text-black/60 text-sm mt-1 font-inter font-semibold">{item.description}</p>
+                                    </div>
+                                  </Link>
+                                ) : (
+                                  <div
+                                    key={item.title}
+                                    className="group flex items-start gap-3 p-4 bg-black/5 rounded-xl hover:bg-black/10 transition-all duration-200 font-inter cursor-pointer"
                                 >
                                   <div className="text-black group-hover:text-black/80 transition-colors">
                                     {item.icon}
@@ -342,7 +414,8 @@ const Navbar = () => {
                                     <span className="text-black text-base font-inter font-semibold">{item.title}</span>
                                     <p className="text-black/60 text-sm mt-1 font-inter font-semibold">{item.description}</p>
                                   </div>
-                                </Link>
+                                  </div>
+                                )
                               ))}
                             </div>
                           </motion.div>
@@ -354,12 +427,22 @@ const Navbar = () => {
 
                 {/* Mobile Action Buttons */}
                 <div className="sticky bottom-0 p-6 bg-white/95 backdrop-blur-sm border-t border-black/10 space-y-3">
+                  {isAuthenticated === false && (
                   <button 
                     onClick={() => router.push('/signup')}
                     className="block w-full px-4 py-4 text-center text-black/70 hover:text-black hover:bg-black/5 rounded-xl transition-colors duration-200 text-base font-inter font-semibold cursor-pointer"
                   >
                     Sign up
                   </button>
+                  )}
+                  {isAuthenticated === true && (
+                    <button 
+                      onClick={() => router.push('/login')}
+                      className="block w-full px-4 py-4 text-center text-black/70 hover:text-black hover:bg-black/5 rounded-xl transition-colors duration-200 text-base font-inter font-semibold cursor-pointer"
+                    >
+                      Sign in
+                    </button>
+                  )}
                   <Link
                     href="/book-demo"
                     className="group relative block w-full px-4 py-4 bg-black text-white rounded-full font-inter font-semibold hover:bg-black/90 transition-all duration-200 text-center text-base shadow-md cursor-pointer"

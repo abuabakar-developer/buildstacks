@@ -1,21 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Upload, Users, FileCheck, Zap, ArrowRight, CheckCircle, Clock, Shield } from 'lucide-react';
-import { Plus_Jakarta_Sans } from 'next/font/google';
-import { Poppins } from 'next/font/google';
-
-const plusJakarta = Plus_Jakarta_Sans({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  variable: '--font-plusjakarta',
-});
-
-const poppins = Poppins({
-  weight: ['400', '500', '600'],
-  subsets: ['latin'],
-  variable: '--font-poppins',
-});
+import { 
+  Check, ArrowRight, FileText, Users, Shield, Building2,
+  Upload, Clock, Zap, FileCheck, CheckCircle
+} from 'lucide-react';
 
 const HowItWorks = () => {
   const steps = [
@@ -62,7 +51,7 @@ const HowItWorks = () => {
   ];
 
   return (
-    <section className={`relative py-20 ${plusJakarta.variable}`}>
+    <section className="relative py-16">
       <div className="relative z-10 container mx-auto px-4">
         {/* Header Section */}
         <motion.div
@@ -75,8 +64,8 @@ const HowItWorks = () => {
             <Clock className="w-4 h-4 text-black/70" />
             <span className='font-xs font-semibold text-black/70'>Best Simple_Process</span>
           </div>
-          <h2 className="text-3xl text-black/70 sm:text-4xl md:text-4xl font-extrabold text-black mb-6 font-plusjakarta leading-tight max-w-4xl mx-auto text-center">
-            How It Works
+          <h2 className="text-3xl text-black/70 sm:text-4xl md:text-4xl font-extrabold text-black mb-6 font-plus-jakarta leading-tight max-w-4xl mx-auto text-center">
+            How Its Works
           </h2>
           <p className="text-lg md:text-xl text-black/70 font-inter font-medium leading-relaxed mb-12 max-w-3xl mx-auto text-center tracking-wide">
             Get started in minutes, not days. Our streamlined process transforms how you manage construction projects.
@@ -122,17 +111,17 @@ const HowItWorks = () => {
                     <div className={`flex-shrink-0 inline-flex p-4 rounded-2xl transition-all duration-500 bg-gradient-to-br ${step.color} group-hover:bg-gradient-to-br ${step.hoverColor} text-white shadow-lg group-hover:shadow-xl group-hover:scale-110`}>
                       {step.icon}
                     </div>
-                    <div className="text-4xl font-bold text-black/10 hover:text-black/20 font-plusjakarta transition-colors duration-500">
+                    <div className="text-4xl font-bold text-black/10 hover:text-black/20 font-plus-jakarta transition-colors duration-500">
                       {step.step}
                     </div>
                   </div>
 
                   {/* Content */}
                   <div className="flex-1">
-                    <h3 className="text-xl md:text-2xl font-semibold whitespace-nowrap text-black font-plusjakarta leading-tight mb-4 transition-colors duration-500">
+                    <h3 className="text-xl md:text-2xl font-semibold whitespace-nowrap text-black font-plus-jakarta leading-tight mb-4 transition-colors duration-500">
                       {step.title}
                     </h3>
-                    <p className="text-black/70 font-semibold text-base leading-relaxed font-plusjakarta transition-colors duration-500">
+                    <p className="text-black/70 font-semibold text-base leading-relaxed font-plus-jakarta transition-colors duration-500">
                       {step.description}
                     </p>
                   </div>

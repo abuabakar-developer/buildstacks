@@ -4,28 +4,21 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
-  Building2, FileText, Users, Shield, 
-  Mail, HardHat, Star, CheckCircle,
-  BookOpen, HelpCircle, Facebook, Twitter, 
-  Linkedin, Instagram, ChevronDown, ChevronUp, ArrowRight
+  Building2, FileText, Users, Shield, HardHat,
+  Facebook, Twitter, Linkedin, Instagram, Youtube,
+  Mail, Phone, MapPin, ArrowRight, Send, ChevronDown,
+  Star, BookOpen, HelpCircle, CheckCircle
 } from 'lucide-react';
-import { Plus_Jakarta_Sans } from 'next/font/google';
-
-const plusJakarta = Plus_Jakarta_Sans({
-  weight: ['400', '500', '600', '700', '800'],
-  subsets: ['latin'],
-  variable: '--font-plusjakarta',
-});
 
 const Footer = () => {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   const footerLinks = {
     product: [
-      { name: 'Project Management', href: '#', icon: <Building2 className="w-4 h-4 text-gray-600" /> },
-      { name: 'Document Control', href: '#', icon: <FileText className="w-4 h-4 text-gray-600" /> },
-      { name: 'Team Collaboration', href: '#', icon: <Users className="w-4 h-4 text-gray-600" /> },
-      { name: 'Security & Compliance', href: '#', icon: <Shield className="w-4 h-4 text-gray-600" /> },
+      { name: 'Project Management', href: '/solutions/project-management', icon: <Building2 className="w-4 h-4 text-gray-600" /> },
+      { name: 'Document Control', href: '/solutions/document-control', icon: <FileText className="w-4 h-4 text-gray-600" /> },
+      { name: 'Team Collaboration', href: '/solutions/team-collaboration', icon: <Users className="w-4 h-4 text-gray-600" /> },
+      { name: 'Security & Compliance', href: '/solutions/security-compliance', icon: <Shield className="w-4 h-4 text-gray-600" /> },
     ],
     company: [
       { name: 'About Us', href: '#', icon: <Star className="w-4 h-4 text-gray-600" /> },
@@ -51,13 +44,13 @@ const Footer = () => {
   };
 
   return (
-    <footer className={`relative bg-gradient-to-tr from-blue-100 via-blue-50 to-white text-slate-900 border-t-0 shadow-inner ${plusJakarta.variable}`}>
+    <footer className="relative bg-white/95 text-slate-900 border-t border-gray-200 shadow-none">
       {/* Extra light SaaS Gradient Background for Footer */}
       {/* Footer Content */}
       <div className="relative z-10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-18">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
           {/* Grid Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mb-6">
             {/* Brand Section */}
             <div className="lg:col-span-1">
               <motion.div
@@ -66,22 +59,22 @@ const Footer = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
               >
-                <Link href="/" className="inline-flex items-center space-x-3 text-black font-bold text-2xl group mb-6">
-                  <div className="bg-black w-11 h-11 flex items-center justify-center rounded-lg text-white transform transition-all duration-300 group-hover:scale-110 shadow-md">
-                    <HardHat size={22} />
+                <Link href="/" className="inline-flex items-center space-x-3 text-black font-bold text-2xl group mb-4">
+                  <div className="bg-black w-10 h-10 flex items-center justify-center rounded-md text-white transform transition-all duration-300 group-hover:scale-110 shadow-sm">
+                    <HardHat size={20} />
                   </div>
                   <span className="tracking-wide font-semibold">BuildStack</span>
                 </Link>
-                <p className="text-black/80 mb-6 leading-relaxed tracking-wide font-semibold font-plusjakarta text-sm">
-                  Transform your construction workflow with AI-powered document management.
+                <p className="text-black/60 mb-4 leading-relaxed tracking-wide font-medium font-plus-jakarta text-sm">
+                  AI-powered construction document management for modern teams.
                 </p>
                 {/* Social Links */}
-                <div className="flex space-x-3">
+                <div className="flex space-x-2">
                   {socialLinks.map((social, index) => (
                     <motion.a
                       key={index}
                       href={social.href}
-                      className="text-gray-800 transition-all duration-200 p-2 rounded-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                      className="text-gray-400 hover:text-blue-500 transition-colors duration-200 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-100"
                       aria-label={social.label}
                       whileHover={{ scale: 1.13 }}
                       whileTap={{ scale: 0.97 }}
@@ -95,7 +88,7 @@ const Footer = () => {
 
             {/* Links Sections */}
             {Object.entries(footerLinks).map(([section, links], sectionIndex) => (
-              <div key={section} className="space-y-4">
+              <div key={section} className="space-y-3">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -103,12 +96,12 @@ const Footer = () => {
                   transition={{ duration: 0.5, delay: sectionIndex * 0.1 }}
                 >
                   <div
-                    className="flex items-center justify-between w-full text-black font-semibold mb-4 transition-colors font-plusjakarta text-lg rounded cursor-pointer"
+                    className="flex items-center w-full text-black font-semibold mb-2 font-plus-jakarta text-base rounded"
                   >
-                    <span className="capitalize">{section}</span>
+                    <span className="capitalize text-black/80 tracking-wide">{section}</span>
                   </div>
                   {/* Always show links below heading */}
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {links.map((link, index) => (
                       <motion.div
                         key={link.name}
@@ -119,14 +112,14 @@ const Footer = () => {
                       >
                         <Link
                           href={link.href}
-                          className="group flex items-center gap-3 text-black hover:text-gray-700 transition-all duration-200 py-1 font-plusjakarta text-base focus:outline-none rounded"
+                          className="group flex items-center gap-1.5 text-black/70 hover:text-black transition-colors duration-200 py-1 font-plus-jakarta text-sm focus:outline-none rounded relative"
                         >
-                          <div className="text-gray-400 group-hover:text-gray-600 transition-colors duration-200">
+                          <div className="text-gray-300 group-hover:text-blue-400 transition-colors duration-200">
                             {link.icon}
                           </div>
-                          <span className="text-sm font-semibold tracking-wide text-black/80">{link.name}</span>
-                          <span className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200 flex items-center">
-                            <ArrowRight className="w-4 h-4" />
+                          <span className="font-medium tracking-wide">{link.name}</span>
+                          <span className="flex items-center ml-1.5 transition-all duration-200 opacity-0 group-hover:opacity-100 group-hover:translate-x-1">
+                            <ArrowRight className="w-3.5 h-3.5 text-black" />
                           </span>
                         </Link>
                       </motion.div>
@@ -143,38 +136,38 @@ const Footer = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="pt-7 border-t border-gray-500"
+            className="pt-6 border-t border-gray-200"
           >
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-              <p className="text-black/80 text-sm font-semibold font-plusjakarta text-center sm:text-left">
+              <p className="text-black/60 text-xs font-medium font-plus-jakarta text-center sm:text-left">
                 © {new Date().getFullYear()} BuildStack. All rights reserved.
               </p>
-              <div className="flex flex-wrap justify-center gap-6 text-sm">
+              <div className="flex flex-wrap justify-center gap-4 text-xs">
                 <Link
                   href="#"
-                  className="text-black hover:text-gray-700 transition-colors duration-200 font-plusjakarta focus:outline-none focus:ring-2 focus:ring-blue-200 rounded group flex items-center"
+                  className="text-black/50 hover:text-black transition-colors duration-200 font-plus-jakarta focus:outline-none focus:ring-2 focus:ring-blue-100 rounded group flex items-center relative gap-1.5"
                 >
-                  <span className="text-sm font-semibold tracking-wide text-black/70">Privacy</span>
-                  <span className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200 flex items-center">
-                    <ArrowRight className="w-4 h-4" />
+                  <span>Privacy</span>
+                  <span className="flex items-center ml-1.5 transition-all duration-200 opacity-0 group-hover:opacity-100 group-hover:translate-x-1">
+                    <ArrowRight className="w-3.5 h-3.5 text-black" />
                   </span>
                 </Link>
                 <Link
                   href="#"
-                  className="text-black hover:text-gray-700 transition-colors duration-200 font-plusjakarta focus:outline-none focus:ring-2 focus:ring-blue-200 rounded group flex items-center"
+                  className="text-black/50 hover:text-black transition-colors duration-200 font-plus-jakarta focus:outline-none focus:ring-2 focus:ring-blue-100 rounded group flex items-center relative gap-1.5"
                 >
-                  <span className="text-sm font-semibold tracking-wide text-black/70">Terms</span>
-                  <span className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200 flex items-center">
-                    <ArrowRight className="w-4 h-4" />
+                  <span>Terms</span>
+                  <span className="flex items-center ml-1.5 transition-all duration-200 opacity-0 group-hover:opacity-100 group-hover:translate-x-1">
+                    <ArrowRight className="w-3.5 h-3.5 text-black" />
                   </span>
                 </Link>
                 <Link
                   href="#"
-                  className="text-black hover:text-gray-700 transition-colors duration-200 font-plusjakarta focus:outline-none focus:ring-2 focus:ring-blue-200 rounded group flex items-center"
+                  className="text-black/50 hover:text-black transition-colors duration-200 font-plus-jakarta focus:outline-none focus:ring-2 focus:ring-blue-100 rounded group flex items-center relative gap-1.5"
                 >
-                  <span className="text-sm font-semibold tracking-wide text-black/70">Security</span>
-                  <span className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200 flex items-center">
-                    <ArrowRight className="w-4 h-4" />
+                  <span>Security</span>
+                  <span className="flex items-center ml-1.5 transition-all duration-200 opacity-0 group-hover:opacity-100 group-hover:translate-x-1">
+                    <ArrowRight className="w-3.5 h-3.5 text-black" />
                   </span>
                 </Link>
               </div>

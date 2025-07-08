@@ -39,20 +39,16 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const formatPhoneNumber = (value: string) => {
-    const phoneNumber = value.replace(/\D/g, '');
-    if (phoneNumber.length <= 10) {
-      const formatted = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
-      return formatted;
-    }
-    return phoneNumber;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
+      // Validate email
+      if (!email) {
+        throw new Error('Email is required');
+      }
+
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -64,19 +60,16 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Something went wrong');
+        throw new Error(data.error || 'Login failed');
       }
 
-      // Set the token in a cookie
-      document.cookie = `token=${data.token}; path=/; max-age=${60 * 60 * 24 * 7}`; // 7 days
-
       // Show success message
-      toast.success('Login successful!');
+      toast.success('Login successful! Welcome back!');
 
-      // Redirect to home page
-      router.push('/');
+      // Redirect to dashboard
+      router.push('/dashboard');
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error(error.message || 'Login failed');
     } finally {
       setIsLoading(false);
     }
@@ -199,7 +192,7 @@ export default function LoginPage() {
                 transition={{ duration: 0.6, delay: 0.6 }}
               >
                 <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-3 font-inter">
-                  Email Address
+                  Email
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -211,7 +204,7 @@ export default function LoginPage() {
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     className="block w-full pl-12 pr-4 py-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 font-semibold text-base font-inter hover:bg-white"
-                    placeholder="Enter your email address"
+                    placeholder="Enter your email"
                     required
                   />
                 </div>
