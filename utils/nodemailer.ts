@@ -125,8 +125,7 @@ export const emailTemplates = {
             
             <div style="text-align: center;">
               <a href="${process.env.NEXT_PUBLIC_BASE_URL}/dashboard" class="button">Go to Dashboard</a>
-            </div>
-            
+            </div>        
             <p><strong>What you can do now:</strong></p>
             <ul>
               <li>🏗️ Create and manage construction projects</li>
