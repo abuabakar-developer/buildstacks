@@ -79,9 +79,9 @@ const Navbar = () => {
 
   const navLinks = [
     { name: 'Home', href: '/', icon: <Home size={18} /> },
-    { name: 'Solutions', href: '#', hasDropdown: true, icon: <Briefcase size={18} /> },
+    { name: 'Solutions', href: '/not-found', hasDropdown: true, icon: <Briefcase size={18} /> },
     { name: 'Pricing', href: '#pricing', icon: <HelpCircle size={18} />, onClick: handlePricingClick },
-    { name: 'Resources', href: '#', icon: <BookOpen size={18} /> },
+    { name: 'Resources', href: '/not-found', icon: <BookOpen size={18} /> },
   ];
 
   const builderTypes = [

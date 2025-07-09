@@ -21,14 +21,14 @@ const Footer = () => {
       { name: 'Security & Compliance', href: '/solutions/security-compliance', icon: <Shield className="w-4 h-4 text-gray-600" /> },
     ],
     company: [
-      { name: 'About Us', href: '#', icon: <Star className="w-4 h-4 text-gray-600" /> },
-      { name: 'Careers', href: '#', icon: <Users className="w-4 h-4 text-gray-600" /> },
-      { name: 'Contact', href: '#', icon: <Mail className="w-4 h-4 text-gray-600" /> },
+      { name: 'About Us', href: '/not-found', icon: <Star className="w-4 h-4 text-gray-600" /> },
+      { name: 'Careers', href: '/not-found', icon: <Users className="w-4 h-4 text-gray-600" /> },
+      { name: 'Contact', href: '/not-found', icon: <Mail className="w-4 h-4 text-gray-600" /> },
     ],
     resources: [
-      { name: 'Documentation', href: '#', icon: <BookOpen className="w-4 h-4 text-gray-600" /> },
-      { name: 'Help Center', href: '#', icon: <HelpCircle className="w-4 h-4 text-gray-600" /> },
-      { name: 'Status', href: '#', icon: <CheckCircle className="w-4 h-4 text-gray-600" /> },
+      { name: 'Documentation', href: '/not-found', icon: <BookOpen className="w-4 h-4 text-gray-600" /> },
+      { name: 'Help Center', href: '/not-found', icon: <HelpCircle className="w-4 h-4 text-gray-600" /> },
+      { name: 'Status', href: '/not-found', icon: <CheckCircle className="w-4 h-4 text-gray-600" /> },
     ],
   };
 
@@ -144,7 +144,7 @@ const Footer = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4 text-xs">
                 <Link
-                  href="#"
+                  href="/not-found"
                   className="text-black/50 hover:text-black transition-colors duration-200 font-plus-jakarta focus:outline-none focus:ring-2 focus:ring-blue-100 rounded group flex items-center relative gap-1.5"
                 >
                   <span>Privacy</span>
@@ -153,7 +153,7 @@ const Footer = () => {
                   </span>
                 </Link>
                 <Link
-                  href="#"
+                  href="/not-found"
                   className="text-black/50 hover:text-black transition-colors duration-200 font-plus-jakarta focus:outline-none focus:ring-2 focus:ring-blue-100 rounded group flex items-center relative gap-1.5"
                 >
                   <span>Terms</span>
@@ -162,7 +162,7 @@ const Footer = () => {
                   </span>
                 </Link>
                 <Link
-                  href="#"
+                  href="/not-found"
                   className="text-black/50 hover:text-black transition-colors duration-200 font-plus-jakarta focus:outline-none focus:ring-2 focus:ring-blue-100 rounded group flex items-center relative gap-1.5"
                 >
                   <span>Security</span>

@@ -23,8 +23,14 @@ export default function ClientLayout({
   const isTeamCollaborationPage = pathname === '/solutions/team-collaboration';
   const isDocumentControlPage = pathname === '/solutions/document-control';
   const isSecurityCompliancePage = pathname === '/solutions/security-compliance';
+  const isNotFoundPage = pathname === '/not-found';
 
   if (isAuthPage || isDashboardPage) {
+    return <>{children}</>;
+  }
+
+  // Show only the 404 page itself, with no Navbar or other layout
+  if (isNotFoundPage) {
     return <>{children}</>;
   }
 
