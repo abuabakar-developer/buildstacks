@@ -63,13 +63,10 @@ export default function LoginPage() {
         throw new Error(data.error || 'Login failed');
       }
 
-      // Show success message
-      toast.success('Login successful! Welcome back!');
-
       // Redirect to dashboard
       router.push('/dashboard');
     } catch (error: any) {
-      toast.error(error.message || 'Login failed');
+      // Optionally handle error UI here, but no toast
     } finally {
       setIsLoading(false);
     }
@@ -163,7 +160,7 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 30, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            className="bg-white border border-gray-300 p-8 shadow-2xl"
+            className="bg-white border border-gray-300 p-8"
           >
             <div className="text-center mb-8">
               <motion.h1 

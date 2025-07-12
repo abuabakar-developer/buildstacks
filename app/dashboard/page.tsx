@@ -40,6 +40,12 @@ import {
   CheckBadgeIcon,
   ExclamationCircleIcon as ExclamationCircleIconSolid,
   GlobeAltIcon,
+  FunnelIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Bars3Icon,
+  XMarkIcon,
+  ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import LinePattern from "../components/LinePattern";
 import Pusher from 'pusher-js';
@@ -48,6 +54,18 @@ import InviteTeamModal from '../components/InviteTeamModal';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import CalendarView from "../components/CalendarView";
+import toast from 'react-hot-toast';
+
+// Color palette for projects
+const PROJECT_COLORS = [
+  "#6366F1", // Indigo
+  "#22D3EE", // Cyan
+  "#F59E42", // Orange
+  "#10B981", // Green
+  "#F43F5E", // Red
+  "#A78BFA", // Purple
+  "#FBBF24", // Yellow
+];
 
 interface StatCardProps {
   title: string;
@@ -114,31 +132,17 @@ interface SecurityAlertProps {
 // Tab Loading Component
 function TabLoading({ tabName }: { tabName: string }) {
   const tabIcons = {
-    overview: <HomeIcon className="h-6 w-6" />,
-    projects: <BuildingOfficeIcon className="h-6 w-6" />,
-    documents: <DocumentIcon className="h-6 w-6" />,
-    team: <UsersIcon className="h-6 w-6" />,
-    analytics: <ChartBarIcon className="h-6 w-6" />,
-    settings: <Cog6ToothIcon className="h-6 w-6" />
-  };
-
-  const tabColors = {
-    overview: "text-blue-600",
-    projects: "text-purple-600", 
-    documents: "text-indigo-600",
-    team: "text-green-600",
-    analytics: "text-orange-600",
-    settings: "text-gray-600"
+    overview: <HomeIcon className="h-8 w-8 text-white" />,
+    projects: <BuildingOfficeIcon className="h-8 w-8 text-white" />,
+    documents: <DocumentIcon className="h-8 w-8 text-white" />,
+    team: <UsersIcon className="h-8 w-8 text-white" />,
+    analytics: <ChartBarIcon className="h-8 w-8 text-white" />,
+    settings: <Cog6ToothIcon className="h-8 w-8 text-white" />
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="flex flex-col items-center justify-center min-h-[400px] p-8"
-    >
-      {/* Animated Icon */}
+    <div className="relative flex flex-col items-center justify-center min-h-[400px] p-8 w-full bg-white">
+      {/* Black icon background */}
       <motion.div
         animate={{ 
           scale: [1, 1.1, 1],
@@ -149,60 +153,38 @@ function TabLoading({ tabName }: { tabName: string }) {
           repeat: Infinity,
           ease: "easeInOut"
         }}
-        className={`mb-6 p-4 rounded-full bg-gradient-to-br from-gray-50 to-white shadow-lg border border-gray-200 ${tabColors[tabName as keyof typeof tabColors]}`}
+        className="relative z-10 mb-8 p-6 rounded-2xl bg-black shadow-xl flex items-center justify-center"
       >
         {tabIcons[tabName as keyof typeof tabIcons]}
       </motion.div>
-
       {/* Loading Text */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-        className="text-center"
-      >
-        <h3 className="text-xl font-semibold text-gray-800 mb-2 capitalize">
+      <div className="relative z-10 text-center mb-6">
+        <h3 className="text-2xl font-bold text-black mb-2 capitalize font-plus-jakarta">
           Loading {tabName.replace('-', ' ')}...
         </h3>
-        <p className="text-gray-600 text-sm">
-          Preparing your data and analytics
+        <p className="text-gray-500 text-base font-inter">
+          Getting your dashboard ready
         </p>
-      </motion.div>
-
-      {/* Progress Bar */}
-      <motion.div
-        initial={{ width: 0 }}
-        animate={{ width: "100%" }}
-        transition={{ duration: 3, ease: "easeInOut" }}
-        className="w-full max-w-md mt-6 bg-gray-200 rounded-full h-2 overflow-hidden"
-      >
-        <div className="h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full" />
-      </motion.div>
-
-      {/* Loading Dots */}
-      <motion.div
-        className="flex space-x-1 mt-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-      >
-        {[0, 1, 2].map((i) => (
+      </div>
+      {/* Animated SaaS black bar loader */}
+      <div className="relative z-10 w-full max-w-xs flex flex-col items-center">
+        <div className="flex flex-col gap-1 w-full">
+          {[0, 1, 2, 3, 4].map((i) => (
           <motion.div
             key={i}
-            className="w-2 h-2 bg-gray-400 rounded-full"
-            animate={{
-              scale: [1, 1.5, 1],
-              opacity: [0.5, 1, 0.5]
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              delay: i * 0.2
-            }}
+              className="h-2 rounded-full bg-black/80"
+              initial={{ width: '0%' }}
+              animate={{ width: ["0%", `${60 + i * 8}%`, "100%", "0%"] }}
+              transition={{ duration: 2.2 + i * 0.2, repeat: Infinity, delay: i * 0.15, ease: "easeInOut" }}
           />
         ))}
-      </motion.div>
-    </motion.div>
+        </div>
+      </div>
+      {/* Friendly message */}
+      <div className="relative z-10 mt-8 text-gray-400 text-sm font-inter">
+        Just a moment... Your workspace is getting ready!
+      </div>
+    </div>
   );
 }
 
@@ -288,9 +270,9 @@ type KanbanBoardProps = {
 };
 function KanbanBoard({ tasks, onStatusChange, teamMembers }: KanbanBoardProps) {
   const columns = [
-    { id: 'todo', title: 'To Do', color: 'bg-gray-100' },
-    { id: 'in-progress', title: 'In Progress', color: 'bg-blue-100' },
-    { id: 'done', title: 'Done', color: 'bg-green-100' },
+    { id: 'todo', title: 'To Do', color: 'bg-gray-50' },
+    { id: 'in-progress', title: 'In Progress', color: 'bg-blue-50' },
+    { id: 'done', title: 'Done', color: 'bg-green-50' },
   ];
   const tasksByStatus: { [key: string]: any[] } = columns.reduce((acc, col) => {
     acc[col.id] = tasks.filter((t: any) => t.status === col.id);
@@ -307,16 +289,16 @@ function KanbanBoard({ tasks, onStatusChange, teamMembers }: KanbanBoardProps) {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex gap-4 overflow-x-auto">
+      <div className="flex gap-6 min-w-[700px] sm:min-w-0">
         {columns.map(col => (
           <Droppable droppableId={col.id} key={col.id}>
             {(provided: any, snapshot: any) => (
               <div
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                className={`w-80 min-h-[300px] rounded-lg p-3 ${col.color} shadow`}
+                className={`w-80 min-h-[320px] rounded-2xl p-4 ${col.color} border border-black/10 shadow-sm flex flex-col transition-all duration-200`}
               >
-                <h4 className="font-bold mb-2 text-black/70">{col.title}</h4>
+                <h4 className="font-bold mb-3 text-black/70 text-lg font-plus-jakarta">{col.title}</h4>
                 {tasksByStatus[col.id].map((task: any, idx: number) => (
                   <Draggable draggableId={task._id} index={idx} key={task._id}>
                     {(provided: any, snapshot: any) => (
@@ -324,17 +306,18 @@ function KanbanBoard({ tasks, onStatusChange, teamMembers }: KanbanBoardProps) {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className={`mb-3 p-3 rounded-lg bg-white shadow flex flex-col gap-2 border-l-4 ${task.priority === 'high' ? 'border-red-500' : task.priority === 'medium' ? 'border-yellow-400' : 'border-green-500'}`}
+                        className={`mb-4 p-4 rounded-2xl bg-white shadow border-l-4 flex flex-col gap-2 border-black/10 hover:shadow-md transition-all duration-200 ${task.priority === 'high' ? 'border-red-500' : task.priority === 'medium' ? 'border-yellow-400' : 'border-green-500'}`}
+                        style={{ touchAction: 'manipulation' }}
                       >
                         <div className="flex justify-between items-center">
-                          <span className="font-semibold text-black/80">{task.title}</span>
-                          <span className={`px-2 py-0.5 rounded text-xs font-bold ${task.status === 'done' ? 'bg-green-200 text-green-800' : task.status === 'in-progress' ? 'bg-blue-200 text-blue-800' : 'bg-gray-200 text-gray-800'}`}>{task.status.replace('-', ' ')}</span>
+                          <span className="font-semibold text-black/80 text-base truncate">{task.title}</span>
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${task.status === 'done' ? 'bg-green-200 text-green-800' : task.status === 'in-progress' ? 'bg-blue-200 text-blue-800' : 'bg-gray-200 text-gray-800'}`}>{task.status.replace('-', ' ')}</span>
                         </div>
-                        {task.description && <div className="text-xs text-black/50">{task.description}</div>}
-                        <div className="flex items-center gap-2 text-xs">
+                        {task.description && <div className="text-xs text-black/50 line-clamp-2">{task.description}</div>}
+                        <div className="flex items-center gap-2 text-xs flex-wrap">
                           {task.assignee && <span className="flex items-center gap-1"><UsersIcon className="h-4 w-4 text-blue-400" />{teamMembers.find((m: any) => m._id === task.assignee?._id)?.name || 'Unassigned'}</span>}
                           {task.dueDate && <span className="flex items-center gap-1"><CalendarIcon className="h-4 w-4 text-gray-400" />{new Date(task.dueDate).toLocaleDateString()}</span>}
-                          <span className={`px-2 py-0.5 rounded text-xs font-bold ${task.priority === 'high' ? 'bg-red-100 text-red-700' : task.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>{task.priority}</span>
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${task.priority === 'high' ? 'bg-red-100 text-red-700' : task.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>{task.priority}</span>
                         </div>
                       </div>
                     )}
@@ -393,6 +376,7 @@ export default function DashboardPage() {
   const [removeLoading, setRemoveLoading] = useState(false);
   const [removeError, setRemoveError] = useState("");
   const [roleError, setRoleError] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -728,98 +712,139 @@ export default function DashboardPage() {
         return (
           <div className="space-y-8 animate-fade-in">
             {/* Quick Stats Overview */}
-            <section className="bg-white rounded-2xl shadow border border-black/10 p-6">
+            <section className="bg-white rounded-2xl border border-black/10 p-6">
               <h3 className="text-xl font-bold text-black/80 mb-6 flex items-center gap-2 font-plus-jakarta">
                 <ChartBarIcon className="h-6 w-6 text-purple-600" /> Quick Stats
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-purple-200">
-                  <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center shadow-lg">
-                    <BuildingOfficeIcon className="h-6 w-6 text-white" />
+                {/* Active Projects */}
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-blue-400 hover:bg-blue-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-blue-100 to-blue-200 group-hover:from-blue-200 group-hover:to-blue-300 transition-colors duration-300">
+                    <BuildingOfficeIcon className="h-6 w-6 text-blue-600" />
                   </div>
-                  <span className="text-3xl font-bold text-purple-700">{projects.length}</span>
-                  <span className="text-sm text-purple-600 font-semibold mt-1">Active Projects</span>
-                  <span className="text-xs text-purple-500 mt-1">{projects.filter(p => p.status === 'completed').length} Completed</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{projects.length}</span>
+                  <span className="text-sm text-black/70 font-semibold">Active Projects</span>
+                  <span className="text-xs text-blue-600 mt-1">{projects.filter(p => p.status === 'completed').length} Completed</span>
                 </div>
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-blue-200">
-                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mb-3">
-                    <DocumentIcon className="h-6 w-6 text-white" />
+                {/* Documents */}
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-green-400 hover:bg-green-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-green-100 to-green-200 group-hover:from-green-200 group-hover:to-green-300 transition-colors duration-300">
+                    <DocumentIcon className="h-6 w-6 text-green-600" />
                   </div>
-                  <span className="text-3xl font-bold text-blue-700">{documents.length}</span>
-                  <span className="text-sm text-blue-600 font-semibold mt-1">Documents</span>
-                  <span className="text-xs text-blue-500 mt-1">{documents.filter(d => d.status === 'approved').length} Approved</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{documents.length}</span>
+                  <span className="text-sm text-black/70 font-semibold">Documents</span>
+                  <span className="text-xs text-green-600 mt-1">{documents.filter(d => d.status === 'approved').length} Approved</span>
                 </div>
-                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-green-200">
-                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mb-3">
-                    <UsersIcon className="h-6 w-6 text-white" />
+                {/* Team Members */}
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-purple-400 hover:bg-purple-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-purple-100 to-purple-200 group-hover:from-purple-200 group-hover:to-purple-300 transition-colors duration-300">
+                    <UsersIcon className="h-6 w-6 text-purple-600" />
                   </div>
-                  <span className="text-3xl font-bold text-green-700">{teamMembers.length}</span>
-                  <span className="text-sm text-green-600 font-semibold mt-1">Team Members</span>
-                  <span className="text-xs text-green-500 mt-1">Active Users</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{teamMembers.length}</span>
+                  <span className="text-sm text-black/70 font-semibold">Team Members</span>
+                  <span className="text-xs text-purple-600 mt-1">Active Users</span>
                 </div>
-                <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-yellow-200">
-                  <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mb-3">
-                    <ClipboardDocumentListIcon className="h-6 w-6 text-white" />
+                {/* Total Tasks */}
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-yellow-400 hover:bg-yellow-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-yellow-100 to-yellow-200 group-hover:from-yellow-200 group-hover:to-yellow-300 transition-colors duration-300">
+                    <ClipboardDocumentListIcon className="h-6 w-6 text-yellow-600" />
                   </div>
-                  <span className="text-3xl font-bold text-yellow-700">{Object.values(tasksByProject).reduce((acc: number, t) => acc + (Array.isArray(t) ? t.length : 0), 0)}</span>
-                  <span className="text-sm text-yellow-600 font-semibold mt-1">Total Tasks</span>
-                  <span className="text-xs text-yellow-500 mt-1">In Progress</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{Object.values(tasksByProject).reduce((acc: number, t) => acc + (Array.isArray(t) ? t.length : 0), 0)}</span>
+                  <span className="text-sm text-black/70 font-semibold">Total Tasks</span>
+                  <span className="text-xs text-yellow-600 mt-1">In Progress</span>
                 </div>
               </div>
             </section>
 
             {/* Main Content Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {/* Projects Section */}
-              <section className="lg:col-span-2 bg-white rounded-2xl shadow border border-black/10 p-6">
-                <h3 className="text-xl font-bold text-black/80 mb-6 flex items-center gap-2 font-plus-jakarta">
-                  <BuildingOfficeIcon className="h-6 w-6 text-purple-600" /> Recent Projects
+              <section className="lg:col-span-2 bg-white rounded-2xl shadow border border-black/10 p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-black/80 mb-4 sm:mb-6 flex items-center gap-2 font-plus-jakarta">
+                  <BuildingOfficeIcon className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" /> Recent Projects
                 </h3>
                 {filteredProjects.length === 0 ? (
-                  <div className="text-center text-gray-500 py-12">
-                    <BuildingOfficeIcon className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                    <p className="text-lg font-semibold">No projects found</p>
-                    <p className="text-sm">Create your first project to get started</p>
+                  <div className="text-center text-black/50 py-8 sm:py-12">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-black/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <BuildingOfficeIcon className="h-8 w-8 sm:h-10 sm:w-10 text-black/30" />
+                    </div>
+                    <p className="text-sm sm:text-base font-semibold text-black/70 mb-1">No projects found</p>
+                    <p className="text-xs sm:text-sm text-black/50">Create your first project to get started</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {filteredProjects.slice(0, 4).map((project) => (
-                      <div key={project._id} onClick={() => setSelectedProject(project)} className="cursor-pointer">
-                        <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-all duration-200">
-                          <div className="flex items-start justify-between mb-3">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                <BuildingOfficeIcon className="h-5 w-5 text-purple-600" />
-                              </div>
-                              <div>
-                                <h4 className="font-bold text-black/80 text-sm">{project.name}</h4>
+                      <div key={project._id} onClick={() => setSelectedProject(project)} className="cursor-pointer group">
+                        <div className="bg-white rounded-3xl p-6 border border-gray-400 transition-all duration-500 flex flex-col h-full group-hover:bg-gray-50 group-hover:border-blue-400">
+                          <div className="flex items-center gap-4 mb-4">
+                            <div className="flex-shrink-0 inline-flex p-4 rounded-2xl bg-gray-200 text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:scale-110 transition-all duration-500">
+                              <BuildingOfficeIcon className="h-6 w-6" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-xl font-semibold text-black font-plus-jakarta leading-tight mb-1 transition-colors duration-500 truncate">{project.name}</h4>
+                              <div className="flex items-center gap-2 mb-1">
                                 <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                                  project.status === "active" ? "bg-green-100 text-green-700" : 
-                                  project.status === "completed" ? "bg-blue-100 text-blue-700" : 
-                                  project.status === "pending" ? "bg-yellow-100 text-yellow-700" : 
-                                  "bg-gray-100 text-gray-700"
+                                  project.status === "active" ? "bg-green-100 text-green-700 border border-green-200" : 
+                                  project.status === "completed" ? "bg-blue-100 text-blue-700 border border-blue-200" : 
+                                  project.status === "pending" ? "bg-yellow-100 text-yellow-700 border border-yellow-200" : 
+                                  "bg-gray-100 text-gray-700 border border-gray-200"
                                 }`}>
                                   {project.status}
                                 </span>
+                                {project.priority && (
+                                  <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                                    project.priority === "high" ? "bg-red-100 text-red-700 border border-red-200" : 
+                                    project.priority === "medium" ? "bg-yellow-100 text-yellow-700 border border-yellow-200" : 
+                                    "bg-green-100 text-green-700 border border-green-200"
+                                  }`}>
+                                    {project.priority}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-black/70 font-inter text-sm leading-relaxed transition-colors duration-500 truncate">{project.desc}</p>
+                            </div>
+                          </div>
+                          <div className="flex-1 flex flex-col justify-between">
+                            {/* Progress Bar */}
+                            <div className="p-4 bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 mb-4 hover:shadow-md transition-all duration-300">
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="text-sm font-semibold text-black font-inter">Progress</div>
+                                <div className="text-sm font-bold text-black font-plus-jakarta">{project.progress}%</div>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
+                                <div
+                                  className="bg-black h-3 rounded-full transition-all duration-700 ease-out shadow-sm relative overflow-hidden"
+                                  style={{ width: `${project.progress}%` }}
+                                >
+                                  {/* Animated shine effect */}
+                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
+                                </div>
+                              </div>
+                              <div className="mt-2 text-xs text-black/60 font-medium">
+                                {project.progress === 100 ? 'Project Complete!' : 
+                                 project.progress >= 75 ? 'Almost there!' :
+                                 project.progress >= 50 ? 'Halfway done!' :
+                                 project.progress >= 25 ? 'Getting started!' : 'Just beginning!'}
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2 text-xs text-black/60 mb-4">
+                              <div className="bg-black/5 px-2 py-1 rounded-lg text-center">
+                                <span className="font-semibold text-black/80">{project.documents}</span>
+                                <div>Documents</div>
+                              </div>
+                              <div className="bg-black/5 px-2 py-1 rounded-lg text-center">
+                                <span className="font-semibold text-black/80">{project.team}</span>
+                                <div>Team</div>
                               </div>
                             </div>
                           </div>
-                          
-                          <div className="space-y-2">
-                            <div className="flex justify-between text-xs text-black/60">
-                              <span>Progress</span>
-                              <span>{project.progress}%</span>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
-                              <div
-                                className="bg-gradient-to-r from-purple-500 to-purple-600 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${project.progress}%` }}
-                              />
-                            </div>
-                            <div className="flex items-center justify-between text-xs text-black/60">
-                              <span>Documents: {project.documents}</span>
-                              <span>Team: {project.team}</span>
-                            </div>
+                          <div className="flex gap-2 mt-4">
+                            <button className="flex-1 bg-black text-white rounded-full px-4 py-2 text-xs font-semibold hover:bg-gray-900 transition-colors duration-200 shadow">
+                              Documents
+                            </button>
+                            <button className="flex-1 bg-transparent border border-black text-black rounded-full px-4 py-2 text-xs font-semibold hover:bg-black hover:text-white transition-colors duration-200 shadow">
+                              Team
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -829,11 +854,11 @@ export default function DashboardPage() {
               </section>
 
               {/* Team Members Section */}
-              <section className="lg:col-span-1 bg-white rounded-2xl shadow border border-black/10 p-6">
-                <h3 className="text-xl font-bold text-black/80 mb-6 flex items-center gap-2 font-plus-jakarta">
-                  <UsersIcon className="h-6 w-6 text-green-600" /> Team Members
+              <section className="lg:col-span-1 bg-white rounded-2xl shadow border border-black/10 p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-black/80 mb-4 sm:mb-6 flex items-center gap-2 font-plus-jakarta">
+                  <UsersIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" /> Team Members
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {teamMembers.length > 0 ? (
                     teamMembers.slice(0, 5).map((member, idx) => {
                       // Create full name from firstName and lastName, or use name if available
@@ -856,42 +881,81 @@ export default function DashboardPage() {
                       };
 
                       return (
-                        <div key={idx} className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-50 to-white rounded-lg border border-green-200 hover:shadow-md transition-all duration-200 group">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-green-500 to-green-600 flex items-center justify-center text-white text-sm font-bold shadow-md group-hover:shadow-lg transition-all duration-200">
-                            {getInitials()}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-black/80 text-sm truncate">{fullName}</p>
-                            <p className="text-xs text-black/60 flex items-center gap-1">
-                              <span className="capitalize">{member.role || 'Member'}</span>
-                              {member.email && (
-                                <span className="text-black/40">•</span>
+                        <div key={idx} className="group bg-gradient-to-br from-black/5 to-black/10 backdrop-blur-sm rounded-lg border border-black/10 hover:border-black/20 hover:shadow-md transition-all duration-300 p-3 sm:p-4">
+                          {/* Mobile Layout - Stacked */}
+                          <div className="block sm:hidden">
+                            <div className="flex items-start gap-3 mb-2">
+                                                          <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-orange-500 to-red-500 flex items-center justify-center text-white text-sm font-bold shadow-md group-hover:shadow-lg transition-all duration-200 flex-shrink-0">
+                              {getInitials()}
+                            </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-semibold text-black/80 text-sm truncate mb-1">{fullName}</p>
+                                <div className="flex flex-wrap gap-1 text-xs text-black/60 mb-2">
+                                  <span className="bg-black/5 px-2 py-1 rounded-full capitalize">
+                                    {member.role || 'Member'}
+                                  </span>
+                                  {member.email && (
+                                    <span className="bg-black/5 px-2 py-1 rounded-full truncate">
+                                      {member.email}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className={`w-3 h-3 rounded-full ${
+                                member.status === 'online' ? 'bg-green-500' :
+                                member.status === 'busy' ? 'bg-yellow-500' :
+                                'bg-gray-400'
+                              }`}></span>
+                              {member.role === 'admin' && (
+                                <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-semibold border border-purple-200">
+                                  Admin
+                                </span>
                               )}
-                              {member.email && (
-                                <span className="text-black/40 truncate">{member.email}</span>
-                              )}
-                            </p>
+                            </div>
                           </div>
-                          <div className="flex flex-col items-end gap-1">
-                            <span className={`w-2 h-2 rounded-full ${
-                              member.status === 'online' ? 'bg-green-500' :
-                              member.status === 'busy' ? 'bg-yellow-500' :
-                              'bg-gray-400'
-                            }`}></span>
-                            {member.role === 'admin' && (
-                              <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-semibold">
-                                Admin
-                              </span>
-                            )}
+                          
+                          {/* Desktop Layout - Horizontal */}
+                          <div className="hidden sm:flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-500 to-red-500 flex items-center justify-center text-white text-sm font-bold shadow-md group-hover:shadow-lg transition-all duration-200">
+                              {getInitials()}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-black/80 text-sm truncate">{fullName}</p>
+                              <p className="text-xs text-black/60 flex items-center gap-1">
+                                <span className="capitalize">{member.role || 'Member'}</span>
+                                {member.email && (
+                                  <span className="text-black/40">•</span>
+                                )}
+                                {member.email && (
+                                  <span className="text-black/40 truncate">{member.email}</span>
+                                )}
+                              </p>
+                            </div>
+                            <div className="flex flex-col items-end gap-1">
+                              <span className={`w-2 h-2 rounded-full ${
+                                member.status === 'online' ? 'bg-green-500' :
+                                member.status === 'busy' ? 'bg-yellow-500' :
+                                'bg-gray-400'
+                              }`}></span>
+                              {member.role === 'admin' && (
+                                <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-semibold border border-purple-200">
+                                  Admin
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       );
                     })
                   ) : (
-                    <div className="text-center text-gray-500 py-8">
-                      <UsersIcon className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                      <p className="text-sm font-semibold">No team members</p>
-                      <p className="text-xs">Invite your first team member</p>
+                    <div className="text-center text-black/50 py-8 sm:py-12">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-black/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <UsersIcon className="h-8 w-8 sm:h-10 sm:w-10 text-black/30" />
+                      </div>
+                      <p className="text-sm sm:text-base font-semibold text-black/70 mb-1">No team members</p>
+                      <p className="text-xs sm:text-sm text-black/50">Invite your first team member</p>
                     </div>
                   )}
                 </div>
@@ -899,14 +963,14 @@ export default function DashboardPage() {
             </div>
 
             {/* Document Upload Section */}
-            <section className="bg-white rounded-2xl shadow border border-black/10 p-6">
-              <h3 className="text-xl font-bold text-black/80 mb-6 flex items-center gap-2 font-plus-jakarta">
-                <CloudArrowUpIcon className="h-6 w-6 text-blue-600" /> Quick Document Upload
+            <section className="bg-white/60 backdrop-blur-md rounded-2xl shadow border border-black/10 p-6">
+              <h3 className="text-xl font-bold text-black mb-6 flex items-center gap-2 font-plus-jakarta">
+                <CloudArrowUpIcon className="h-6 w-6 text-black/70" /> Quick Document Upload
               </h3>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
-                  <h4 className="text-lg font-bold text-blue-700 mb-4 flex items-center gap-2 font-plus-jakarta">
-                    <DocumentIcon className="h-5 w-5" /> Upload New Document
+                <div className="bg-white/40 backdrop-blur rounded-xl p-6 border border-gray-300">
+                  <h4 className="text-lg font-bold text-black mb-4 flex items-center gap-2 font-plus-jakarta">
+                    <DocumentIcon className="h-5 w-5 text-black/70" /> Upload New Document
                   </h4>
                   <form
                     onSubmit={async (e) => {
@@ -950,11 +1014,11 @@ export default function DashboardPage() {
                     className="space-y-4"
                   >
                     <div>
-                      <label className="block text-sm font-medium text-blue-700 mb-2">Select Project</label>
+                      <label className="block text-sm font-medium text-black/70 mb-2 font-plus-jakarta">Select Project</label>
                       <select
                         value={selectedProjectId || ""}
                         onChange={e => setSelectedProjectId(e.target.value)}
-                        className="w-full border border-blue-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white"
+                        className="w-full border border-black/10 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/20 text-sm bg-white/80 font-inter text-black/70"
                         required
                       >
                         <option value="" disabled>Select a project</option>
@@ -964,9 +1028,9 @@ export default function DashboardPage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-blue-700 mb-2">Select File</label>
+                      <label className="block text-sm font-medium text-black/70 mb-2 font-plus-jakarta">Select File</label>
                       <div
-                        className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors duration-200 ${selectedFile ? 'border-green-400 bg-green-50' : 'border-blue-300 bg-white hover:bg-blue-50'}`}
+                        className={`relative border-4 border-dashed rounded-3xl p-10 text-center cursor-pointer transition-all duration-300 group overflow-hidden shadow-lg ${selectedFile ? 'border-green-400 bg-gradient-to-br from-green-50/80 to-white/60' : 'border-black/20 bg-gradient-to-br from-white/60 via-white/40 to-white/80 hover:from-black/5 hover:to-white/90'}`}
                         onDragOver={e => { e.preventDefault(); e.stopPropagation(); }}
                         onDrop={e => {
                           e.preventDefault();
@@ -983,10 +1047,16 @@ export default function DashboardPage() {
                         aria-label="Select or drop a file"
                       >
                         {selectedFile ? (
-                          <div className="flex flex-col items-center gap-2">
-                            <DocumentIcon className="h-8 w-8 text-green-500" />
-                            <span className="font-semibold text-black/80">{selectedFile.name}</span>
-                            <span className="text-xs text-black/50">{selectedFile.type || 'Unknown type'} • {(selectedFile.size / 1024).toFixed(1)} KB</span>
+                          <div className="flex flex-col items-center gap-3 animate-fade-in">
+                            <motion.div
+                              animate={{ scale: [1, 1.1, 1], rotate: [0, 8, -8, 0] }}
+                              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                              className="inline-flex items-center justify-center mb-2"
+                            >
+                              <DocumentIcon className="h-12 w-12 text-green-500 drop-shadow-lg" />
+                            </motion.div>
+                            <span className="font-semibold text-black font-plus-jakarta text-lg">{selectedFile.name}</span>
+                            <span className="text-sm text-black/50">{selectedFile.type || 'Unknown type'} • {(selectedFile.size / 1024).toFixed(1)} KB</span>
                             <button
                               type="button"
                               className="mt-2 text-xs text-red-600 hover:underline"
@@ -994,9 +1064,17 @@ export default function DashboardPage() {
                             >Remove</button>
                           </div>
                         ) : (
-                          <div className="flex flex-col items-center gap-2">
-                            <CloudArrowUpIcon className="h-8 w-8 text-blue-400" />
-                            <span className="text-blue-600">Drag & drop a file here, or click to select</span>
+                          <div className="flex flex-col items-center gap-3 animate-fade-in">
+                            <motion.div
+                              animate={{ y: [0, -8, 0] }}
+                              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                              className="inline-flex items-center justify-center mb-2"
+                            >
+                              <CloudArrowUpIcon className="h-14 w-14 text-black/30 group-hover:text-black/60 transition-colors duration-200 drop-shadow" />
+                            </motion.div>
+                            <span className="text-lg font-semibold text-black/70 font-plus-jakarta">Drag & drop your file here</span>
+                            <span className="text-sm text-black/50 font-inter">or <span className="underline cursor-pointer text-black/80">click to browse</span> from your device</span>
+                            <span className="mt-2 text-xs text-black/40 font-inter">Supported: PDF, DOCX, XLSX, PNG, JPG, etc.</span>
                           </div>
                         )}
                         <input
@@ -1011,51 +1089,58 @@ export default function DashboardPage() {
                     <button
                       type="submit"
                       disabled={uploading}
-                      className="w-full bg-blue-500 text-white rounded-lg px-4 py-3 font-semibold hover:bg-blue-600 transition-all duration-200 disabled:opacity-60"
+                      className="w-full bg-black text-white rounded-full px-6 py-3 font-semibold font-plus-jakarta hover:bg-gray-900 transition-all duration-200 disabled:opacity-60 shadow-lg text-base"
                     >
                       {uploading ? "Uploading..." : "Upload Document"}
                     </button>
-                    {uploadSuccess && <div className="text-green-600 text-sm bg-green-50 p-3 rounded-lg">{uploadSuccess}</div>}
-                    {uploadError && <div className="text-red-600 text-sm bg-red-50 p-3 rounded-lg">{uploadError}</div>}
+                    {uploadSuccess && <div className="text-green-600 text-sm bg-green-50/80 p-3 rounded-xl font-inter">{uploadSuccess}</div>}
+                    {uploadError && <div className="text-red-600 text-sm bg-red-50/80 p-3 rounded-xl font-inter">{uploadError}</div>}
                   </form>
                 </div>
 
-                <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-200">
-                  <h4 className="text-lg font-bold text-black/80 mb-4 flex items-center gap-2 font-plus-jakarta">
-                    <DocumentCheckIcon className="h-5 w-5" /> Recent Documents
+                <div className="bg-white rounded-3xl p-6 border border-gray-400">
+                  <h4 className="text-lg font-bold text-black mb-4 flex items-center gap-2 font-plus-jakarta">
+                    <DocumentCheckIcon className="h-5 w-5 text-blue-600" /> Recent Documents
                   </h4>
                   <div className="space-y-3">
                     {filteredDocuments.slice(0, 5).map((doc, idx) => (
-                      <div key={doc._id || idx} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all duration-200">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <DocumentIcon className="h-4 w-4 text-blue-600" />
+                      <div key={doc._id || idx} className="group bg-white rounded-2xl border border-gray-300 transition-all duration-300 p-4 flex items-center gap-4">
+                        {/* Icon */}
+                        <div className={`flex-shrink-0 inline-flex p-3 rounded-2xl bg-gray-200 text-blue-600 group-hover:bg-blue-50 group-hover:text-blue-700 transition-all duration-300`}>
+                          <DocumentIcon className="h-5 w-5" />
                         </div>
+                        {/* Content */}
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-black/80 text-sm truncate">{doc.name}</p>
-                          <div className="flex items-center gap-2 text-xs text-black/60">
-                            <span>{projects.find(p => p._id === (doc.projectId?._id || doc.projectId))?.name || 'Unknown Project'}</span>
-                            <span>•</span>
-                            <span className="font-medium text-blue-600">{doc.uploadedBy || 'Unknown User'}</span>
+                          <p className="font-semibold text-black text-base font-plus-jakarta truncate mb-1">{doc.name}</p>
+                          <div className="flex flex-wrap gap-2 text-xs text-black/60 mb-1">
+                            <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full font-semibold">
+                              {projects.find(p => p._id === (doc.projectId?._id || doc.projectId))?.name || 'Unknown Project'}
+                            </span>
+                            <span className="bg-green-50 text-green-700 px-2 py-1 rounded-full font-semibold">
+                              {doc.uploadedBy || 'Unknown User'}
+                            </span>
                           </div>
-                        </div>
-                        <div className="text-right">
-                          <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                            doc.status === "approved" ? "bg-green-100 text-green-700" : 
-                            doc.status === "pending" ? "bg-yellow-100 text-yellow-700" : 
-                            doc.status === "rejected" ? "bg-red-100 text-red-700" :
-                            "bg-gray-100 text-gray-700"
-                          }`}>
-                            {doc.status}
-                          </span>
-                          <p className="text-xs text-black/60 mt-1">{new Date(doc.date).toLocaleDateString()}</p>
+                          <div className="flex items-center gap-2 text-xs">
+                            <span className={`font-semibold px-2 py-1 rounded-full border ${
+                              doc.status === "approved" ? "bg-green-100 text-green-700 border-green-200" :
+                              doc.status === "pending" ? "bg-yellow-100 text-yellow-700 border-yellow-200" :
+                              doc.status === "rejected" ? "bg-red-100 text-red-700 border-red-200" :
+                              "bg-gray-100 text-gray-700 border-gray-200"
+                            }`}>
+                              {doc.status}
+                            </span>
+                            <span className="text-black/50">{new Date(doc.date).toLocaleDateString()}</span>
+                          </div>
                         </div>
                       </div>
                     ))}
                     {filteredDocuments.length === 0 && (
-                      <div className="text-center text-gray-500 py-8">
-                        <DocumentIcon className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                        <p className="text-sm font-semibold">No documents yet</p>
-                        <p className="text-xs">Upload your first document</p>
+                      <div className="text-center text-black/50 py-8 sm:py-12">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <DocumentIcon className="h-8 w-8 sm:h-10 sm:w-10 text-blue-400" />
+                        </div>
+                        <p className="text-sm sm:text-base font-semibold text-black/70 mb-1">No documents yet</p>
+                        <p className="text-xs sm:text-sm text-black/50">Upload your first document to get started</p>
                       </div>
                     )}
                   </div>
@@ -1069,14 +1154,14 @@ export default function DashboardPage() {
           <div className="space-y-8 animate-fade-in">
             {/* Projects Header */}
             <section className="bg-white rounded-2xl shadow border border-black/10 p-6">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <h2 className="text-2xl font-bold text-black/80 flex items-center gap-3">
                   <BuildingOfficeIcon className="h-7 w-7 text-purple-600" /> 
                   Project Management
                 </h2>
                 <button
                   onClick={() => setModalOpen(true)}
-                  className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-200 flex items-center gap-2"
+                  className="bg-black text-white px-6 py-3 rounded-full font-semibold transition-all duration-200 flex items-center gap-2 font-inter hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-black w-full sm:w-auto"
                 >
                   <PlusIcon className="h-5 w-5" />
                   New Project
@@ -1090,33 +1175,37 @@ export default function DashboardPage() {
                 <ChartBarIcon className="h-6 w-6 text-purple-600" /> Project Analytics
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-purple-200">
-                  <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center shadow-lg">
-                    <BuildingOfficeIcon className="h-6 w-6 text-white" />
+                {/* Total Projects */}
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center shadow-sm hover:shadow-lg transition-all duration-300 hover:border-blue-400 hover:bg-blue-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-blue-100 to-blue-200 group-hover:from-blue-200 group-hover:to-blue-300 transition-colors duration-300 shadow">
+                    <BuildingOfficeIcon className="h-6 w-6 text-blue-600" />
                   </div>
-                  <span className="text-3xl font-bold text-purple-700">{projects.length}</span>
-                  <span className="text-sm text-purple-600 font-semibold mt-1">Total Projects</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{projects.length}</span>
+                  <span className="text-sm text-black/70 font-semibold">Total Projects</span>
                 </div>
-                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-green-200">
-                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mb-3">
-                    <CheckCircleIcon className="h-6 w-6 text-white" />
+                {/* Active */}
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center shadow-sm hover:shadow-lg transition-all duration-300 hover:border-green-400 hover:bg-green-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-green-100 to-green-200 group-hover:from-green-200 group-hover:to-green-300 transition-colors duration-300 shadow">
+                    <CheckCircleIcon className="h-6 w-6 text-green-600" />
                   </div>
-                  <span className="text-3xl font-bold text-green-700">{projects.filter(p => p.status === 'active').length}</span>
-                  <span className="text-sm text-green-600 font-semibold mt-1">Active</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{projects.filter(p => p.status === 'active').length}</span>
+                  <span className="text-sm text-black/70 font-semibold">Active</span>
                 </div>
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-blue-200">
-                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mb-3">
-                    <ClipboardDocumentListIcon className="h-6 w-6 text-white" />
+                {/* Completed */}
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center shadow-sm hover:shadow-lg transition-all duration-300 hover:border-purple-400 hover:bg-purple-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-purple-100 to-purple-200 group-hover:from-purple-200 group-hover:to-purple-300 transition-colors duration-300 shadow">
+                    <ClipboardDocumentListIcon className="h-6 w-6 text-purple-600" />
                   </div>
-                  <span className="text-3xl font-bold text-blue-700">{projects.filter(p => p.status === 'completed').length}</span>
-                  <span className="text-sm text-blue-600 font-semibold mt-1">Completed</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{projects.filter(p => p.status === 'completed').length}</span>
+                  <span className="text-sm text-black/70 font-semibold">Completed</span>
                 </div>
-                <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-yellow-200">
-                  <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mb-3">
-                    <ClockIcon className="h-6 w-6 text-white" />
+                {/* Pending */}
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center shadow-sm hover:shadow-lg transition-all duration-300 hover:border-yellow-400 hover:bg-yellow-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-yellow-100 to-yellow-200 group-hover:from-yellow-200 group-hover:to-yellow-300 transition-colors duration-300 shadow">
+                    <ClockIcon className="h-6 w-6 text-yellow-600" />
                   </div>
-                  <span className="text-3xl font-bold text-yellow-700">{projects.filter(p => p.status === 'pending').length}</span>
-                  <span className="text-sm text-yellow-600 font-semibold mt-1">Pending</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{projects.filter(p => p.status === 'pending').length}</span>
+                  <span className="text-sm text-black/70 font-semibold">Pending</span>
                 </div>
               </div>
             </section>
@@ -1162,94 +1251,127 @@ export default function DashboardPage() {
             </section>
 
             {/* Projects Grid */}
-            <section className="bg-white rounded-2xl shadow border border-black/10 p-6">
-              <h3 className="text-xl font-bold text-black/80 mb-6 flex items-center gap-2">
-                <FolderIcon className="h-6 w-6 text-purple-600" /> All Projects
-              </h3>
+            <section className="bg-white rounded-3xl border border-gray-300 p-4 sm:p-6 lg:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 lg:mb-8">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-black to-gray-800 rounded-2xl flex items-center justify-center">
+                    <BuildingOfficeIcon className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-black/80 font-plus-jakarta">All Projects</h3>
+                    <p className="text-black/60 font-inter text-sm sm:text-base">Manage your construction projects efficiently</p>
+                  </div>
+                </div>
+                <div className="flex sm:hidden items-center gap-3">
+                  <div className="px-4 py-2 bg-black/5 rounded-full border border-black/20">
+                    <span className="text-sm font-semibold text-black/80">{filteredProjects.length} Projects</span>
+                  </div>
+                </div>
+                <div className="hidden sm:flex items-center gap-3">
+                  <div className="px-4 py-2 bg-black/5 rounded-full border border-black/20">
+                    <span className="text-sm font-semibold text-black/80">{filteredProjects.length} Projects</span>
+                  </div>
+                </div>
+              </div>
+              
               {filteredProjects.length === 0 ? (
-                <div className="text-center text-gray-500 py-12">
-                  <BuildingOfficeIcon className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                  <p className="text-lg font-semibold">No projects found</p>
-                  <p className="text-sm">Create your first project to get started</p>
+                <div className="text-center py-12 sm:py-16 lg:py-20">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                    <BuildingOfficeIcon className="h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 text-gray-400" />
+                  </div>
+                  <h4 className="text-lg sm:text-xl lg:text-2xl font-bold text-black/70 mb-2 font-plus-jakarta">No projects found</h4>
+                  <p className="text-black/50 font-inter text-sm sm:text-base">Create your first construction project to get started</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
                   {filteredProjects.map((project) => (
-                    <div key={project._id} className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-200">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                            <BuildingOfficeIcon className="h-6 w-6 text-purple-600" />
+                    <div key={project._id} className="group bg-white border-2 border-gray-200 rounded-3xl p-4 sm:p-6 lg:p-8 hover:border-black/30 hover:bg-black/5 transition-all duration-300 flex flex-col h-full">
+                      {/* Header */}
+                      <div className="flex items-start justify-between mb-4 sm:mb-6 gap-3">
+                        <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-black/10 to-black/20 rounded-2xl flex items-center justify-center group-hover:from-black/20 group-hover:to-black/30 transition-all duration-300 flex-shrink-0">
+                            <BuildingOfficeIcon className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-black/80" />
                           </div>
-                          <div>
-                            <h4 className="font-bold text-black/80 text-sm mb-1">{project.name}</h4>
-                            <p className="text-xs text-black/60">{project.desc}</p>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="font-bold text-black/80 text-base sm:text-lg lg:text-xl mb-1 sm:mb-2 font-plus-jakarta break-words leading-relaxed">{project.name}</h4>
+                            <p className="text-xs sm:text-sm lg:text-base text-black/60 font-inter break-words leading-relaxed">{project.desc}</p>
                           </div>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                            project.status === "active" ? "bg-green-100 text-green-700" : 
-                            project.status === "completed" ? "bg-blue-100 text-blue-700" : 
-                            project.status === "pending" ? "bg-yellow-100 text-yellow-700" : 
-                            "bg-gray-100 text-gray-700"
-                          }`}>
-                            {project.status}
-                          </span>
-                          <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                            project.priority === "high" ? "bg-red-100 text-red-700" : 
-                            project.priority === "medium" ? "bg-yellow-100 text-yellow-700" : 
-                            project.priority === "low" ? "bg-green-100 text-green-700" : 
-                            "bg-gray-100 text-gray-700"
-                          }`}>
-                            {project.priority}
-                          </span>
                         </div>
                       </div>
                       
+                      {/* Status & Priority Badges */}
+                      <div className="flex flex-wrap items-center gap-2 mb-4 sm:mb-6">
+                        <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-bold border ${
+                          project.status === "active" ? "bg-green-100 text-green-700 border-green-200" : 
+                          project.status === "completed" ? "bg-blue-100 text-blue-700 border-blue-200" : 
+                          project.status === "pending" ? "bg-yellow-100 text-yellow-700 border-yellow-200" : 
+                          "bg-gray-100 text-gray-700 border-gray-200"
+                        }`}>
+                          {project.status}
+                        </span>
+                        <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-bold border ${
+                          project.priority === "high" ? "bg-red-100 text-red-700 border-red-200" : 
+                          project.priority === "medium" ? "bg-yellow-100 text-yellow-700 border-yellow-200" : 
+                          project.priority === "low" ? "bg-green-100 text-green-700 border-green-200" : 
+                          "bg-gray-100 text-gray-700 border-gray-200"
+                        }`}>
+                          {project.priority}
+                        </span>
+                      </div>
+                      
                       {/* Progress Bar */}
-                      <div className="mb-4">
-                        <div className="flex justify-between text-xs text-black/60 mb-1">
-                          <span>Progress</span>
-                          <span>{project.progress}%</span>
+                      <div className="p-4 bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 mb-4 hover:shadow-md transition-all duration-300">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="text-sm font-semibold text-black font-inter">Progress</div>
+                          <div className="text-sm font-bold text-black font-plus-jakarta">{project.progress}%</div>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
                           <div
-                            className="bg-gradient-to-r from-purple-500 to-purple-600 h-2 rounded-full transition-all duration-300"
+                            className="bg-black h-3 rounded-full transition-all duration-700 ease-out shadow-sm relative overflow-hidden"
                             style={{ width: `${project.progress}%` }}
-                          />
+                          >
+                            {/* Animated shine effect */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
+                          </div>
+                        </div>
+                        <div className="mt-2 text-xs text-black/60 font-medium">
+                          {project.progress === 100 ? 'Project Complete!' : 
+                           project.progress >= 75 ? 'Almost there!' :
+                           project.progress >= 50 ? 'Halfway done!' :
+                           project.progress >= 25 ? 'Getting started!' : 'Just beginning!'}
                         </div>
                       </div>
                       
                       {/* Project Stats */}
-                      <div className="grid grid-cols-3 gap-2 mb-4">
-                        <div className="text-center">
-                          <div className="text-lg font-bold text-purple-600">{project.documents}</div>
-                          <div className="text-xs text-black/60">Documents</div>
+                      <div className="space-y-3 mb-6">
+                        <div className="p-3 bg-gray-50 rounded-xl">
+                          <div className="text-xs text-black/60 font-inter font-semibold mb-1">Documents:</div>
+                          <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">{project.documents} files</div>
                         </div>
-                        <div className="text-center">
-                          <div className="text-lg font-bold text-blue-600">{project.team}</div>
-                          <div className="text-xs text-black/60">Team</div>
+                        <div className="p-3 bg-gray-50 rounded-xl">
+                          <div className="text-xs text-black/60 font-inter font-semibold mb-1">Team Members:</div>
+                          <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">{project.team} members</div>
                         </div>
-                        <div className="text-center">
-                          <div className="text-lg font-bold text-green-600">{tasksByProject[project._id]?.length || 0}</div>
-                          <div className="text-xs text-black/60">Tasks</div>
+                        <div className="p-3 bg-gray-50 rounded-xl">
+                          <div className="text-xs text-black/60 font-inter font-semibold mb-1">Total Tasks:</div>
+                          <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">{tasksByProject[project._id]?.length || 0} tasks</div>
                         </div>
                       </div>
                       
                       {/* Owner Info */}
                       {project.owner && (
-                        <div className="flex items-center gap-2 mb-4 p-2 bg-yellow-50 rounded-lg">
-                          <StarIcon className="h-4 w-4 text-yellow-500" />
-                          <span className="text-xs text-yellow-700 font-semibold">
+                        <div className="p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-200 mb-4">
+                          <div className="text-xs text-yellow-800 font-inter font-semibold mb-1">Project Owner:</div>
+                          <div className="font-semibold text-yellow-800 text-sm break-words leading-relaxed">
                             {project.owner.firstName} {project.owner.lastName} {user?._id === project.owner._id ? '(You)' : ''}
-                          </span>
+                          </div>
                         </div>
                       )}
                       
                       {/* Action Buttons */}
-                      <div className="flex items-center gap-2">
-                        <button className="flex-1 bg-purple-500 text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-purple-600 transition-colors">
-                          View
+                      <div className="flex flex-col gap-2 mt-auto">
+                        <button className="w-full bg-black text-white px-4 py-3 rounded-full text-sm font-semibold hover:bg-gray-900 hover:scale-105 transition-all duration-300 font-inter shadow-lg hover:shadow-xl">
+                          View Project
                         </button>
                         {user?._id === project.owner?._id && (
                           <button 
@@ -1257,9 +1379,9 @@ export default function DashboardPage() {
                               setSelectedProject(project);
                               setInviteModalOpen(true);
                             }}
-                            className="flex-1 bg-blue-500 text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-blue-600 transition-colors"
+                            className="w-full bg-transparent border-2 border-black text-black px-4 py-3 rounded-full text-sm font-semibold hover:bg-black hover:text-white hover:scale-105 transition-all duration-300 font-inter shadow-lg hover:shadow-xl"
                           >
-                            Invite
+                            Invite Team
                           </button>
                         )}
                       </div>
@@ -1275,14 +1397,14 @@ export default function DashboardPage() {
           <div className="space-y-8 animate-fade-in">
             {/* Documents Header */}
             <section className="bg-white rounded-2xl shadow border border-black/10 p-6">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <h2 className="text-2xl font-bold text-black/80 flex items-center gap-3">
                   <DocumentIcon className="h-7 w-7 text-blue-600" /> 
                   Document Management
                 </h2>
                 <button
                   onClick={() => setModalOpen(true)}
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center gap-2"
+                  className="bg-black text-white px-6 py-3 rounded-full font-semibold transition-all duration-200 flex items-center gap-2 font-inter hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-black w-full sm:w-auto"
                 >
                   <PlusIcon className="h-5 w-5" />
                   Upload Document
@@ -1291,38 +1413,38 @@ export default function DashboardPage() {
             </section>
 
             {/* Document Analytics Overview */}
-            <section className="bg-white rounded-2xl shadow border border-black/10 p-6">
+            <section className="bg-white rounded-2xl border border-black/10 p-6">
               <h3 className="text-xl font-bold text-black/80 mb-6 flex items-center gap-2">
                 <ChartBarIcon className="h-6 w-6 text-purple-600" /> Document Analytics
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-blue-200">
-                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mb-3">
-                    <DocumentIcon className="h-6 w-6 text-white" />
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-blue-400 hover:bg-blue-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-blue-100 to-blue-200 group-hover:from-blue-200 group-hover:to-blue-300 transition-colors duration-300">
+                    <DocumentIcon className="h-6 w-6 text-blue-600" />
                   </div>
-                  <span className="text-3xl font-bold text-blue-700">{documents.length}</span>
-                  <span className="text-sm text-blue-600 font-semibold mt-1">Total Documents</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{documents.length}</span>
+                  <span className="text-sm text-black/70 font-semibold">Total Documents</span>
                 </div>
-                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-green-200">
-                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mb-3">
-                    <CheckCircleIcon className="h-6 w-6 text-white" />
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-green-400 hover:bg-green-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-green-100 to-green-200 group-hover:from-green-200 group-hover:to-green-300 transition-colors duration-300">
+                    <CheckCircleIcon className="h-6 w-6 text-green-600" />
                   </div>
-                  <span className="text-3xl font-bold text-green-700">{documents.filter(d => d.status === 'approved').length}</span>
-                  <span className="text-sm text-green-600 font-semibold mt-1">Approved</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{documents.filter(d => d.status === 'approved').length}</span>
+                  <span className="text-sm text-black/70 font-semibold">Approved</span>
                 </div>
-                <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-yellow-200">
-                  <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mb-3">
-                    <ClockIcon className="h-6 w-6 text-white" />
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-yellow-400 hover:bg-yellow-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-yellow-100 to-yellow-200 group-hover:from-yellow-200 group-hover:to-yellow-300 transition-colors duration-300">
+                    <ClockIcon className="h-6 w-6 text-yellow-600" />
                   </div>
-                  <span className="text-3xl font-bold text-yellow-700">{documents.filter(d => d.status === 'pending').length}</span>
-                  <span className="text-sm text-yellow-600 font-semibold mt-1">Pending</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{documents.filter(d => d.status === 'pending').length}</span>
+                  <span className="text-sm text-black/70 font-semibold">Pending</span>
                 </div>
-                <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-red-200">
-                  <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center mb-3">
-                    <ExclamationCircleIcon className="h-6 w-6 text-white" />
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-red-400 hover:bg-red-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-red-100 to-red-200 group-hover:from-red-200 group-hover:to-red-300 transition-colors duration-300">
+                    <ExclamationCircleIcon className="h-6 w-6 text-red-600" />
                   </div>
-                  <span className="text-3xl font-bold text-red-700">{documents.filter(d => d.status === 'rejected').length}</span>
-                  <span className="text-sm text-red-600 font-semibold mt-1">Rejected</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{documents.filter(d => d.status === 'rejected').length}</span>
+                  <span className="text-sm text-black/70 font-semibold">Rejected</span>
                 </div>
               </div>
             </section>
@@ -1374,62 +1496,86 @@ export default function DashboardPage() {
             </section>
 
             {/* Documents Grid View */}
-            <section className="bg-white rounded-2xl shadow border border-black/10 p-6">
-              <h3 className="text-xl font-bold text-black/80 mb-6 flex items-center gap-2">
-                <DocumentDuplicateIcon className="h-6 w-6 text-blue-600" /> All Documents
-              </h3>
+            <section className="bg-white rounded-3xl border border-gray-300 p-4 sm:p-6 lg:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 lg:mb-8">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-black to-gray-800 rounded-2xl flex items-center justify-center">
+                    <DocumentDuplicateIcon className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-black/80 font-plus-jakarta">All Documents</h3>
+                    <p className="text-black/60 font-inter text-sm sm:text-base">Manage your construction documents efficiently</p>
+                  </div>
+                </div>
+                <div className="flex sm:hidden items-center gap-3">
+                  <div className="px-4 py-2 bg-black/5 rounded-full border border-black/20">
+                    <span className="text-sm font-semibold text-black/80">{filteredDocuments.length} Documents</span>
+                  </div>
+                </div>
+                <div className="hidden sm:flex items-center gap-3">
+                  <div className="px-4 py-2 bg-black/5 rounded-full border border-black/20">
+                    <span className="text-sm font-semibold text-black/80">{filteredDocuments.length} Documents</span>
+                  </div>
+                </div>
+              </div>
+              
               {filteredDocuments.length === 0 ? (
-                <div className="text-center text-gray-500 py-12">
-                  <DocumentIcon className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                  <p className="text-lg font-semibold">No documents found</p>
-                  <p className="text-sm">Upload your first document to get started</p>
+                <div className="text-center py-12 sm:py-16 lg:py-20">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                    <DocumentIcon className="h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 text-gray-400" />
+                  </div>
+                  <h4 className="text-lg sm:text-xl lg:text-2xl font-bold text-black/70 mb-2 font-plus-jakarta">No documents found</h4>
+                  <p className="text-black/50 font-inter text-sm sm:text-base">Upload your first construction document to get started</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
                   {filteredDocuments.map((doc, idx) => (
-                    <div key={doc._id || idx} className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-200">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <DocumentIcon className="h-6 w-6 text-blue-600" />
+                    <div key={doc._id || idx} className="group bg-white border-2 border-gray-200 rounded-3xl p-4 sm:p-6 lg:p-8 hover:border-black/30 hover:bg-black/5 transition-all duration-300 flex flex-col h-full">
+                      {/* Header */}
+                      <div className="flex items-start justify-between mb-4 sm:mb-6 gap-3">
+                        <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-black/10 to-black/20 rounded-2xl flex items-center justify-center group-hover:from-black/20 group-hover:to-black/30 transition-all duration-300 flex-shrink-0">
+                            <DocumentIcon className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-black/80" />
                           </div>
-                          <div>
-                            <h4 className="font-bold text-black/80 text-sm mb-1">{doc.name}</h4>
-                            <p className="text-xs text-black/60">{doc.type}</p>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="font-bold text-black/80 text-base sm:text-lg lg:text-xl mb-1 sm:mb-2 font-plus-jakarta truncate">{doc.name}</h4>
+                            <p className="text-xs sm:text-sm lg:text-base text-black/60 font-inter truncate">{doc.type}</p>
                           </div>
                         </div>
-                        <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                          doc.status === "approved" ? "bg-green-100 text-green-700" : 
-                          doc.status === "pending" ? "bg-yellow-100 text-yellow-700" : 
-                          doc.status === "rejected" ? "bg-red-100 text-red-700" : 
-                          "bg-gray-100 text-gray-700"
+                        <span className={`text-xs sm:text-sm lg:text-base font-bold px-2 sm:px-3 py-1 sm:py-2 rounded-full border flex-shrink-0 ${
+                          doc.status === "approved" ? "bg-green-100 text-green-700 border-green-200" : 
+                          doc.status === "pending" ? "bg-yellow-100 text-yellow-700 border-yellow-200" : 
+                          doc.status === "rejected" ? "bg-red-100 text-red-700 border-red-200" : 
+                          "bg-gray-100 text-gray-700 border-gray-200"
                         }`}>
                           {doc.status}
                         </span>
                       </div>
                       
-                      <div className="space-y-2 mb-4">
-                        <div className="flex items-center justify-between text-xs text-black/60">
-                          <span>Project:</span>
-                          <span className="font-semibold text-black/80">
+                      {/* Document Info */}
+                      <div className="space-y-3 mb-6">
+                        <div className="p-3 bg-gray-50 rounded-xl">
+                          <div className="text-xs text-black/60 font-inter font-semibold mb-1">Project:</div>
+                          <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">
                             {projects.find(p => p._id === (doc.projectId?._id || doc.projectId))?.name || 'Unknown'}
-                          </span>
+                          </div>
                         </div>
-                        <div className="flex items-center justify-between text-xs text-black/60">
-                          <span>Uploaded by:</span>
-                          <span className="font-semibold text-black/80">{doc.uploadedBy}</span>
+                        <div className="p-3 bg-gray-50 rounded-xl">
+                          <div className="text-xs text-black/60 font-inter font-semibold mb-1">Uploaded by:</div>
+                          <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">{doc.uploadedBy}</div>
                         </div>
-                        <div className="flex items-center justify-between text-xs text-black/60">
-                          <span>Date:</span>
-                          <span className="font-semibold text-black/80">{doc.date}</span>
+                        <div className="p-3 bg-gray-50 rounded-xl">
+                          <div className="text-xs text-black/60 font-inter font-semibold mb-1">Date:</div>
+                          <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">{doc.date}</div>
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-2">
-                        <button className="flex-1 bg-blue-500 text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-blue-600 transition-colors">
-                          View
+                      {/* Action Buttons */}
+                      <div className="flex flex-col gap-2 mt-auto">
+                        <button className="w-full bg-black text-white px-4 py-3 rounded-full text-sm font-semibold hover:bg-gray-900 hover:scale-105 transition-all duration-300 font-inter shadow-lg hover:shadow-xl">
+                          View Document
                         </button>
-                        <button className="flex-1 bg-gray-500 text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-gray-600 transition-colors">
+                        <button className="w-full bg-transparent border-2 border-black text-black px-4 py-3 rounded-full text-sm font-semibold hover:bg-black hover:text-white hover:scale-105 transition-all duration-300 font-inter shadow-lg hover:shadow-xl">
                           Download
                         </button>
                       </div>
@@ -1445,71 +1591,91 @@ export default function DashboardPage() {
           <div className="space-y-8 animate-fade-in">
             {/* Team Header */}
             <section className="bg-white rounded-2xl shadow border border-black/10 p-6">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <h2 className="text-2xl font-bold text-black/80 flex items-center gap-3">
                   <UsersIcon className="h-7 w-7 text-green-600" /> 
                   Team Management
                 </h2>
                 <button
                   onClick={() => setInviteModalOpen(true)}
-                  className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 flex items-center gap-2"
+                  className="px-6 py-3 rounded-full font-semibold border-2 border-black text-black bg-transparent hover:bg-black hover:text-white transition-all duration-200 flex items-center gap-2 font-inter focus:outline-none focus:ring-4 focus:ring-black/20"
                 >
-                  <PlusIcon className="h-5 w-5" />
-                  Invite Member
+                  <UsersIcon className="h-5 w-5" /> Invite Team
                 </button>
               </div>
             </section>
 
             {/* Team Analytics Overview */}
-            <section className="bg-white rounded-2xl shadow border border-black/10 p-6">
+            <section className="bg-white rounded-2xl border border-black/10 p-6">
               <h3 className="text-xl font-bold text-black/80 mb-6 flex items-center gap-2">
                 <ChartBarIcon className="h-6 w-6 text-green-600" /> Team Analytics
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-green-200">
-                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mb-3">
-                    <UsersIcon className="h-6 w-6 text-white" />
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-green-400 hover:bg-green-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-green-100 to-green-200 group-hover:from-green-200 group-hover:to-green-300 transition-colors duration-300">
+                    <UsersIcon className="h-6 w-6 text-green-600" />
                   </div>
-                  <span className="text-3xl font-bold text-green-700">{teamMembers.length}</span>
-                  <span className="text-sm text-green-600 font-semibold mt-1">Total Members</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{teamMembers.length}</span>
+                  <span className="text-sm text-black/70 font-semibold">Total Members</span>
                 </div>
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-blue-200">
-                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mb-3">
-                    <BuildingOfficeIcon className="h-6 w-6 text-white" />
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-blue-400 hover:bg-blue-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-blue-100 to-blue-200 group-hover:from-blue-200 group-hover:to-blue-300 transition-colors duration-300">
+                    <BuildingOfficeIcon className="h-6 w-6 text-blue-600" />
                   </div>
-                  <span className="text-3xl font-bold text-blue-700">{projects.length}</span>
-                  <span className="text-sm text-blue-600 font-semibold mt-1">Active Projects</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{projects.length}</span>
+                  <span className="text-sm text-black/70 font-semibold">Active Projects</span>
                 </div>
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-purple-200">
-                  <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mb-3">
-                    <DocumentIcon className="h-6 w-6 text-white" />
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-purple-400 hover:bg-purple-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-purple-100 to-purple-200 group-hover:from-purple-200 group-hover:to-purple-300 transition-colors duration-300">
+                    <DocumentIcon className="h-6 w-6 text-purple-600" />
                   </div>
-                  <span className="text-3xl font-bold text-purple-700">{documents.length}</span>
-                  <span className="text-sm text-purple-600 font-semibold mt-1">Documents</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{documents.length}</span>
+                  <span className="text-sm text-black/70 font-semibold">Documents</span>
                 </div>
-                <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-yellow-200">
-                  <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mb-3">
-                    <ClipboardDocumentListIcon className="h-6 w-6 text-white" />
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-yellow-400 hover:bg-yellow-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-yellow-100 to-yellow-200 group-hover:from-yellow-200 group-hover:to-yellow-300 transition-colors duration-300">
+                    <ClipboardDocumentListIcon className="h-6 w-6 text-yellow-600" />
                   </div>
-                  <span className="text-3xl font-bold text-yellow-700">{Object.values(tasksByProject).reduce((acc: number, t) => acc + (Array.isArray(t) ? t.length : 0), 0)}</span>
-                  <span className="text-sm text-yellow-600 font-semibold mt-1">Total Tasks</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{Object.values(tasksByProject).reduce((acc: number, t) => acc + (Array.isArray(t) ? t.length : 0), 0)}</span>
+                  <span className="text-sm text-black/70 font-semibold">Total Tasks</span>
                 </div>
               </div>
             </section>
 
             {/* Team Members Grid */}
-            <section className="bg-white rounded-2xl shadow border border-black/10 p-6">
-              <h3 className="text-xl font-bold text-black/80 mb-6 flex items-center gap-2">
-                <UserGroupIcon className="h-6 w-6 text-green-600" /> Team Members
-              </h3>
+            <section className="bg-white rounded-3xl border border-gray-300 p-4 sm:p-6 lg:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 lg:mb-8">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-black to-gray-800 rounded-2xl flex items-center justify-center">
+                    <UserGroupIcon className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-black/80 font-plus-jakarta">All Team Members</h3>
+                    <p className="text-black/60 font-inter text-sm sm:text-base">Manage your construction team efficiently</p>
+                  </div>
+                </div>
+                <div className="flex sm:hidden items-center gap-3">
+                  <div className="px-4 py-2 bg-black/5 rounded-full border border-black/20">
+                    <span className="text-sm font-semibold text-black/80">{teamMembers.length} Members</span>
+                  </div>
+                </div>
+                <div className="hidden sm:flex items-center gap-3">
+                  <div className="px-4 py-2 bg-black/5 rounded-full border border-black/20">
+                    <span className="text-sm font-semibold text-black/80">{teamMembers.length} Members</span>
+                  </div>
+                </div>
+              </div>
+              
               {teamMembers.length === 0 ? (
-                <div className="text-center text-gray-500 py-12">
-                  <UsersIcon className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                  <p className="text-lg font-semibold">No team members yet</p>
-                  <p className="text-sm">Invite your first team member to get started</p>
+                <div className="text-center py-12 sm:py-16 lg:py-20">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                    <UsersIcon className="h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 text-gray-400" />
+                  </div>
+                  <h4 className="text-lg sm:text-xl lg:text-2xl font-bold text-black/70 mb-2 font-plus-jakarta">No team members found</h4>
+                  <p className="text-black/50 font-inter text-sm sm:text-base">Invite your first team member to get started</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
                   {teamMembers.map((member, idx) => {
                     // Create full name from firstName and lastName, or use name if available
                     const fullName = member.firstName && member.lastName 
@@ -1534,94 +1700,107 @@ export default function DashboardPage() {
                     const isCurrentUser = user?._id === member._id;
                     const isOwnerOrAdmin = user?.role === 'admin' || user?._id === selectedProject?.owner?._id;
                     return (
-                      <div key={idx} className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-200">
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-green-500 to-green-600 flex items-center justify-center text-white text-xl font-bold shadow-lg">
-                            {getInitials()}
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-bold text-black/80 text-lg">{fullName}</h4>
-                            <p className="text-sm text-black/60">{member.email}</p>
-                            <span className="inline-block mt-1 px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
-                              {member.role || 'Member'}
-                            </span>
+                      <div key={idx} className="group bg-white border-2 border-gray-200 rounded-3xl p-4 sm:p-6 lg:p-8 hover:border-black/30 hover:bg-black/5 transition-all duration-300 flex flex-col h-full">
+                        {/* Header */}
+                        <div className="flex items-start justify-between mb-4 sm:mb-6 gap-3">
+                          <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-gradient-to-tr from-orange-500 to-red-500 rounded-2xl flex items-center justify-center text-white text-sm sm:text-base lg:text-lg font-bold shadow-lg group-hover:shadow-xl transition-all duration-300 flex-shrink-0">
+                              {getInitials()}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <h4 className="font-bold text-black/80 text-base sm:text-lg lg:text-xl mb-1 sm:mb-2 font-plus-jakarta break-words leading-relaxed">{fullName}</h4>
+                              <p className="text-xs sm:text-sm lg:text-base text-black/60 font-inter break-words leading-relaxed">{member.email}</p>
+                            </div>
                           </div>
                         </div>
-                        {/* Role update and remove actions */}
+                        {/* Role Management */}
                         {isOwnerOrAdmin && !isCurrentUser && (
-                          <div className="flex items-center gap-2 mb-4">
-                            {/* Change Role */}
-                            <select
-                              value={member.role || 'member'}
-                              onChange={async (e) => {
-                                setRoleUpdateLoading(member._id);
-                                setRoleError("");
-                                try {
-                                  const res = await fetch(`/api/projects/${selectedProject?._id}/members/${member._id}`, {
-                                    method: 'PATCH',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ role: e.target.value }),
-                                  });
-                                  if (!res.ok) {
-                                    const data = await res.json();
-                                    setRoleError(data.error || 'Failed to update role');
-                                  } else {
-                                    // Refetch team members
-                                    fetch(`/api/projects/${selectedProject?._id}`)
-                                      .then(res => res.json())
-                                      .then(data => setTeamMembers(data.members || []));
-                                  }
-                                } catch (err) {
-                                  setRoleError('Failed to update role');
-                                }
-                                setRoleUpdateLoading(null);
-                              }}
-                              className="border border-gray-300 rounded px-2 py-1 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-400"
-                              disabled={roleUpdateLoading === member._id}
-                            >
-                              <option value="admin">Admin</option>
-                              <option value="member">Member</option>
-                            </select>
-                            {/* Remove */}
-                            <button
-                              className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs font-semibold disabled:opacity-60"
-                              onClick={() => setRemoveMemberModal({open: true, member})}
-                              disabled={removeLoading}
-                            >
-                              Remove
-                            </button>
+                          <div className="space-y-3 mb-6">
+                            <div className="p-3 bg-red-50 rounded-xl border border-red-200">
+                              <div className="text-xs text-red-800 font-inter font-semibold mb-2">Manage Role:</div>
+                              <div className="flex flex-col sm:flex-row gap-2">
+                                <select
+                                  value={member.role || 'member'}
+                                  onChange={async (e) => {
+                                    setRoleUpdateLoading(member._id);
+                                    setRoleError("");
+                                    try {
+                                      const res = await fetch(`/api/projects/${selectedProject?._id}/members/${member._id}`, {
+                                        method: 'PATCH',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ role: e.target.value }),
+                                      });
+                                      if (!res.ok) {
+                                        const data = await res.json();
+                                        setRoleError(data.error || 'Failed to update role');
+                                      } else {
+                                        // Refetch team members
+                                        fetch(`/api/projects/${selectedProject?._id}`)
+                                          .then(res => res.json())
+                                          .then(data => setTeamMembers(data.members || []));
+                                      }
+                                    } catch (err) {
+                                      setRoleError('Failed to update role');
+                                    }
+                                    setRoleUpdateLoading(null);
+                                  }}
+                                  className="flex-1 border border-red-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
+                                  disabled={roleUpdateLoading === member._id}
+                                >
+                                  <option value="admin">Admin</option>
+                                  <option value="member">Member</option>
+                                </select>
+                                <button
+                                  className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold hover:bg-red-600 transition-colors disabled:opacity-60"
+                                  onClick={() => setRemoveMemberModal({open: true, member})}
+                                  disabled={removeLoading}
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                            {roleError && <div className="text-red-500 text-xs p-2 bg-red-50 rounded-lg">{roleError}</div>}
                           </div>
                         )}
-                        {roleError && <div className="text-red-500 text-xs mb-2">{roleError}</div>}
-                        <div className="space-y-3 mb-4">
-                          <div className="flex items-center justify-between p-2 bg-blue-50 rounded-lg">
-                            <span className="text-xs text-blue-600">Status</span>
-                            <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                              member.status === 'online' ? 'bg-green-100 text-green-700' :
-                              member.status === 'busy' ? 'bg-yellow-100 text-yellow-700' :
-                              'bg-gray-100 text-gray-700'
-                            }`}>
-                              {member.status || 'offline'}
-                            </span>
+                        {/* Member Info */}
+                        <div className="space-y-3 mb-6">
+                          <div className="p-3 bg-gray-50 rounded-xl">
+                            <div className="text-xs text-black/60 font-inter font-semibold mb-1">Role:</div>
+                            <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">
+                              {member.role || 'Member'}
+                            </div>
                           </div>
-                          <div className="flex items-center justify-between p-2 bg-purple-50 rounded-lg">
-                            <span className="text-xs text-purple-600">Projects</span>
-                            <span className="text-xs font-semibold text-purple-700">
-                              {projects.filter(p => p.members?.some((m: any) => m._id === member._id || m.email === member.email)).length}
-                            </span>
+                          <div className="p-3 bg-gray-50 rounded-xl">
+                            <div className="text-xs text-black/60 font-inter font-semibold mb-1">Status:</div>
+                            <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">
+                              <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                member.status === 'online' ? 'bg-green-100 text-green-700' :
+                                member.status === 'busy' ? 'bg-yellow-100 text-yellow-700' :
+                                'bg-gray-100 text-gray-700'
+                              }`}>
+                                {member.status || 'offline'}
+                              </span>
+                            </div>
                           </div>
-                          <div className="flex items-center justify-between p-2 bg-yellow-50 rounded-lg">
-                            <span className="text-xs text-yellow-600">Documents</span>
-                            <span className="text-xs font-semibold text-yellow-700">
-                              {documents.filter(d => d.uploadedBy === fullName || d.uploadedBy === member.email).length}
-                            </span>
+                          <div className="p-3 bg-gray-50 rounded-xl">
+                            <div className="text-xs text-black/60 font-inter font-semibold mb-1">Active Projects:</div>
+                            <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">
+                              {projects.filter(p => p.members?.some((m: any) => m._id === member._id || m.email === member.email)).length} projects
+                            </div>
+                          </div>
+                          <div className="p-3 bg-gray-50 rounded-xl">
+                            <div className="text-xs text-black/60 font-inter font-semibold mb-1">Documents Uploaded:</div>
+                            <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">
+                              {documents.filter(d => d.uploadedBy === fullName || d.uploadedBy === member.email).length} documents
+                            </div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <button className="flex-1 bg-green-500 text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-green-600 transition-colors">
+                        {/* Action Buttons */}
+                        <div className="flex flex-col gap-2 mt-auto">
+                          <button className="w-full bg-black text-white px-4 py-3 rounded-full text-sm font-semibold hover:bg-gray-900 hover:scale-105 transition-all duration-300 font-inter shadow-lg hover:shadow-xl">
                             View Profile
                           </button>
-                          <button className="flex-1 bg-blue-500 text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-blue-600 transition-colors">
+                          <button className="w-full bg-transparent border-2 border-black text-black px-4 py-3 rounded-full text-sm font-semibold hover:bg-black hover:text-white hover:scale-105 transition-all duration-300 font-inter shadow-lg hover:shadow-xl">
                             Message
                           </button>
                         </div>
@@ -1692,42 +1871,42 @@ export default function DashboardPage() {
         return (
           <div className="space-y-8 animate-fade-in">
             {/* Enhanced Quick Stats */}
-            <section className="bg-white rounded-2xl shadow border border-black/10 p-6">
+            <section className="bg-white rounded-2xl border border-black/10 p-6">
               <h2 className="text-2xl font-bold text-black/80 mb-6 flex items-center gap-3">
                 <ChartBarIcon className="h-7 w-7 text-purple-600" /> 
                 Construction Analytics Dashboard
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-purple-200">
-                  <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center shadow-lg">
-                    <BuildingOfficeIcon className="h-6 w-6 text-white" />
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-purple-400 hover:bg-purple-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-purple-100 to-purple-200 group-hover:from-purple-200 group-hover:to-purple-300 transition-colors duration-300">
+                    <BuildingOfficeIcon className="h-6 w-6 text-purple-600" />
                   </div>
-                  <span className="text-3xl font-bold text-purple-700">{projects.length}</span>
-                  <span className="text-sm text-purple-600 font-semibold mt-1">Total Projects</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{projects.length}</span>
+                  <span className="text-sm text-black/70 font-semibold">Total Projects</span>
                   <span className="text-xs text-purple-500 mt-1">{activeProjects} Active</span>
                 </div>
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-blue-200">
-                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mb-3">
-                    <DocumentIcon className="h-6 w-6 text-white" />
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-blue-400 hover:bg-blue-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-blue-100 to-blue-200 group-hover:from-blue-200 group-hover:to-blue-300 transition-colors duration-300">
+                    <DocumentIcon className="h-6 w-6 text-blue-600" />
                   </div>
-                  <span className="text-3xl font-bold text-blue-700">{totalDocuments}</span>
-                  <span className="text-sm text-blue-600 font-semibold mt-1">Documents</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{totalDocuments}</span>
+                  <span className="text-sm text-black/70 font-semibold">Documents</span>
                   <span className="text-xs text-blue-500 mt-1">{approvedDocuments} Approved</span>
                 </div>
-                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-green-200">
-                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mb-3">
-                    <UsersIcon className="h-6 w-6 text-white" />
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-green-400 hover:bg-green-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-green-100 to-green-200 group-hover:from-green-200 group-hover:to-green-300 transition-colors duration-300">
+                    <UsersIcon className="h-6 w-6 text-green-600" />
                   </div>
-                  <span className="text-3xl font-bold text-green-700">{teamMembers.length}</span>
-                  <span className="text-sm text-green-600 font-semibold mt-1">Team Members</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{teamMembers.length}</span>
+                  <span className="text-sm text-black/70 font-semibold">Team Members</span>
                   <span className="text-xs text-green-500 mt-1">Active Users</span>
                 </div>
-                <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-6 flex flex-col items-center transition-transform duration-200 hover:scale-105 shadow-sm border border-yellow-200">
-                  <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mb-3">
-                    <ClipboardDocumentListIcon className="h-6 w-6 text-white" />
+                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-yellow-400 hover:bg-yellow-50/40">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-yellow-100 to-yellow-200 group-hover:from-yellow-200 group-hover:to-yellow-300 transition-colors duration-300">
+                    <ClipboardDocumentListIcon className="h-6 w-6 text-yellow-600" />
                   </div>
-                  <span className="text-3xl font-bold text-yellow-700">{totalTasks}</span>
-                  <span className="text-sm text-yellow-600 font-semibold mt-1">Total Tasks</span>
+                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{totalTasks}</span>
+                  <span className="text-sm text-black/70 font-semibold">Total Tasks</span>
                   <span className="text-xs text-yellow-500 mt-1">In Progress</span>
                 </div>
               </div>
@@ -1905,8 +2084,8 @@ export default function DashboardPage() {
         return (
           <div className="space-y-8 animate-fade-in">
             {/* Settings Header */}
-            <section className="bg-white rounded-2xl shadow border border-black/10 p-6">
-              <h2 className="text-2xl font-bold text-black/80 mb-6 flex items-center gap-3">
+            <section className="bg-white rounded-3xl border border-gray-400 p-6">
+              <h2 className="text-2xl font-bold text-black mb-6 flex items-center gap-3 font-plus-jakarta">
                 <Cog6ToothIcon className="h-7 w-7 text-purple-600" /> 
                 Account Settings & Preferences
               </h2>
@@ -1914,57 +2093,57 @@ export default function DashboardPage() {
 
             {/* User Profile Section */}
             {user && (
-              <section className="bg-white rounded-2xl shadow border border-black/10 p-6">
-                <h3 className="text-xl font-bold text-black/80 mb-6 flex items-center gap-2">
+              <section className="bg-white rounded-3xl border border-gray-400 p-6">
+                <h3 className="text-xl font-bold text-black mb-6 flex items-center gap-2 font-plus-jakarta">
                   <UserGroupIcon className="h-6 w-6 text-blue-600" /> Profile Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Profile Card */}
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
+                  <div className="bg-transparent rounded-xl p-6 border-2 border-gray-300 hover:border-gray-400 transition-all duration-200">
                     <div className="flex items-center gap-4 mb-6">
-                      <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-blue-600 to-blue-400 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-orange-500 to-red-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
                         {user.firstName?.[0]?.toUpperCase()}{user.lastName?.[0]?.toUpperCase()}
                       </div>
                       <div>
-                        <h4 className="text-xl font-bold text-black/80">{user.firstName} {user.lastName}</h4>
-                        <p className="text-blue-700 font-medium">{user.email || user.id}</p>
-                        <span className="inline-block mt-2 px-3 py-1 bg-blue-200 text-blue-800 rounded-full text-sm font-semibold">
+                        <h4 className="text-xl font-bold text-black font-plus-jakarta">{user.firstName} {user.lastName}</h4>
+                        <p className="text-black/70 font-medium">{user.email || user.id}</p>
+                        <span className="inline-block mt-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">
                           Account Owner
                         </span>
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <div className="flex items-center gap-3 p-3 bg-white/60 rounded-lg">
-                        <BuildingOfficeIcon className="h-5 w-5 text-blue-500" />
+                      <div className="flex items-center gap-3 p-3 bg-white/60 rounded-lg border border-gray-200">
+                        <BuildingOfficeIcon className="h-5 w-5 text-blue-600" />
                         <div>
-                          <p className="text-sm text-black/60">Company ID</p>
-                          <p className="font-semibold text-black/80">{user.companyId}</p>
+                          <p className="text-sm text-black/70">Company ID</p>
+                          <p className="font-semibold text-black">{user.companyId}</p>
                         </div>
                       </div>
                       {user.businessType && (
-                        <div className="flex items-center gap-3 p-3 bg-white/60 rounded-lg">
-                          <WrenchScrewdriverIcon className="h-5 w-5 text-yellow-500" />
+                        <div className="flex items-center gap-3 p-3 bg-white/60 rounded-lg border border-gray-200">
+                          <WrenchScrewdriverIcon className="h-5 w-5 text-yellow-600" />
                           <div>
-                            <p className="text-sm text-black/60">Business Type</p>
-                            <p className="font-semibold text-black/80">{user.businessType}</p>
+                            <p className="text-sm text-black/70">Business Type</p>
+                            <p className="font-semibold text-black">{user.businessType}</p>
                           </div>
                         </div>
                       )}
                       {user.country && (
-                        <div className="flex items-center gap-3 p-3 bg-white/60 rounded-lg">
-                          <GlobeAltIcon className="h-5 w-5 text-green-500" />
+                        <div className="flex items-center gap-3 p-3 bg-white/60 rounded-lg border border-gray-200">
+                          <GlobeAltIcon className="h-5 w-5 text-green-600" />
                           <div>
-                            <p className="text-sm text-black/60">Country</p>
-                            <p className="font-semibold text-black/80">{user.country}</p>
+                            <p className="text-sm text-black/70">Country</p>
+                            <p className="font-semibold text-black">{user.country}</p>
                           </div>
                         </div>
                       )}
                       {user.constructionVolume && (
-                        <div className="flex items-center gap-3 p-3 bg-white/60 rounded-lg">
-                          <ChartBarIcon className="h-5 w-5 text-purple-500" />
+                        <div className="flex items-center gap-3 p-3 bg-white/60 rounded-lg border border-gray-200">
+                          <ChartBarIcon className="h-5 w-5 text-purple-600" />
                           <div>
-                            <p className="text-sm text-black/60">Construction Volume</p>
-                            <p className="font-semibold text-black/80">{user.constructionVolume}</p>
+                            <p className="text-sm text-black/70">Construction Volume</p>
+                            <p className="font-semibold text-black">{user.constructionVolume}</p>
                           </div>
                         </div>
                       )}
@@ -1973,39 +2152,34 @@ export default function DashboardPage() {
 
                   {/* Account Actions */}
                   <div className="space-y-4">
-                    <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
-                      <h4 className="text-lg font-bold text-green-700 mb-4 flex items-center gap-2">
-                        <CheckBadgeIcon className="h-5 w-5" /> Account Status
+                    <div className="bg-transparent rounded-xl p-6 border-2 border-gray-300 hover:border-gray-400 transition-all duration-200">
+                      <h4 className="text-lg font-bold text-black mb-4 flex items-center gap-2 font-plus-jakarta">
+                        <CheckBadgeIcon className="h-5 w-5 text-green-600" /> Account Status
                       </h4>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-green-600">Account Type</span>
-                          <span className="font-semibold text-green-700">Active</span>
+                          <span className="text-sm text-black/70">Account Type</span>
+                          <span className="font-semibold text-black">Active</span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-green-600">Last Login</span>
-                          <span className="font-semibold text-green-700">Today</span>
+                          <span className="text-sm text-black/70">Last Login</span>
+                          <span className="font-semibold text-black">Today</span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-green-600">Member Since</span>
-                          <span className="font-semibold text-green-700">2024</span>
+                          <span className="text-sm text-black/70">Member Since</span>
+                          <span className="font-semibold text-black">2024</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-6 border border-red-200">
-                      <h4 className="text-lg font-bold text-red-700 mb-4 flex items-center gap-2">
-                        <ExclamationCircleIcon className="h-5 w-5" /> Danger Zone
+                    <div className="bg-transparent rounded-xl p-6 border-2 border-gray-300 hover:border-gray-400 transition-all duration-200">
+                      <h4 className="text-lg font-bold text-black mb-4 flex items-center gap-2 font-plus-jakarta">
+                        <ExclamationCircleIcon className="h-5 w-5 text-red-600" /> Danger Zone
                       </h4>
-                      <p className="text-sm text-red-600 mb-4">Once you delete your account, there is no going back. Please be certain.</p>
+                      <p className="text-sm text-black/70 mb-4">Once you delete your account, there is no going back. Please be certain.</p>
                       <button
-                        className="bg-red-500 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-600 transition-all duration-200 disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-red-300"
-                        onClick={async () => {
-                          setLogoutLoading(true);
-                          await fetch('/api/auth/logout', { method: 'POST' });
-                          setLogoutLoading(false);
-                          window.location.reload();
-                        }}
+                        className="bg-transparent border-2 border-red-500 text-red-700 px-6 py-3 rounded-full font-semibold hover:bg-red-500 hover:text-white transition-all duration-200 w-full sm:w-auto disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-red-300"
+                        onClick={() => handleLogout(setLogoutLoading)}
                         disabled={logoutLoading}
                       >
                         {logoutLoading ? 'Logging out...' : 'Logout'}
@@ -2017,8 +2191,8 @@ export default function DashboardPage() {
             )}
 
             {/* Subscription & Billing Section */}
-            <section className="bg-white rounded-2xl shadow border border-black/10 p-6">
-              <h3 className="text-xl font-bold text-black/80 mb-6 flex items-center gap-2">
+            <section className="bg-white rounded-3xl border border-gray-400 p-6">
+              <h3 className="text-xl font-bold text-black mb-6 flex items-center gap-2 font-plus-jakarta">
                 <ChartPieIcon className="h-6 w-6 text-yellow-600" /> Subscription & Billing
               </h3>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -2027,7 +2201,7 @@ export default function DashboardPage() {
                   <div className="flex items-center gap-3 mb-4">
                     <ChartPieIcon className="h-8 w-8 text-yellow-600" />
                     <div>
-                      <h4 className="text-xl font-bold text-yellow-700">Current Plan</h4>
+                      <h4 className="text-xl font-bold text-yellow-700 font-plus-jakarta">Current Plan</h4>
                       <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${projects.length <= 2 ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'}`}>
                         {projects.length <= 2 ? 'Free Plan' : 'Pro Plan'}
                       </span>
@@ -2057,7 +2231,7 @@ export default function DashboardPage() {
 
                 {/* Plan Features */}
                 <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
-                  <h4 className="text-xl font-bold text-purple-700 mb-4 flex items-center gap-2">
+                  <h4 className="text-xl font-bold text-purple-700 mb-4 flex items-center gap-2 font-plus-jakarta">
                     <StarIcon className="h-6 w-6" /> Plan Features
                   </h4>
                   <div className="space-y-3">
@@ -2087,7 +2261,7 @@ export default function DashboardPage() {
                   
                   <div className="mt-6">
                     <button
-                      className={`w-full px-6 py-3 rounded-lg font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 ${
+                      className={`w-full px-6 py-3 rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 ${
                         projects.length <= 2 
                           ? 'bg-yellow-500 text-white hover:bg-yellow-600 focus:ring-yellow-300' 
                           : 'bg-gray-300 text-gray-600 cursor-not-allowed'
@@ -2103,40 +2277,40 @@ export default function DashboardPage() {
             </section>
 
             {/* Security & Privacy Section */}
-            <section className="bg-white rounded-2xl shadow border border-black/10 p-6">
-              <h3 className="text-xl font-bold text-black/80 mb-6 flex items-center gap-2">
+            <section className="bg-white rounded-3xl border border-gray-400 p-6">
+              <h3 className="text-xl font-bold text-black mb-6 flex items-center gap-2 font-plus-jakarta">
                 <ShieldCheckIcon className="h-6 w-6 text-green-600" /> Security & Privacy
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
+                <div className="bg-transparent rounded-xl p-6 border-2 border-gray-300 hover:border-gray-400 transition-all duration-200">
                   <div className="flex items-center gap-3 mb-4">
                     <LockClosedIcon className="h-6 w-6 text-green-600" />
-                    <h4 className="text-lg font-bold text-green-700">Password</h4>
+                    <h4 className="text-lg font-bold text-black font-plus-jakarta">Password</h4>
                   </div>
-                  <p className="text-sm text-green-600 mb-4">Update your password to keep your account secure.</p>
-                  <button className="bg-green-500 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-green-600 transition-all duration-200">
+                  <p className="text-sm text-black/70 mb-4">Update your password to keep your account secure.</p>
+                  <button className="bg-transparent border-2 border-green-500 text-green-700 px-6 py-3 rounded-full font-semibold hover:bg-green-500 hover:text-white transition-all duration-200 w-full sm:w-auto">
                     Change Password
                   </button>
                 </div>
 
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
+                <div className="bg-transparent rounded-xl p-6 border-2 border-gray-300 hover:border-gray-400 transition-all duration-200">
                   <div className="flex items-center gap-3 mb-4">
                     <DocumentDuplicateIcon className="h-6 w-6 text-blue-600" />
-                    <h4 className="text-lg font-bold text-blue-700">Privacy</h4>
+                    <h4 className="text-lg font-bold text-black font-plus-jakarta">Privacy</h4>
                   </div>
-                  <p className="text-sm text-blue-600 mb-4">Manage your privacy settings and data preferences.</p>
-                  <button className="bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-blue-600 transition-all duration-200">
+                  <p className="text-sm text-black/70 mb-4">Manage your privacy settings and data preferences.</p>
+                  <button className="bg-transparent border-2 border-blue-500 text-blue-700 px-6 py-3 rounded-full font-semibold hover:bg-blue-500 hover:text-white transition-all duration-200 w-full sm:w-auto">
                     Privacy Settings
                   </button>
                 </div>
 
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
+                <div className="bg-transparent rounded-xl p-6 border-2 border-gray-300 hover:border-gray-400 transition-all duration-200">
                   <div className="flex items-center gap-3 mb-4">
                     <CalendarDaysIcon className="h-6 w-6 text-purple-600" />
-                    <h4 className="text-lg font-bold text-purple-700">Notifications</h4>
+                    <h4 className="text-lg font-bold text-black font-plus-jakarta">Notifications</h4>
                   </div>
-                  <p className="text-sm text-purple-600 mb-4">Configure your notification preferences.</p>
-                  <button className="bg-purple-500 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-purple-600 transition-all duration-200">
+                  <p className="text-sm text-black/70 mb-4">Configure your notification preferences.</p>
+                  <button className="bg-transparent border-2 border-purple-500 text-purple-700 px-6 py-3 rounded-full font-semibold hover:bg-purple-500 hover:text-white transition-all duration-200 w-full sm:w-auto">
                     Notification Settings
                   </button>
                 </div>
@@ -2147,15 +2321,217 @@ export default function DashboardPage() {
       case "calendar":
         return (
           <div className="space-y-8 animate-fade-in">
-            <section className="bg-white rounded-2xl shadow border border-black/10 p-6">
-              <h2 className="text-2xl font-bold text-black/80 mb-6 flex items-center gap-3">
-                <CalendarIcon className="h-7 w-7 text-pink-600" />
-                Calendar & Deadlines
-              </h2>
-              <CalendarView
-                tasksByProject={tasksByProject}
-                projects={projects}
-              />
+            {/* Calendar Header with Stats */}
+            <section className="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-transparent border-2 border-pink-500 flex items-center justify-center shadow-lg">
+                    <CalendarIcon className="h-6 w-6 text-pink-600" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-black font-plus-jakarta">Calendar & Deadlines</h2>
+                    <p className="text-black/60 text-sm">Manage your project timelines and task deadlines</p>
+                  </div>
+                </div>
+                
+                {/* Quick Stats */}
+                <div className="flex flex-wrap gap-4">
+                  <div className="bg-transparent rounded-2xl px-4 py-3 border-2 border-green-500">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-transparent border-2 border-green-500 flex items-center justify-center">
+                        <CheckCircleIcon className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-green-700 font-medium">Completed</p>
+                        <p className="text-lg font-bold text-green-800">
+                          {Object.values(tasksByProject).flat().filter((task: any) => task.status === 'completed').length}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-transparent rounded-2xl px-4 py-3 border-2 border-blue-500">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-transparent border-2 border-blue-500 flex items-center justify-center">
+                        <ClockIcon className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-blue-700 font-medium">Pending</p>
+                        <p className="text-lg font-bold text-blue-800">
+                          {Object.values(tasksByProject).flat().filter((task: any) => task.status === 'pending').length}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-transparent rounded-2xl px-4 py-3 border-2 border-orange-500">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-transparent border-2 border-orange-500 flex items-center justify-center">
+                        <ExclamationTriangleIcon className="h-4 w-4 text-orange-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-orange-700 font-medium">Overdue</p>
+                        <p className="text-lg font-bold text-orange-800">
+                          {Object.values(tasksByProject).flat().filter((task: any) => 
+                            task.dueDate && new Date(task.dueDate) < new Date() && task.status !== 'completed'
+                          ).length}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Calendar Controls */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <button className="px-4 py-2 rounded-full bg-black text-white font-semibold hover:bg-gray-800 transition-all duration-200 flex items-center gap-2">
+                    <PlusIcon className="h-4 w-4" />
+                    Add Task
+                  </button>
+                  <button className="px-4 py-2 rounded-full border-2 border-gray-300 text-black font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 flex items-center gap-2">
+                    <FunnelIcon className="h-4 w-4" />
+                    Filter
+                  </button>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <button className="p-2 rounded-full hover:bg-gray-100 transition-all duration-200">
+                    <ChevronLeftIcon className="h-5 w-5 text-black/60" />
+                  </button>
+                  <span className="px-4 py-2 text-sm font-semibold text-black">Today</span>
+                  <button className="p-2 rounded-full hover:bg-gray-100 transition-all duration-200">
+                    <ChevronRightIcon className="h-5 w-5 text-black/60" />
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            {/* Main Calendar Section */}
+            <section className="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm">
+              <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+                {/* Calendar Sidebar */}
+                <div className="xl:col-span-1 space-y-6">
+                  {/* View Selector */}
+                  <div className="bg-gray-50 rounded-2xl p-4">
+                    <h3 className="text-sm font-semibold text-black mb-3">Calendar Views</h3>
+                    <div className="space-y-2">
+                      {['Month', 'Week', 'Day', 'Agenda'].map((view) => (
+                        <button
+                          key={view}
+                          className="w-full text-left px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-white hover:shadow-sm"
+                        >
+                          {view} View
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Project Filter */}
+                  <div className="bg-gray-50 rounded-2xl p-4">
+                    <h3 className="text-sm font-semibold text-black mb-3">Projects</h3>
+                    <div className="space-y-2">
+                      {projects.map((project, index) => (
+                        <label key={project._id} className="flex items-center gap-3 p-2 rounded-xl hover:bg-white transition-all duration-200 cursor-pointer">
+                          <div 
+                            className="w-3 h-3 rounded-full"
+                            style={{ backgroundColor: PROJECT_COLORS[index % PROJECT_COLORS.length] }}
+                          />
+                          <span className="text-sm text-black/80">{project.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Quick Actions */}
+                  <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-4 border border-purple-200">
+                    <h3 className="text-sm font-semibold text-purple-800 mb-3">Quick Actions</h3>
+                    <div className="space-y-2">
+                      <button className="w-full text-left px-3 py-2 rounded-xl text-sm font-medium text-purple-700 hover:bg-white hover:shadow-sm transition-all duration-200">
+                        📅 Schedule Meeting
+                      </button>
+                      <button className="w-full text-left px-3 py-2 rounded-xl text-sm font-medium text-purple-700 hover:bg-white hover:shadow-sm transition-all duration-200">
+                        ⏰ Set Reminder
+                      </button>
+                      <button className="w-full text-left px-3 py-2 rounded-xl text-sm font-medium text-purple-700 hover:bg-white hover:shadow-sm transition-all duration-200">
+                        📊 Export Calendar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Main Calendar */}
+                <div className="xl:col-span-3">
+                  <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                    <CalendarView
+                      tasksByProject={tasksByProject}
+                      projects={projects}
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Upcoming Deadlines */}
+            <section className="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm">
+              <h3 className="text-xl font-bold text-black mb-6 flex items-center gap-2 font-plus-jakarta">
+                <ClockIcon className="h-6 w-6 text-orange-600" />
+                Upcoming Deadlines
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {Object.entries(tasksByProject).flatMap(([projectId, tasks]: [string, any]) => 
+                  (tasks as any[])
+                    .filter((task: any) => task.dueDate && new Date(task.dueDate) >= new Date())
+                    .sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+                    .slice(0, 6)
+                    .map((task: any) => {
+                      const project = projects.find(p => p._id === projectId);
+                      const daysUntil = Math.ceil((new Date(task.dueDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                      const isOverdue = new Date(task.dueDate) < new Date();
+                      
+                      return (
+                        <div key={task._id} className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-4 border border-gray-200 hover:shadow-md transition-all duration-200">
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-black text-sm line-clamp-2">{task.title}</h4>
+                              <p className="text-xs text-black/60 mt-1">{project?.name}</p>
+                            </div>
+                            <div className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                              task.priority === 'high' ? 'bg-red-100 text-red-700' :
+                              task.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-green-100 text-green-700'
+                            }`}>
+                              {task.priority}
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <CalendarIcon className="h-4 w-4 text-black/40" />
+                              <span className={`text-sm font-medium ${
+                                isOverdue ? 'text-red-600' : daysUntil <= 3 ? 'text-orange-600' : 'text-black/70'
+                              }`}>
+                                {isOverdue ? 'Overdue' : daysUntil === 0 ? 'Today' : `${daysUntil} days`}
+                              </span>
+                            </div>
+                            <button className="px-3 py-1 rounded-full bg-black text-white text-xs font-semibold hover:bg-gray-800 transition-all duration-200">
+                              View
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })
+                )}
+              </div>
+              
+              {Object.values(tasksByProject).flat().filter((task: any) => task.dueDate && new Date(task.dueDate) >= new Date()).length === 0 && (
+                <div className="text-center py-12">
+                  <CalendarIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <h4 className="text-lg font-semibold text-black/60 mb-2">No upcoming deadlines</h4>
+                  <p className="text-sm text-black/40">Tasks with due dates will appear here</p>
+                </div>
+              )}
             </section>
           </div>
         );
@@ -2166,112 +2542,263 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col md:flex-row font-inter">
-      {/* Sidebar */}
-      <aside className="bg-white border-r border-black/10 w-full md:w-72 flex-shrink-0 sticky top-0 z-30 h-16 md:h-screen flex md:flex-col items-center md:items-stretch px-4 md:px-6 py-2 md:py-8 shadow-sm">
-        <div className="flex-1 flex flex-row md:flex-col gap-3 md:gap-4 items-center md:items-stretch w-full">
-          {/* Logo Section */}
-          <div className="hidden md:flex items-center justify-center mb-10">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center shadow-lg">
-                <BuildingOfficeIcon className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-2xl font-bold text-black tracking-tight font-plus-jakarta">BuildStack</span>
+      {/* Mobile Header - Always Visible */}
+      <header className="md:hidden bg-white border-b border-black/10 px-4 py-3 sticky top-0 z-40">
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
+              <BuildingOfficeIcon className="h-6 w-6 text-white" />
             </div>
+            <span className="text-xl font-bold text-black font-plus-jakarta">BuildStack</span>
           </div>
           
-          {/* Navigation Items */}
-          <div className="flex flex-row md:flex-col gap-1 md:gap-2 w-full overflow-y-auto max-h-[calc(100vh-120px)] md:max-h-full">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2.5 rounded-2xl bg-transparent border-2 border-black/20 text-black hover:bg-black/5 hover:border-black/40 transition-all duration-300 backdrop-blur-sm"
+          >
+            {mobileMenuOpen ? (
+              <XMarkIcon className="h-6 w-6" />
+            ) : (
+              <Bars3Icon className="h-6 w-6" />
+            )}
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Sidebar Overlay */}
+      {mobileMenuOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/50 z-50"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile Sidebar */}
+      <aside className={`md:hidden fixed top-0 left-0 h-full w-80 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
+        mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        {/* Mobile Sidebar Header */}
+        <div className="bg-black px-4 py-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white/10 rounded-2xl flex items-center justify-center">
+              <BuildingOfficeIcon className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-white font-plus-jakarta">BuildStack</h1>
+              <p className="text-white/70 text-xs font-inter">Construction Docs</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        <div className="flex-1 overflow-y-auto py-3 px-3">
+          {/* User Profile Section - Compact */}
+          {user && (
+            <div className="mb-4 p-3 bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-500 to-red-500 flex items-center justify-center text-white text-sm font-bold shadow-lg">
+                  {user.firstName?.[0]?.toUpperCase()}{user.lastName?.[0]?.toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-black text-sm truncate">{user.firstName} {user.lastName}</p>
+                  <p className="text-black/60 text-xs truncate">{user.email}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Navigation Items - Compact spacing */}
+          <div className="space-y-1 mb-4">
             {navItems.map((item) => (
               <button
                 key={item.tab}
-                className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 font-semibold group relative overflow-hidden font-inter w-full ${
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 font-semibold group relative overflow-hidden ${
                   activeTab === item.tab 
-                    ? `bg-black/8 ${item.activeColor} shadow-lg border-2 ${item.activeBorderColor} transform scale-[1.02]` 
-                    : `${item.color} hover:bg-black/5 hover:shadow-md hover:scale-[1.01] border-2 border-transparent`
+                    ? 'bg-black text-white shadow-lg transform scale-[1.01]' 
+                    : 'text-black/70 hover:bg-gray-100 hover:text-black'
+                } ${tabLoading && loadingTab === item.tab ? 'opacity-50 cursor-not-allowed' : ''}`}
+                onClick={() => {
+                  handleTabChange(item.tab);
+                  setMobileMenuOpen(false);
+                }}
+                disabled={tabLoading}
+              >
+                {/* Icon - Modern and impactful */}
+                <div className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
+                  activeTab === item.tab 
+                    ? 'bg-white/20 text-white' 
+                    : 'bg-gray-100 text-black/60 group-hover:bg-gray-200 group-hover:text-black'
+                }`}>
+                  {React.cloneElement(item.icon, {
+                    className: `h-4 w-4 transition-all duration-300 ${
+                      activeTab === item.tab 
+                        ? 'text-white' 
+                        : 'text-black/60 group-hover:text-black'
+                    }`
+                  })}
+                </div>
+                
+                {/* Text */}
+                <span className="font-semibold text-sm">{item.name}</span>
+                
+                {/* Active Indicator */}
+                {activeTab === item.tab && (
+                  <div className="absolute right-3 w-1.5 h-1.5 bg-white rounded-full" />
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Quick Actions - Compact */}
+          <div className="mb-3 p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border border-blue-200">
+            <h3 className="text-xs font-semibold text-blue-800 mb-2 font-plus-jakarta">Quick Actions</h3>
+            <div className="space-y-1">
+              <button 
+                onClick={() => {
+                  setModalOpen(true);
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-medium text-blue-700 hover:bg-white hover:shadow-sm transition-all duration-200"
+              >
+                <PlusIcon className="h-3 w-3" />
+                New Project
+              </button>
+              <button className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-medium text-blue-700 hover:bg-white hover:shadow-sm transition-all duration-200">
+                <DocumentIcon className="h-3 w-3" />
+                Upload Document
+              </button>
+              <button className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-medium text-blue-700 hover:bg-white hover:shadow-sm transition-all duration-200">
+                <UsersIcon className="h-3 w-3" />
+                Invite Team
+              </button>
+            </div>
+          </div>
+
+          {/* Stats Summary - Compact */}
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <div className="p-2 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+              <div className="text-lg font-bold text-green-800 font-plus-jakarta">{projects.length}</div>
+              <div className="text-xs text-green-700 font-medium">Projects</div>
+            </div>
+            <div className="p-2 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+              <div className="text-lg font-bold text-purple-800 font-plus-jakarta">{documents.length}</div>
+              <div className="text-xs text-purple-700 font-medium">Documents</div>
+            </div>
+          </div>
+
+          {/* Additional Stats for better mobile visibility */}
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <div className="p-2 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg border border-orange-200">
+              <div className="text-lg font-bold text-orange-800 font-plus-jakarta">{teamMembers.length}</div>
+              <div className="text-xs text-orange-700 font-medium">Team</div>
+            </div>
+            <div className="p-2 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg border border-yellow-200">
+              <div className="text-lg font-bold text-yellow-800 font-plus-jakarta">{Object.values(tasksByProject).reduce((acc: number, t) => acc + (Array.isArray(t) ? t.length : 0), 0)}</div>
+              <div className="text-xs text-yellow-700 font-medium">Tasks</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Sidebar Footer */}
+        <div className="p-3 border-t border-gray-200">
+          <button
+            onClick={() => {
+              handleLogout(setLogoutLoading);
+              setMobileMenuOpen(false);
+            }}
+            disabled={logoutLoading}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 transition-all duration-200 font-semibold text-sm"
+          >
+            <ArrowRightOnRectangleIcon className="h-4 w-4" />
+            {logoutLoading ? 'Signing out...' : 'Sign Out'}
+          </button>
+        </div>
+      </aside>
+
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:block bg-white border-r border-black/10 w-72 flex-shrink-0 sticky top-0 z-30 h-screen flex flex-col items-stretch px-0 pt-0 shadow-sm">
+        {/* Logo/Header Section */}
+        <div className="w-full">
+          <div className="w-full bg-black flex items-center justify-center gap-3 px-0 py-4 border-b border-black" style={{marginTop:0,marginLeft:0}}>
+            <div className="w-10 h-10 flex items-center justify-center">
+              <BuildingOfficeIcon className="h-7 w-7 text-white" />
+            </div>
+            <span className="text-2xl font-bold text-white tracking-tight font-plus-jakarta">BuildStack</span>
+          </div>
+        </div>
+        <div className="flex-1 flex flex-col gap-4 items-stretch w-full pt-6 px-6">
+          {/* Navigation Items */}
+          <div className="flex flex-col gap-2 w-full overflow-y-auto max-h-full">
+            {navItems.map((item) => (
+              <button
+                key={item.tab}
+                className={`sidebar-item sidebar-glow flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 font-semibold group relative overflow-hidden font-inter w-full ${
+                  activeTab === item.tab 
+                    ? `sidebar-active-state sidebar-active text-black shadow-xl transform scale-[1.02] backdrop-blur-sm` 
+                    : `text-black/70 hover:bg-black/5 hover:shadow-lg hover:scale-[1.01] border-2 border-transparent hover:border-black/20`
                 } ${tabLoading && loadingTab === item.tab ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={() => handleTabChange(item.tab)}
                 aria-current={activeTab === item.tab ? "page" : undefined}
                 disabled={tabLoading}
                 style={{ minHeight: 0 }}
               >
-                {/* Active indicator */}
+                {/* Smart Active Border Indicator */}
                 {activeTab === item.tab && (
-                  <div className={`absolute left-0 top-0 bottom-0 w-1 ${item.activeBorderColor} rounded-r-full`} />
+                  <>
+                    {/* Left border indicator with animation */}
+                    <div className="sidebar-border-active absolute left-0 top-0 bottom-0 w-1 bg-black rounded-r-full shadow-sm" />
+                    {/* Top glow effect */}
+                    <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-black/30 to-transparent" />
+                    {/* Bottom glow effect */}
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-black/20 to-transparent" />
+                  </>
                 )}
                 
-                {/* Icon with enhanced styling - more prominent */}
-                <div className="flex items-center justify-center transition-all duration-300" style={{ minWidth: 32, minHeight: 32 }}>
-                  {tabLoading && loadingTab === item.tab ? (
-                    <div className="flex flex-col items-center">
-                      {/* Animated Icon */}
-                      <motion.div
-                        animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
-                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                        className="mb-1 p-2 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 shadow border border-gray-200"
-                      >
-                        {React.cloneElement(item.icon, { className: "h-5 w-5 text-gray-800" })}
-                      </motion.div>
-                      {/* Progress Bar */}
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: "100%" }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                        className="w-8 bg-gray-200 rounded-full h-1 overflow-hidden mt-1"
-                      >
-                        <div className="h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full" />
-                      </motion.div>
-                      {/* Animated Dots */}
-                      <motion.div className="flex space-x-0.5 mt-1">
-                        {[0, 1, 2].map((i) => (
-                          <motion.div
-                            key={i}
-                            className="w-1.5 h-1.5 bg-blue-400 rounded-full"
-                            animate={{
-                              scale: [1, 1.5, 1],
-                              opacity: [0.5, 1, 0.5]
-                            }}
-                            transition={{
-                              duration: 1.5,
-                              repeat: Infinity,
-                              delay: i * 0.2
-                            }}
-                          />
-                        ))}
-                      </motion.div>
-                    </div>
-                  ) : (
-                    React.cloneElement(item.icon, {
-                      className: `transition-all duration-300 text-gray-800 h-5 w-5 ${
+                {/* Icon with enhanced styling */}
+                <div className={`flex items-center justify-center transition-all duration-300 relative z-10 ${activeTab === item.tab ? 'sidebar-icon-active' : ''}`} style={{ minWidth: 32, minHeight: 32 }}>
+                  {React.cloneElement(item.icon, {
+                      className: `transition-all duration-300 h-5 w-5 ${
                         activeTab === item.tab 
-                          ? 'scale-110 drop-shadow-sm' 
-                          : 'group-hover:scale-105 drop-shadow-sm'
+                          ? 'text-black scale-110 drop-shadow-sm' 
+                          : 'text-black/70 group-hover:text-black group-hover:scale-105 drop-shadow-sm'
                       }`
-                    })
-                  )}
+                  })}
                 </div>
                 
-                {/* Text */}
-                <span className="hidden md:inline font-semibold font-inter text-base">{item.name}</span>
+                {/* Text with animation */}
+                <span className={`font-semibold font-inter text-base relative z-10 ${activeTab === item.tab ? 'sidebar-text-active' : ''}`}>{item.name}</span>
                 
-                {/* Hover effect */}
+                {/* Yes/Check icon for SaaS impact, always same distance from right border */}
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
+                  <CheckCircleIcon className="h-5 w-5 text-black opacity-80" />
+                </span>
+                
+                {/* Enhanced Hover and Active Effects */}
                 <div className={`absolute inset-0 rounded-2xl transition-all duration-300 ${
                   activeTab === item.tab 
-                    ? 'bg-gradient-to-r from-white/30 to-transparent' 
-                    : 'group-hover:bg-gradient-to-r from-white/20 to-transparent'
+                    ? 'bg-gradient-to-r from-white/40 via-white/20 to-transparent shadow-inner' 
+                    : 'group-hover:bg-gradient-to-r from-white/30 via-white/10 to-transparent'
                 }`} />
+                
+                {/* Subtle pulse animation for active state */}
+                {activeTab === item.tab && (
+                  <div className="absolute inset-0 rounded-2xl bg-black/5 animate-pulse" />
+                )}
               </button>
             ))}
           </div>
           
           {/* Bottom Spacing */}
-          <div className="hidden md:block flex-1"></div>
+          <div className="flex-1"></div>
           
           {/* User Profile Section */}
-          <div className="hidden md:block mt-6">
+          <div className="mt-6">
             {user && (
               <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-4 border border-gray-200 shadow-sm">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-blue-400 flex items-center justify-center text-white text-sm font-bold shadow-md">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-500 to-red-500 flex items-center justify-center text-white text-sm font-bold shadow-md">
                     {user.firstName?.[0]?.toUpperCase()}{user.lastName?.[0]?.toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -2291,24 +2818,87 @@ export default function DashboardPage() {
         <div className="absolute inset-0 pointer-events-none -z-10" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.03) 1px, transparent 0)', backgroundSize: '36px 36px'}} />
         {/* Top Bar */}
         <header className="sticky top-0 z-20 bg-white/80 backdrop-blur border-b border-black/10 px-4 py-3">
-          {/* Mobile Layout - Vertical Stack */}
-          <div className="block sm:hidden">
-            {/* Top Row - New Project Button and User Avatar */}
-            <div className="flex items-center justify-between mb-3">
+          {/* Desktop Layout - Search on left, actions on right */}
+          <div className="hidden md:flex items-center justify-between gap-4">
+            {/* Left side - Search bar */}
+            <div className="flex-1 max-w-2xl">
+              <div className="relative">
+                <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-black/40" />
+                <input
+                  type="text"
+                  placeholder="Search projects, documents, or anything..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 rounded-full border border-black/10 bg-white shadow focus:outline-none focus:border-black focus:ring-2 focus:ring-black text-base font-inter transition-all duration-200 text-black"
+                  style={{ fontWeight: 500 }}
+                />
+              </div>
+            </div>
+
+            {/* Center - Search filters */}
+            <div className="flex items-center gap-3">
+              <select
+                value={searchType}
+                onChange={e => setSearchType(e.target.value)}
+                className="rounded-full px-4 py-2 border border-black/10 bg-white shadow text-sm font-inter focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+              >
+                <option value="all">All</option>
+                <option value="projects">Projects</option>
+                <option value="documents">Documents</option>
+              </select>
+              {/* Advanced filters for documents */}
+              {searchType === "documents" && (
+                <>
+                  <select
+                    value={filterStatus}
+                    onChange={e => setFilterStatus(e.target.value)}
+                    className="rounded-full px-4 py-2 border border-black/10 bg-white shadow text-sm font-inter focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                  >
+                    <option value="">All Statuses</option>
+                    <option value="approved">Approved</option>
+                    <option value="pending">Pending</option>
+                    <option value="rejected">Rejected</option>
+                    <option value="draft">Draft</option>
+                  </select>
+                  <input
+                    type="text"
+                    placeholder="Uploader"
+                    value={filterUploader}
+                    onChange={e => setFilterUploader(e.target.value)}
+                    className="rounded-full px-4 py-2 border border-black/10 bg-white shadow text-sm font-inter focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 w-32"
+                  />
+                  <input
+                    type="date"
+                    value={filterDate}
+                    onChange={e => setFilterDate(e.target.value)}
+                    className="rounded-full px-4 py-2 border border-black/10 bg-white shadow text-sm font-inter focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 w-36"
+                  />
+                  <button
+                    type="button"
+                    className="text-xs text-gray-500 hover:underline ml-1 px-2 py-1 rounded-full"
+                    onClick={() => { setFilterStatus(""); setFilterUploader(""); setFilterDate(""); }}
+                  >
+                    Clear
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Right side - New button and user profile */}
+            <div className="flex items-center gap-3">
               <button
-                className="px-3 py-2 bg-black text-white rounded-full font-semibold shadow hover:bg-gray-900 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                className="px-4 py-2 rounded-full font-semibold border-2 border-black text-black bg-transparent hover:bg-black hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-black text-sm flex items-center gap-2"
                 onClick={() => setModalOpen(true)}
               >
-                <PlusIcon className="h-4 w-4 inline mr-1" /> 
+                <PlusIcon className="h-4 w-4" /> 
                 New
               </button>
-              
-              {/* User Profile Avatar & Dropdown in Header */}
+              {/* User Profile Avatar & Dropdown */}
               <div className="relative" ref={profileRef}>
                 {user ? (
                   <>
                     <button
-                      className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-blue-400 flex items-center justify-center text-white text-sm font-bold shadow-lg border-2 border-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+                      className="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-500 to-red-500 text-white text-base font-bold shadow-lg border-4 border-white focus:outline-none focus:ring-2 focus:ring-black hover:scale-105 transition-all duration-200 flex items-center justify-center"
                       onClick={() => setProfileDropdownOpen((open) => !open)}
                       aria-label="User profile"
                     >
@@ -2317,7 +2907,7 @@ export default function DashboardPage() {
                     {/* Dropdown */}
                     {profileDropdownOpen && (
                       <div className="absolute right-0 mt-2 w-72 bg-white border border-black/10 rounded-2xl shadow-xl p-5 z-50 flex flex-col items-center animate-fade-in">
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-600 to-blue-400 flex items-center justify-center text-white text-2xl font-bold shadow mb-2">
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-orange-500 to-red-500 text-white text-3xl font-bold shadow-lg border-4 border-white flex items-center justify-center mb-2">
                           {user.firstName?.[0]?.toUpperCase()}{user.lastName?.[0]?.toUpperCase()}
                         </div>
                         <div className="text-lg font-semibold text-black/80 mb-1" style={{ fontFamily: 'var(--font-plus-jakarta)' }}>{user.firstName} {user.lastName}</div>
@@ -2329,12 +2919,7 @@ export default function DashboardPage() {
                         </div>
                         <button
                           className="w-full bg-black text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-gray-900 transition-all duration-200 disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-black/30"
-                          onClick={async () => {
-                            setLogoutLoading(true);
-                            await fetch('/api/auth/logout', { method: 'POST' });
-                            setLogoutLoading(false);
-                            window.location.reload();
-                          }}
+                          onClick={() => handleLogout(setLogoutLoading)}
                           disabled={logoutLoading}
                         >
                           {logoutLoading ? 'Logging out...' : 'Logout'}
@@ -2343,188 +2928,124 @@ export default function DashboardPage() {
                     )}
                   </>
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-sm font-bold shadow-lg border-2 border-white" />
-                )}
-              </div>
-            </div>
-
-            {/* Bottom Row - Search System */}
-            <div className="flex items-center gap-3 flex-wrap">
-              <MagnifyingGlassIcon className="h-5 w-5 text-black/40" />
-              <div className="flex items-center gap-2 flex-wrap">
-                <select
-                  value={searchType}
-                  onChange={e => setSearchType(e.target.value)}
-                  className="border border-black/10 rounded-lg bg-white/50 text-sm px-2 py-1 focus:outline-none focus:ring-2 focus:ring-black/20"
-                  style={{ fontFamily: 'var(--font-inter)', fontWeight: 500 }}
-                >
-                  <option value="all">All</option>
-                  <option value="projects">Projects</option>
-                  <option value="documents">Documents</option>
-                </select>
-                <input
-                  type="text"
-                  placeholder={`Search ${searchType}`}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-2 pr-4 py-1 border border-black/10 rounded-lg bg-white/50 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-transparent text-sm w-32"
-                  style={{ fontFamily: 'var(--font-inter)', fontWeight: 500 }}
-                />
-                {/* Advanced filters for documents */}
-                {searchType === "documents" && (
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <select
-                      value={filterStatus}
-                      onChange={e => setFilterStatus(e.target.value)}
-                      className="border border-black/10 rounded-lg bg-white/50 text-sm px-2 py-1 focus:outline-none focus:ring-2 focus:ring-black/20"
-                    >
-                      <option value="">All Statuses</option>
-                      <option value="approved">Approved</option>
-                      <option value="pending">Pending</option>
-                      <option value="rejected">Rejected</option>
-                      <option value="draft">Draft</option>
-                    </select>
-                    <input
-                      type="text"
-                      placeholder="Uploader"
-                      value={filterUploader}
-                      onChange={e => setFilterUploader(e.target.value)}
-                      className="pl-2 pr-4 py-1 border border-black/10 rounded-lg bg-white/50 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-transparent text-sm w-24"
-                    />
-                    <input
-                      type="date"
-                      value={filterDate}
-                      onChange={e => setFilterDate(e.target.value)}
-                      className="border border-black/10 rounded-lg bg-white/50 text-sm px-2 py-1 focus:outline-none focus:ring-2 focus:ring-black/20"
-                    />
-                    <button
-                      type="button"
-                      className="text-xs text-gray-500 hover:underline ml-1"
-                      onClick={() => { setFilterStatus(""); setFilterUploader(""); setFilterDate(""); }}
-                    >
-                      Clear
-                    </button>
-                  </div>
+                  <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-sm font-bold shadow-lg border-2 border-white" />
                 )}
               </div>
             </div>
           </div>
-
-          {/* Desktop Layout - Horizontal */}
-          <div className="hidden sm:flex items-center justify-between mb-6">
-            {/* Left Side - Search System */}
-            <div className="flex items-center gap-3">
-              <MagnifyingGlassIcon className="h-5 w-5 text-black/40" />
-              <div className="flex items-center gap-2">
+          
+          {/* Mobile Layout - Stacked layout */}
+          <div className="md:hidden">
+            {/* Top row - Search bar */}
+            <div className="relative mb-3">
+              <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-black/40" />
+              <input
+                type="text"
+                placeholder="Search projects, documents, or anything..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 rounded-full border border-black/10 bg-white shadow focus:outline-none focus:border-black focus:ring-2 focus:ring-black text-base font-inter transition-all duration-200 text-black"
+                style={{ fontWeight: 500 }}
+              />
+            </div>
+            
+            {/* Bottom row - Filters and actions */}
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 flex-1">
                 <select
                   value={searchType}
                   onChange={e => setSearchType(e.target.value)}
-                  className="border border-black/10 rounded-lg bg-white/50 text-sm px-2 py-1 focus:outline-none focus:ring-2 focus:ring-black/20"
-                  style={{ fontFamily: 'var(--font-inter)', fontWeight: 500 }}
+                  className="rounded-full px-3 py-2 border border-black/10 bg-white shadow text-sm font-inter focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200"
                 >
                   <option value="all">All</option>
                   <option value="projects">Projects</option>
                   <option value="documents">Documents</option>
                 </select>
-                <input
-                  type="text"
-                  placeholder={`Search ${searchType}`}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-2 pr-4 py-1 border border-black/10 rounded-lg bg-white/50 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-transparent text-sm w-40 md:w-56"
-                  style={{ fontFamily: 'var(--font-inter)', fontWeight: 500 }}
-                />
-                {/* Advanced filters for documents */}
+                {/* Collapsible advanced filters for documents */}
                 {searchType === "documents" && (
-                  <div className="flex items-center gap-2">
-                    <select
-                      value={filterStatus}
-                      onChange={e => setFilterStatus(e.target.value)}
-                      className="border border-black/10 rounded-lg bg-white/50 text-sm px-2 py-1 focus:outline-none focus:ring-2 focus:ring-black/20"
-                    >
-                      <option value="">All Statuses</option>
-                      <option value="approved">Approved</option>
-                      <option value="pending">Pending</option>
-                      <option value="rejected">Rejected</option>
-                      <option value="draft">Draft</option>
-                    </select>
-                    <input
-                      type="text"
-                      placeholder="Uploader"
-                      value={filterUploader}
-                      onChange={e => setFilterUploader(e.target.value)}
-                      className="pl-2 pr-4 py-1 border border-black/10 rounded-lg bg-white/50 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-transparent text-sm w-28"
-                    />
-                    <input
-                      type="date"
-                      value={filterDate}
-                      onChange={e => setFilterDate(e.target.value)}
-                      className="border border-black/10 rounded-lg bg-white/50 text-sm px-2 py-1 focus:outline-none focus:ring-2 focus:ring-black/20"
-                    />
-                    <button
-                      type="button"
-                      className="text-xs text-gray-500 hover:underline ml-1"
-                      onClick={() => { setFilterStatus(""); setFilterUploader(""); setFilterDate(""); }}
-                    >
-                      Clear
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Right Side - New Project Button and User Avatar */}
-            <div className="flex items-center gap-3">
-              <button
-                className="px-4 py-2 bg-black text-white rounded-full font-semibold shadow hover:bg-gray-900 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-black text-base"
-                onClick={() => setModalOpen(true)}
-              >
-                <PlusIcon className="h-5 w-5 inline mr-1" /> 
-                New Project
-              </button>
-              
-              {/* User Profile Avatar & Dropdown in Header */}
-              <div className="relative" ref={profileRef}>
-                {user ? (
-                  <>
-                    <button
-                      className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-blue-400 flex items-center justify-center text-white text-lg font-bold shadow-lg border-2 border-white focus:outline-none focus:ring-2 focus:ring-blue-300"
-                      onClick={() => setProfileDropdownOpen((open) => !open)}
-                      aria-label="User profile"
-                    >
-                      {user.firstName?.[0]?.toUpperCase()}{user.lastName?.[0]?.toUpperCase()}
-                    </button>
-                    {/* Dropdown */}
-                    {profileDropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-72 bg-white border border-black/10 rounded-2xl shadow-xl p-5 z-50 flex flex-col items-center animate-fade-in">
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-600 to-blue-400 flex items-center justify-center text-white text-2xl font-bold shadow mb-2">
-                          {user.firstName?.[0]?.toUpperCase()}{user.lastName?.[0]?.toUpperCase()}
-                        </div>
-                        <div className="text-lg font-semibold text-black/80 mb-1" style={{ fontFamily: 'var(--font-plus-jakarta)' }}>{user.firstName} {user.lastName}</div>
-                        <div className="text-sm text-blue-700 font-medium bg-blue-100 rounded px-2 py-0.5 mb-2" style={{ fontFamily: 'var(--font-inter)' }}>{user.email || user.id}</div>
-                        <div className="w-full flex flex-col gap-1 text-sm text-black/70 mb-3" style={{ fontFamily: 'var(--font-inter)' }}>
-                          <div className="flex items-center gap-2"><BuildingOfficeIcon className="h-5 w-5 text-blue-400" /><span className="font-semibold">Company ID:</span> <span className="truncate">{user.companyId}</span></div>
-                          {user.businessType && <div className="flex items-center gap-2"><WrenchScrewdriverIcon className="h-5 w-5 text-yellow-500" /><span className="font-semibold">Business Type:</span> <span>{user.businessType}</span></div>}
-                          {user.country && <div className="flex items-center gap-2"><GlobeAltIcon className="h-5 w-5 text-green-500" /><span className="font-semibold">Country:</span> <span>{user.country}</span></div>}
-                        </div>
-                        <button
-                          className="w-full bg-black text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-gray-900 transition-all duration-200 disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-black/30"
-                          onClick={async () => {
-                            setLogoutLoading(true);
-                            await fetch('/api/auth/logout', { method: 'POST' });
-                            setLogoutLoading(false);
-                            window.location.reload();
-                          }}
-                          disabled={logoutLoading}
+                  <details className="relative">
+                    <summary className="cursor-pointer text-sm text-black/60 px-2 py-1 select-none">Filters</summary>
+                    <div className="absolute top-full left-0 mt-1 bg-white border border-black/10 rounded-lg shadow-lg p-3 z-40 min-w-48">
+                      <div className="flex flex-col gap-2">
+                        <select
+                          value={filterStatus}
+                          onChange={e => setFilterStatus(e.target.value)}
+                          className="rounded-full px-3 py-2 border border-black/10 bg-white shadow text-sm font-inter focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 w-full"
                         >
-                          {logoutLoading ? 'Logging out...' : 'Logout'}
+                          <option value="">All Statuses</option>
+                          <option value="approved">Approved</option>
+                          <option value="pending">Pending</option>
+                          <option value="rejected">Rejected</option>
+                          <option value="draft">Draft</option>
+                        </select>
+                        <input
+                          type="text"
+                          placeholder="Uploader"
+                          value={filterUploader}
+                          onChange={e => setFilterUploader(e.target.value)}
+                          className="rounded-full px-3 py-2 border border-black/10 bg-white shadow text-sm font-inter focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 w-full"
+                        />
+                        <input
+                          type="date"
+                          value={filterDate}
+                          onChange={e => setFilterDate(e.target.value)}
+                          className="rounded-full px-3 py-2 border border-black/10 bg-white shadow text-sm font-inter focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 w-full"
+                        />
+                        <button
+                          type="button"
+                          className="text-xs text-gray-500 hover:underline px-2 py-1 rounded-full text-left"
+                          onClick={() => { setFilterStatus(""); setFilterUploader(""); setFilterDate(""); }}
+                        >
+                          Clear
                         </button>
                       </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-lg font-bold shadow-lg border-2 border-white" />
+                    </div>
+                  </details>
                 )}
+              </div>
+              
+              {/* Mobile actions */}
+              <div className="flex items-center gap-2">
+                <button
+                  className="px-3 py-2 bg-black text-white rounded-full font-semibold shadow hover:bg-gray-900 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-black text-sm flex items-center gap-1"
+                  onClick={() => setModalOpen(true)}
+                >
+                  <PlusIcon className="h-4 w-4" /> 
+                  New
+                </button>
+                {/* Mobile user profile */}
+                <div className="relative" ref={profileRef}>
+                  {user ? (
+                    <>
+                      <button
+                        className="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-500 to-red-500 text-white text-sm font-bold shadow-lg border-4 border-white focus:outline-none focus:ring-2 focus:ring-black flex items-center justify-center"
+                        onClick={() => setProfileDropdownOpen((open) => !open)}
+                        aria-label="User profile"
+                      >
+                        {user.firstName?.[0]?.toUpperCase()}{user.lastName?.[0]?.toUpperCase()}
+                      </button>
+                      {/* Mobile dropdown */}
+                      {profileDropdownOpen && (
+                        <div className="absolute right-0 mt-2 w-64 bg-white border border-black/10 rounded-2xl shadow-xl p-4 z-50 flex flex-col items-center animate-fade-in">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-orange-500 to-red-500 text-white text-xl font-bold shadow-lg border-4 border-white flex items-center justify-center mb-2">
+                            {user.firstName?.[0]?.toUpperCase()}{user.lastName?.[0]?.toUpperCase()}
+                          </div>
+                          <div className="text-base font-semibold text-black/80 mb-1 text-center" style={{ fontFamily: 'var(--font-plus-jakarta)' }}>{user.firstName} {user.lastName}</div>
+                          <div className="text-xs text-blue-700 font-medium bg-blue-100 rounded px-2 py-0.5 mb-2 text-center" style={{ fontFamily: 'var(--font-inter)' }}>{user.email || user.id}</div>
+                          <button
+                            className="w-full bg-black text-white px-3 py-2 rounded-lg font-semibold shadow hover:bg-gray-900 transition-all duration-200 disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-black/30 text-sm"
+                            onClick={() => handleLogout(setLogoutLoading)}
+                            disabled={logoutLoading}
+                          >
+                            {logoutLoading ? 'Logging out...' : 'Logout'}
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-sm font-bold shadow-lg border-2 border-white" />
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -2563,7 +3084,7 @@ export default function DashboardPage() {
                 </button>
                 <button
                   onClick={() => setInviteModalOpen(true)}
-                  className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-200 flex items-center gap-2 font-inter hover:scale-105 transform"
+                  className="px-6 py-3 rounded-full font-semibold border-2 border-black text-black bg-transparent hover:bg-black hover:text-white transition-all duration-200 flex items-center gap-2 font-inter focus:outline-none focus:ring-4 focus:ring-black/20"
                 >
                   <UsersIcon className="h-5 w-5" /> Invite Team
                 </button>
@@ -2585,7 +3106,7 @@ export default function DashboardPage() {
                 </button>
                 <button
                   onClick={() => setInviteModalOpen(true)}
-                  className="flex-1 bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-3 rounded-full font-semibold shadow-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-200 flex items-center justify-center gap-2 text-sm font-inter hover:scale-105 transform"
+                  className="flex-1 px-4 py-3 rounded-full font-semibold border-2 border-black text-black bg-transparent hover:bg-black hover:text-white transition-all duration-200 flex items-center justify-center gap-2 text-sm font-inter focus:outline-none focus:ring-4 focus:ring-black/20"
                 >
                   <UsersIcon className="h-4 w-4" /> Invite Team
                 </button>
@@ -2693,27 +3214,32 @@ export default function DashboardPage() {
         )}
         {/* Tasks Section */}
         {selectedProject && (
-          <div className="mt-6 bg-white rounded-lg shadow p-4">
-            <div className="flex justify-between items-center mb-2">
-              <h4 className="font-bold text-lg">Tasks</h4>
-              <button onClick={() => { setActiveProjectId(selectedProject._id); setTaskModalOpen(true); }} className="flex items-center gap-1 px-3 py-1 bg-black text-white rounded hover:bg-gray-800">
-                <PlusIcon className="w-4 h-4" /> Add Task
+          <div className="mt-8 bg-white/80 rounded-2xl border border-black/10 p-6 shadow-sm">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+              <h4 className="font-bold text-xl text-black/80 font-plus-jakarta">Task Management</h4>
+              <button
+                onClick={() => { setActiveProjectId(selectedProject._id); setTaskModalOpen(true); }}
+                className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-full font-semibold text-base shadow hover:bg-gray-900 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-black/20"
+              >
+                <PlusIcon className="w-5 h-5" /> Add Task
               </button>
             </div>
-            <KanbanBoard
-              tasks={tasksByProject[selectedProject?._id || ''] || []}
-              onStatusChange={async (taskId, newStatus) => {
-                // Update status in backend
-                await fetch(`/api/projects/${selectedProject._id}/tasks/${taskId}`, {
-                  method: 'PATCH',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ status: newStatus }),
-                });
-                // Refetch tasks
-                fetchTasks(selectedProject._id);
-              }}
-              teamMembers={teamMembers}
-            />
+            <div className="overflow-x-auto pb-2">
+              <KanbanBoard
+                tasks={tasksByProject[selectedProject?._id || ''] || []}
+                onStatusChange={async (taskId, newStatus) => {
+                  // Update status in backend
+                  await fetch(`/api/projects/${selectedProject._id}/tasks/${taskId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus }),
+                  });
+                  // Refetch tasks
+                  fetchTasks(selectedProject._id);
+                }}
+                teamMembers={teamMembers}
+              />
+            </div>
           </div>
         )}
         <AddTaskModal open={taskModalOpen} onClose={() => setTaskModalOpen(false)} onAdd={task => {
@@ -2932,6 +3458,14 @@ function ProjectCard({ name, status, progress, documents, team, lastUpdated, pri
           </span>
         </div>
       </div>
+      <div className="flex gap-2 mt-4">
+        <button className="flex-1 bg-black text-white rounded-full px-4 py-2 text-xs font-semibold hover:bg-gray-900 transition-colors duration-200 shadow">
+          Documents
+        </button>
+        <button className="flex-1 bg-transparent border border-black text-black rounded-full px-4 py-2 text-xs font-semibold hover:bg-black hover:text-white transition-colors duration-200 shadow">
+          Team
+        </button>
+      </div>
     </motion.div>
   );
 }
@@ -3100,13 +3634,22 @@ function setCookie(name: string, value: string, days = 7) {
   document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
 }
 
-
-
-
-
-
-
-
-
-
+// Add this function near the top-level of DashboardPage
+async function handleLogout(setLogoutLoading: (b: boolean) => void) {
+  setLogoutLoading(true);
+  try {
+    const res = await fetch('/api/auth/logout', { method: 'POST' });
+    if (res.ok) {
+      toast.success('Logged out successfully!');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1200);
+    } else {
+      toast.error('Logout failed. Please try again.');
+    }
+  } catch (err) {
+    toast.error('Network error. Please try again.');
+  }
+  setLogoutLoading(false);
+}
 

@@ -57,6 +57,56 @@ export async function POST(request: NextRequest) {
       role = invitation.role;
       invitation.status = 'accepted';
       await invitation.save();
+      // Set owner to the inviter (if available), otherwise fallback to self after save
+      const user = new User({
+        firstName,
+        lastName,
+        email,
+        password,
+        phone,
+        country,
+        businessType,
+        constructionVolume,
+        companyId: company._id,
+        role,
+        owner: invitation.inviterId || undefined // fallback to undefined, will set after save if needed
+      });
+      await user.save();
+      if (!user.owner) {
+        user.owner = user._id;
+        await user.save();
+      }
+      company.members.push({ userId: user._id, role, status: 'active' });
+      await company.save();
+      // Generate JWT token
+      const token = generateToken({ userId: user._id.toString(), email: user.email, companyId: company._id, role });
+      // Create response with cookie
+      const response = NextResponse.json(
+        { 
+          message: 'User created successfully',
+          user: {
+            id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            country: user.country,
+            businessType: user.businessType,
+            constructionVolume: user.constructionVolume,
+            companyId: user.companyId,
+            role: user.role,
+            ...(phone && { phone })
+          }
+        },
+        { status: 201 }
+      );
+      response.cookies.set('auth-token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60, // 7 days
+        path: '/',
+      });
+      return response;
     } else {
       if (!companyName) {
         return NextResponse.json(
@@ -68,77 +118,84 @@ export async function POST(request: NextRequest) {
       const trimmedCompanyName = companyName.trim();
       const existingCompany = await Company.findOne({ name: trimmedCompanyName });
       if (existingCompany) {
+        // If company exists and no invitation, do not allow signup
         return NextResponse.json(
-          { error: 'A company with this name already exists. Please use a different name.' },
+          { error: 'A company with this name already exists. Please ask the company admin to invite you.' },
           { status: 400 }
         );
       }
-      company = new Company({ name: trimmedCompanyName, members: [] });
+      // Create new user instance (not saved yet, owner not set yet)
+      const userId = new (await import('mongoose')).default.Types.ObjectId();
+      const user = new User({
+        _id: userId,
+        firstName,
+        lastName,
+        email,
+        password,
+        phone,
+        country,
+        businessType, // <-- use the ID directly
+        constructionVolume,
+        role: 'admin', // will be admin of the new company
+        owner: userId
+      });
+      await user.save();
+      company = new Company({ name: trimmedCompanyName, members: [], owner: userId });
+      await company.save();
+      // Set user's companyId
+      user.companyId = company._id;
+      await user.save();
+      // Add user to company members
+      company.members.push({ userId: user._id, role: 'admin', status: 'active' });
       await company.save();
       role = 'admin';
+      // Continue with token generation and response
+      // Generate JWT token
+      const token = generateToken({ userId: user._id.toString(), email: user.email, companyId: company._id, role });
+      // Create response with cookie
+      const response = NextResponse.json(
+        { 
+          message: 'User created successfully',
+          user: {
+            id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            country: user.country,
+            businessType: user.businessType,
+            constructionVolume: user.constructionVolume,
+            companyId: user.companyId,
+            role: user.role,
+            ...(phone && { phone })
+          }
+        },
+        { status: 201 }
+      );
+      // Set HTTP-only cookie
+      response.cookies.set('auth-token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60, // 7 days
+        path: '/',
+      });
+      // Only create a project if all required fields are present
+      if (name && company && user) {
+        const project = await Project.create({
+          name,
+          desc: desc || '',
+          companyId: company._id,
+          owner: user._id,
+          members: [user._id]
+        });
+        await openai.chat.completions.create({
+          model: 'gpt-3.5-turbo',
+          messages: [{ role: 'user', content: `Summarize this project: ${desc}` }],
+          max_tokens: 60,
+        });
+      }
+      return response;
     }
-
-    // Create new user (save businessType as the ID, not the full name)
-    const user = new User({
-      firstName,
-      lastName,
-      email,
-      password,
-      phone,
-      country,
-      businessType, // <-- use the ID directly
-      constructionVolume,
-      companyId: company._id,
-      role,
-    });
-    await user.save();
-
-    // Add user to company members
-    company.members.push({ userId: user._id, role, status: 'active' });
-    await company.save();
-
-    // Generate JWT token
-    const token = generateToken({ userId: user._id.toString(), email: user.email, companyId: company._id, role });
-
-    // Create response with cookie
-    const response = NextResponse.json(
-      { 
-        message: 'User created successfully',
-        user: {
-          id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          country: user.country,
-          businessType: user.businessType,
-          constructionVolume: user.constructionVolume,
-          companyId: user.companyId,
-          role: user.role,
-          ...(phone && { phone })
-        }
-      },
-      { status: 201 }
-    );
-
-    // Set HTTP-only cookie
-    response.cookies.set('auth-token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60, // 7 days
-      path: '/',
-    });
-
-    // Create project
-    const project = await Project.create({ name, desc });
-
-    const summary = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: `Summarize this project: ${desc}` }],
-      max_tokens: 60,
-    });
-
-    return response;
 
   } catch (error: any) {
     console.error('Signup error:', error);

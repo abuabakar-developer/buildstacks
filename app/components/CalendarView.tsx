@@ -5,7 +5,7 @@ import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import { enUS } from "date-fns/locale/en-US";
-import { CalendarIcon } from "@heroicons/react/24/outline";
+import { CalendarIcon, XMarkIcon, PencilIcon, TrashIcon, CheckCircleIcon, ClockIcon, ExclamationTriangleIcon, BuildingOfficeIcon, PlusIcon } from "@heroicons/react/24/outline";
 import React, { useState, useMemo, useEffect } from "react";
 
 const locales = { "en-US": enUS };
@@ -49,6 +49,7 @@ export default function CalendarView({ tasksByProject, projects }: CalendarViewP
   const [addTaskTitle, setAddTaskTitle] = useState("");
   const [addTaskProjectId, setAddTaskProjectId] = useState(projects[0]?._id || "");
   const [addTaskPriority, setAddTaskPriority] = useState("medium");
+  const [addTaskDescription, setAddTaskDescription] = useState("");
 
   // Map projectId to color
   const projectColorMap = React.useMemo(() => {
@@ -111,27 +112,36 @@ export default function CalendarView({ tasksByProject, projects }: CalendarViewP
   // Custom event style for color-coding
   const eventPropGetter = (event: any) => {
     const color = projectColorMap[event.resource.projectId] || "#6366F1";
+    const isOverdue = new Date(event.start) < new Date() && event.resource.task.status !== 'completed';
+    
     return {
       style: {
-        backgroundColor: color,
-        borderRadius: "8px",
+        backgroundColor: isOverdue ? '#EF4444' : color,
+        borderRadius: "12px",
         color: "#fff",
         border: "none",
-        padding: "4px 8px",
+        padding: "6px 12px",
         fontWeight: 600,
         fontFamily: 'var(--font-inter)',
-        boxShadow: "0 1px 4px 0 rgba(0,0,0,0.04)",
+        boxShadow: "0 2px 8px 0 rgba(0,0,0,0.1)",
+        fontSize: '12px',
+        textAlign: 'center' as const,
+        minHeight: '24px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       },
     };
   };
 
-  // Modal for event details
+  // Enhanced Event Modal
   function EventModal({ event, onClose }: any) {
     const [editMode, setEditMode] = useState(false);
     const [newDueDate, setNewDueDate] = useState(event.resource.task.dueDate);
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const { task, project } = event.resource;
+    const isOverdue = new Date(task.dueDate) < new Date() && task.status !== 'completed';
 
     // Edit handler
     const handleEdit = async () => {
@@ -166,37 +176,130 @@ export default function CalendarView({ tasksByProject, projects }: CalendarViewP
     };
 
     return (
-      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
-          <h3 className="text-lg font-bold mb-2">{task.title}</h3>
-          <p className="mb-1"><span className="font-semibold">Project:</span> {project?.name || "Unknown"}</p>
-          <p className="mb-1"><span className="font-semibold">Status:</span> {task.status}</p>
-          <p className="mb-1"><span className="font-semibold">Priority:</span> {task.priority}</p>
-          {editMode ? (
-            <div className="mb-2">
-              <label className="block text-sm font-semibold mb-1">Due Date:</label>
-              <input
-                type="date"
-                className="border rounded px-2 py-1"
-                value={newDueDate ? newDueDate.slice(0, 10) : ''}
-                onChange={e => setNewDueDate(e.target.value)}
-                disabled={saving}
-              />
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl border border-gray-200">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-black font-plus-jakarta">{task.title}</h3>
+            <button 
+              onClick={onClose}
+              className="p-2 rounded-full hover:bg-gray-100 transition-all duration-200"
+            >
+              <XMarkIcon className="h-5 w-5 text-black/60" />
+            </button>
+          </div>
+
+          {/* Status Badge */}
+          <div className="mb-6">
+            <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-semibold ${
+              isOverdue ? 'bg-red-100 text-red-700' :
+              task.status === 'completed' ? 'bg-green-100 text-green-700' :
+              'bg-blue-100 text-blue-700'
+            }`}>
+              {isOverdue ? (
+                <ExclamationTriangleIcon className="h-4 w-4" />
+              ) : task.status === 'completed' ? (
+                <CheckCircleIcon className="h-4 w-4" />
+              ) : (
+                <ClockIcon className="h-4 w-4" />
+              )}
+              {isOverdue ? 'Overdue' : task.status === 'completed' ? 'Completed' : task.status}
             </div>
-          ) : (
-            <p className="mb-1"><span className="font-semibold">Due:</span> {new Date(task.dueDate).toLocaleString()}</p>
-          )}
-          <div className="flex gap-2 mt-4">
+          </div>
+
+          {/* Task Details */}
+          <div className="space-y-4 mb-6">
+            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
+                <BuildingOfficeIcon className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-black/60">Project</p>
+                <p className="font-semibold text-black">{project?.name || "Unknown"}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                task.priority === 'high' ? 'bg-red-500' :
+                task.priority === 'medium' ? 'bg-yellow-500' :
+                'bg-green-500'
+              }`}>
+                <ExclamationTriangleIcon className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-black/60">Priority</p>
+                <p className="font-semibold text-black capitalize">{task.priority}</p>
+              </div>
+            </div>
+
+            {editMode ? (
+              <div className="p-3 bg-blue-50 rounded-xl border border-blue-200">
+                <label className="block text-sm font-semibold text-blue-700 mb-2">Due Date:</label>
+                <input
+                  type="date"
+                  className="w-full px-3 py-2 rounded-lg border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={newDueDate ? newDueDate.slice(0, 10) : ''}
+                  onChange={e => setNewDueDate(e.target.value)}
+                  disabled={saving}
+                />
+              </div>
+            ) : (
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center">
+                  <CalendarIcon className="h-4 w-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-black/60">Due Date</p>
+                  <p className={`font-semibold ${isOverdue ? 'text-red-600' : 'text-black'}`}>
+                    {new Date(task.dueDate).toLocaleDateString('en-US', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3">
             {editMode ? (
               <>
-                <button className="bg-green-500 text-white px-4 py-2 rounded" onClick={handleEdit} disabled={saving}>{saving ? "Saving..." : "Save"}</button>
-                <button className="bg-gray-200 px-4 py-2 rounded" onClick={() => setEditMode(false)} disabled={saving}>Cancel</button>
+                <button 
+                  className="flex-1 px-4 py-3 rounded-xl bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60" 
+                  onClick={handleEdit} 
+                  disabled={saving}
+                >
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
+                <button 
+                  className="px-4 py-3 rounded-xl border-2 border-gray-300 text-black font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-200" 
+                  onClick={() => setEditMode(false)} 
+                  disabled={saving}
+                >
+                  Cancel
+                </button>
               </>
             ) : (
               <>
-                <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => setEditMode(true)}>Edit Deadline</button>
-                <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={handleDelete} disabled={deleting}>{deleting ? "Deleting..." : "Delete Task"}</button>
-                <button className="bg-gray-200 px-4 py-2 rounded" onClick={onClose}>Close</button>
+                <button 
+                  className="flex-1 px-4 py-3 rounded-xl bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-all duration-200 flex items-center justify-center gap-2" 
+                  onClick={() => setEditMode(true)}
+                >
+                  <PencilIcon className="h-4 w-4" />
+                  Edit
+                </button>
+                <button 
+                  className="px-4 py-3 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60" 
+                  onClick={handleDelete} 
+                  disabled={deleting}
+                >
+                  <TrashIcon className="h-4 w-4" />
+                  {deleting ? "Deleting..." : "Delete"}
+                </button>
               </>
             )}
           </div>
@@ -205,86 +308,180 @@ export default function CalendarView({ tasksByProject, projects }: CalendarViewP
     );
   }
 
-  // Add Task Modal
+  // Enhanced Add Task Modal
   function AddTaskModal({ open, onClose, date }: any) {
     if (!open) return null;
     return (
-      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-        <form
-          className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg"
-          onSubmit={async e => {
-            e.preventDefault();
-            setAddTaskLoading(true);
-            setAddTaskError("");
-            try {
-              const res = await fetch(`/api/projects/${addTaskProjectId}/tasks`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  title: addTaskTitle,
-                  dueDate: date,
-                  priority: addTaskPriority,
-                }),
-              });
-              if (!res.ok) throw new Error("Failed to add task");
-              setAddTaskTitle("");
-              setAddTaskProjectId(projects[0]?._id || "");
-              setAddTaskPriority("medium");
-              setAddModalOpen(false);
-              onClose(); // Optionally, refetch tasks here
-            } catch (err) {
-              setAddTaskError("Failed to add task");
-            }
-            setAddTaskLoading(false);
-          }}
-        >
-          <h3 className="text-lg font-bold mb-4">Add Task</h3>
-          {addTaskError && <div className="text-red-500 mb-2">{addTaskError}</div>}
-          <input
-            className="w-full border p-2 rounded mb-2"
-            placeholder="Title"
-            value={addTaskTitle}
-            onChange={e => setAddTaskTitle(e.target.value)}
-            required
-          />
-          <select
-            className="w-full border p-2 rounded mb-2"
-            value={addTaskProjectId}
-            onChange={e => setAddTaskProjectId(e.target.value)}
-            required
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl border border-gray-200">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-black font-plus-jakarta">Add New Task</h3>
+            <button 
+              onClick={onClose}
+              className="p-2 rounded-full hover:bg-gray-100 transition-all duration-200"
+            >
+              <XMarkIcon className="h-5 w-5 text-black/60" />
+            </button>
+          </div>
+
+          <form
+            onSubmit={async e => {
+              e.preventDefault();
+              setAddTaskLoading(true);
+              setAddTaskError("");
+              try {
+                const res = await fetch(`/api/projects/${addTaskProjectId}/tasks`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    title: addTaskTitle,
+                    description: addTaskDescription,
+                    dueDate: date,
+                    priority: addTaskPriority,
+                  }),
+                });
+                if (!res.ok) throw new Error("Failed to add task");
+                setAddTaskTitle("");
+                setAddTaskDescription("");
+                setAddTaskProjectId(projects[0]?._id || "");
+                setAddTaskPriority("medium");
+                setAddModalOpen(false);
+                onClose(); // Optionally, refetch tasks here
+              } catch (err) {
+                setAddTaskError("Failed to add task");
+              }
+              setAddTaskLoading(false);
+            }}
+            className="space-y-6"
           >
-            {projects.map((p) => (
-              <option key={p._id} value={p._id}>{p.name}</option>
-            ))}
-          </select>
-          <input
-            type="date"
-            className="w-full border p-2 rounded mb-2"
-            value={date ? date.slice(0, 10) : ''}
-            disabled
-          />
-          <div className="flex gap-2 mb-4">
-            <label className={`px-3 py-1 rounded cursor-pointer ${addTaskPriority === 'high' ? 'bg-red-500 text-white' : 'bg-gray-200 text-black'}`}> <input type="radio" className="hidden" value="high" checked={addTaskPriority==='high'} onChange={()=>setAddTaskPriority('high')} /> High </label>
-            <label className={`px-3 py-1 rounded cursor-pointer ${addTaskPriority === 'medium' ? 'bg-yellow-400 text-white' : 'bg-gray-200 text-black'}`}> <input type="radio" className="hidden" value="medium" checked={addTaskPriority==='medium'} onChange={()=>setAddTaskPriority('medium')} /> Medium </label>
-            <label className={`px-3 py-1 rounded cursor-pointer ${addTaskPriority === 'low' ? 'bg-green-500 text-white' : 'bg-gray-200 text-black'}`}> <input type="radio" className="hidden" value="low" checked={addTaskPriority==='low'} onChange={()=>setAddTaskPriority('low')} /> Low </label>
-          </div>
-          <div className="flex justify-end gap-2">
-            <button type="button" onClick={onClose} className="px-4 py-2 rounded bg-gray-200">Cancel</button>
-            <button type="submit" disabled={addTaskLoading} className="px-4 py-2 rounded bg-black text-white hover:bg-gray-800">{addTaskLoading ? "Adding..." : "Add Task"}</button>
-          </div>
-        </form>
+            {addTaskError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
+                {addTaskError}
+              </div>
+            )}
+
+            {/* Task Title */}
+            <div>
+              <label className="block text-sm font-semibold text-black mb-2">Task Title</label>
+              <input
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                placeholder="Enter task title"
+                value={addTaskTitle}
+                onChange={e => setAddTaskTitle(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Task Description */}
+            <div>
+              <label className="block text-sm font-semibold text-black mb-2">Description (Optional)</label>
+              <textarea
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+                placeholder="Enter task description"
+                value={addTaskDescription}
+                onChange={e => setAddTaskDescription(e.target.value)}
+                rows={3}
+              />
+            </div>
+
+            {/* Project Selection */}
+            <div>
+              <label className="block text-sm font-semibold text-black mb-2">Project</label>
+              <select
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                value={addTaskProjectId}
+                onChange={e => setAddTaskProjectId(e.target.value)}
+                required
+              >
+                {projects.map((p) => (
+                  <option key={p._id} value={p._id}>{p.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Due Date */}
+            <div>
+              <label className="block text-sm font-semibold text-black mb-2">Due Date</label>
+              <input
+                type="date"
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                value={date ? date.slice(0, 10) : ''}
+                disabled
+              />
+            </div>
+
+            {/* Priority Selection */}
+            <div>
+              <label className="block text-sm font-semibold text-black mb-3">Priority</label>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { value: 'low', label: 'Low', color: 'bg-green-100 text-green-700 border-green-300' },
+                  { value: 'medium', label: 'Medium', color: 'bg-yellow-100 text-yellow-700 border-yellow-300' },
+                  { value: 'high', label: 'High', color: 'bg-red-100 text-red-700 border-red-300' }
+                ].map((priority) => (
+                  <label 
+                    key={priority.value}
+                    className={`px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200 text-center font-semibold ${
+                      addTaskPriority === priority.value 
+                        ? priority.color 
+                        : 'bg-gray-50 text-black/60 border-gray-200 hover:bg-gray-100'
+                    }`}
+                  >
+                    <input 
+                      type="radio" 
+                      className="hidden" 
+                      value={priority.value} 
+                      checked={addTaskPriority === priority.value} 
+                      onChange={() => setAddTaskPriority(priority.value)} 
+                    />
+                    {priority.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Form Actions */}
+            <div className="flex gap-3 pt-4">
+              <button 
+                type="button" 
+                onClick={onClose} 
+                className="flex-1 px-4 py-3 rounded-xl border-2 border-gray-300 text-black font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-200"
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                disabled={addTaskLoading} 
+                className="flex-1 px-4 py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-800 transition-all duration-200 disabled:opacity-60 flex items-center justify-center gap-2"
+              >
+                {addTaskLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Adding...
+                  </>
+                ) : (
+                  <>
+                    <PlusIcon className="h-4 w-4" />
+                    Add Task
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl shadow p-4">
+    <div className="bg-white rounded-2xl overflow-hidden">
       <DnDCalendar
         localizer={localizer}
         events={events}
         startAccessor={(event: any) => event.start}
         endAccessor={(event: any) => event.end}
-        style={{ height: 600, opacity: updating ? 0.5 : 1 }}
+        style={{ height: 700, opacity: updating ? 0.5 : 1 }}
         onSelectEvent={onSelectEvent}
         onEventDrop={onEventDrop}
         popup
@@ -298,14 +495,34 @@ export default function CalendarView({ tasksByProject, projects }: CalendarViewP
           setAddDate(date);
           setAddModalOpen(true);
         }}
+        defaultView="month"
+        toolbar={true}
+        step={60}
+        timeslots={1}
+        min={new Date(0, 0, 0, 8, 0, 0)}
+        max={new Date(0, 0, 0, 20, 0, 0)}
       />
+      
       {events.length === 0 && (
-        <div className="text-center text-gray-400 mt-8">
-          <CalendarIcon className="h-12 w-12 mx-auto mb-2 text-pink-200" />
-          <div className="font-semibold">No deadlines yet</div>
-          <div className="text-sm">Tasks with due dates will appear here</div>
+        <div className="text-center py-16">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center mx-auto mb-6">
+            <CalendarIcon className="h-10 w-10 text-pink-500" />
+          </div>
+          <h4 className="text-xl font-bold text-black mb-2 font-plus-jakarta">No deadlines yet</h4>
+          <p className="text-black/60 mb-6">Tasks with due dates will appear here</p>
+          <button 
+            onClick={() => {
+              setAddDate(new Date().toISOString());
+              setAddModalOpen(true);
+            }}
+            className="px-6 py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-800 transition-all duration-200 flex items-center gap-2 mx-auto"
+          >
+            <PlusIcon className="h-4 w-4" />
+            Add Your First Task
+          </button>
         </div>
       )}
+      
       {modalOpen && (
         <EventModal event={selectedEvent} onClose={() => { setModalOpen(false); setSelectedEvent(null); }} />
       )}

@@ -31,7 +31,6 @@ import {
   Zap
 } from 'lucide-react';
 import { Inter, Poppins } from 'next/font/google';
-import { toast } from 'react-hot-toast';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const poppins = Poppins({
@@ -177,8 +176,6 @@ export default function SignupPage() {
         Object.assign(requestBody, { phone: formData.phone.trim() });
       }
 
-      console.log('Sending signup request:', requestBody);
-
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
@@ -188,14 +185,10 @@ export default function SignupPage() {
       });
 
       const data = await response.json();
-      console.log('Signup response:', { status: response.status, data });
 
       if (!response.ok) {
         throw new Error(data.error || `Signup failed with status ${response.status}`);
       }
-
-      // Show success message
-      toast.success('Registration successful! Please login to continue.');
 
       // Redirect to login page after a short delay
       setTimeout(() => {
@@ -203,8 +196,7 @@ export default function SignupPage() {
       }, 1500);
 
     } catch (error: any) {
-      console.error('Signup error:', error);
-      toast.error(error.message || 'Something went wrong during registration');
+      // Optionally handle error UI here, but no toast
     } finally {
       setIsLoading(false);
     }
@@ -231,10 +223,10 @@ export default function SignupPage() {
   );
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="flex min-h-screen">
-        {/* Left Side - Form Section */}
-        <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-12 xl:px-16 py-12 lg:py-16">
+    <>
+      <div className="min-h-screen bg-white flex mt-14 font-sans">
+        {/* Left Side - Signup Form (White background) */}
+        <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-12 xl:px-16 py-12 lg:py-16 bg-white">
           <div className="max-w-lg w-full mx-auto">
             {/* Logo and Header */}
             <div className="text-center mb-8">
@@ -247,12 +239,10 @@ export default function SignupPage() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Create your account</h1>
               <p className="text-lg text-gray-600">Join thousands of construction professionals</p>
             </div>
-
             {/* Step Indicator */}
             {renderStepIndicator()}
-
             {/* Form Content */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-8 lg:p-10 shadow-lg">
+            <div className="bg-white rounded-2xl border border-gray-200 p-8 lg:p-10 shadow-sm">
               <AnimatePresence mode="wait">
                 {/* Step 1: Business Type */}
                 {step === 1 && (
@@ -271,7 +261,7 @@ export default function SignupPage() {
                           onClick={() => setSelectedType(type.id)}
                           className={`w-full p-4 rounded-xl border-2 transition-all duration-200 text-left ${
                             selectedType === type.id
-                              ? 'border-blue-500 bg-blue-50 shadow-md'
+                              ? 'border-black bg-gray-100 shadow'
                               : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
                           }`}
                           whileHover={{ scale: 1.02 }}
@@ -293,7 +283,7 @@ export default function SignupPage() {
                       <button
                         onClick={handleNext}
                         disabled={!selectedType}
-                        className="w-full py-3 px-4 bg-black text-white rounded-full font-semibold text-base shadow hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="w-full py-3 px-4 bg-black text-white rounded-full font-semibold text-base shadow-sm hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                       >
                         {isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : (
                           <>
@@ -323,7 +313,7 @@ export default function SignupPage() {
                           onClick={() => setSelectedVolume(volume.value)}
                           className={`p-4 rounded-xl border-2 transition-all duration-200 text-center ${
                             selectedVolume === volume.value
-                              ? 'border-blue-500 bg-blue-50 shadow-md'
+                              ? 'border-black bg-gray-100 shadow'
                               : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
                           }`}
                           whileHover={{ scale: 1.02 }}
@@ -345,7 +335,7 @@ export default function SignupPage() {
                       <button
                         onClick={handleNext}
                         disabled={!selectedVolume}
-                        className="px-6 py-3 bg-black text-white rounded-full font-semibold text-base shadow hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="px-6 py-3 bg-black text-white rounded-full font-semibold text-base shadow-sm hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                       >
                         {isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : (
                           <>
@@ -565,7 +555,7 @@ export default function SignupPage() {
                         </button>
                         <button
                           type="submit"
-                          className="w-40 py-3 px-4 bg-black text-white rounded-full font-semibold text-base shadow hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                          className="w-40 py-3 px-4 bg-black text-white rounded-full font-semibold text-base shadow-sm hover:bg-black/90 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                           disabled={isLoading}
                         >
                           {isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : "Sign Up"}
@@ -578,54 +568,65 @@ export default function SignupPage() {
             </div>
           </div>
         </div>
-        {/* Right Side - Feature/Illustration Section */}
-        <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-gray-50 to-gray-100 border-l border-gray-200">
-          <div className="relative z-10 h-full flex flex-col justify-center px-12 py-16 text-gray-800 w-full">
+        {/* Right Side - Features/Promo Section (Black/gradient, with padding and rounded corners) */}
+        <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-8">
+          <div className="relative w-full h-full rounded-3xl shadow-md overflow-hidden flex flex-col justify-center px-12 py-16 bg-gradient-to-br from-black via-gray-900 to-black text-white" style={{minHeight: '80vh'}}>
+            {/* Animated Background Elements (from book a demo) */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-90"></div>
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute inset-0" style={{
+                  backgroundImage: `
+                    linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+                  `,
+                  backgroundSize: '50px 50px'
+                }}></div>
+              </div>
+              <motion.div
+                className="absolute top-20 left-10 w-32 h-32 bg-green-500/20 rounded-full blur-3xl"
+                animate={{ x: [0, 30, 0], y: [0, -20, 0], scale: [1, 1.1, 1] }}
+                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.div
+                className="absolute top-40 right-20 w-24 h-24 bg-blue-500/20 rounded-full blur-3xl"
+                animate={{ x: [0, -25, 0], y: [0, 15, 0], scale: [1, 0.9, 1] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+              />
+              <motion.div
+                className="absolute bottom-20 left-1/4 w-20 h-20 bg-yellow-500/20 rounded-full blur-3xl"
+                animate={{ x: [0, 20, 0], y: [0, -10, 0], scale: [1, 1.2, 1] }}
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              />
+            </div>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="max-w-lg mx-auto w-full"
+              transition={{ duration: 0.7 }}
+              className="max-w-lg w-full text-left relative z-10"
             >
               <div className="text-center mb-12">
-                <h1 className="text-4xl font-bold mb-6 text-black leading-tight">
+                <h1 className="text-4xl font-bold mb-6 text-white leading-tight">
                   Join BuildStack Today
                 </h1>
-                <p className={`text-xl text-gray-700 leading-relaxed ${bodyTextClass}`}>
+                <p className={`text-xl text-white/80 leading-relaxed ${bodyTextClass}`}>
                   Create your account and streamline your construction workflow with our all-in-one document management platform.
                 </p>
               </div>
-              
               {/* Feature Column Layout */}
               <div className="space-y-6">
                 {[
                   {
-                    icon: <FileText className="w-6 h-6" />,
-                    title: "Document Control",
-                    description: "Manage blueprints and permits with ease",
-                    hoverBg: "bg-blue-50",
-                    hoverColor: "text-blue-600"
+                    icon: <FileText className="w-6 h-6" />, title: "Document Control", description: "Manage blueprints and permits with ease"
                   },
                   {
-                    icon: <Users className="w-6 h-6" />,
-                    title: "Team Collaboration",
-                    description: "Coordinate across departments seamlessly",
-                    hoverBg: "bg-green-50",
-                    hoverColor: "text-green-600"
+                    icon: <Users className="w-6 h-6" />, title: "Team Collaboration", description: "Coordinate across departments seamlessly"
                   },
                   {
-                    icon: <Shield className="w-6 h-6" />,
-                    title: "Secure Access",
-                    description: "Role-based permissions and data protection",
-                    hoverBg: "bg-purple-50",
-                    hoverColor: "text-purple-600"
+                    icon: <Shield className="w-6 h-6" />, title: "Secure Access", description: "Role-based permissions and data protection"
                   },
                   {
-                    icon: <DollarSign className="w-6 h-6" />,
-                    title: "Project Analytics",
-                    description: "Track progress and metrics in real-time",
-                    hoverBg: "bg-orange-50",
-                    hoverColor: "text-orange-600"
+                    icon: <DollarSign className="w-6 h-6" />, title: "Project Analytics", description: "Track progress and metrics in real-time"
                   }
                 ].map((feature, index) => (
                   <motion.div
@@ -633,25 +634,22 @@ export default function SignupPage() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-gray-200/50 shadow-sm hover:shadow-md transition-all duration-300 group"
+                    className="backdrop-blur-lg bg-white/10 border border-gray-200/20 rounded-xl p-6 shadow-lg flex items-start gap-4 hover:shadow-2xl transition-all duration-300 group"
                   >
-                    <div className="flex items-start gap-4">
-                      <div className={`p-3 rounded-xl bg-gray-300 text-gray-600 shadow-lg transition-all duration-500 group-hover:${feature.hoverBg} group-hover:${feature.hoverColor} group-hover:scale-110`}>
-                        {feature.icon}
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-black text-lg mb-2 group-hover:text-gray-800 transition-colors duration-200">
-                          {feature.title}
-                        </h3>
-                        <p className={`text-gray-600 leading-relaxed ${bodyTextClass}`}>
-                          {feature.description}
-                        </p>
-                      </div>
+                    <div className="p-3 rounded-xl bg-white/20 text-white shadow-lg flex items-center justify-center">
+                      {feature.icon}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-white text-lg mb-2 group-hover:text-gray-200 transition-colors duration-200">
+                        {feature.title}
+                      </h3>
+                      <p className="text-gray-200 leading-relaxed">
+                        {feature.description}
+                      </p>
                     </div>
                   </motion.div>
                 ))}
               </div>
-
               {/* Trust Indicators */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -659,24 +657,24 @@ export default function SignupPage() {
                 transition={{ duration: 0.5, delay: 0.6 }}
                 className="mt-12 text-center"
               >
-                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-gray-200/50">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-gray-200/20">
                   <div className="flex items-center justify-center gap-8 mb-4">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-black">10K+</div>
-                      <div className="text-sm text-gray-600">Active Users</div>
+                      <div className="text-2xl font-bold text-white">10K+</div>
+                      <div className="text-sm text-gray-200">Active Users</div>
                     </div>
-                    <div className="w-px h-8 bg-gray-300"></div>
+                    <div className="w-px h-8 bg-gray-500"></div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-black">500+</div>
-                      <div className="text-sm text-gray-600">Projects</div>
+                      <div className="text-2xl font-bold text-white">500+</div>
+                      <div className="text-sm text-gray-200">Projects</div>
                     </div>
-                    <div className="w-px h-8 bg-gray-300"></div>
+                    <div className="w-px h-8 bg-gray-500"></div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-black">99%</div>
-                      <div className="text-sm text-gray-600">Satisfaction</div>
+                      <div className="text-2xl font-bold text-white">99%</div>
+                      <div className="text-sm text-gray-200">Satisfaction</div>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-600 italic">
+                  <p className="text-sm text-gray-200 italic">
                     "BuildStack has transformed how we manage our construction projects"
                   </p>
                 </div>
@@ -685,7 +683,6 @@ export default function SignupPage() {
           </div>
         </div>
       </div>
-
       {/* More than software: A partner in your growth Section */}
       <motion.section 
         initial={{ opacity: 0, y: 50 }}
@@ -731,93 +728,47 @@ export default function SignupPage() {
               }}
               className="relative grid grid-cols-1 md:grid-cols-3 gap-8 z-10"
             >
-              {/* Card 1 */}
+              {[
+                {
+                  icon: <DollarSign className="w-6 h-6" />, title: "Cash back on materials", description: "Manage materials and earn rebates from brand names so you can add to your bottom line without hassle.", hoverColor: 'text-green-600', hoverBgColor: 'bg-green-50', bg: 'bg-green-100', border: 'border-green-400', arrow: 'text-green-600', arrowHover: 'group-hover:text-white', arrowBg: 'group-hover:bg-green-600', arrowBorder: 'group-hover:border-white/20'
+                },
+                {
+                  icon: <CreditCard className="w-6 h-6" />, title: "Online payments", description: "Payments between subs, clients and your business don't have to be messy. You can easily send and receive money online.", hoverColor: 'text-blue-600', hoverBgColor: 'bg-blue-50', bg: 'bg-blue-100', border: 'border-blue-400', arrow: 'text-blue-600', arrowHover: 'group-hover:text-white', arrowBg: 'group-hover:bg-blue-600', arrowBorder: 'group-hover:border-white/20'
+                },
+                {
+                  icon: <BarChart3 className="w-6 h-6" />, title: "Advanced reporting", description: "Make better business decisions with easy-to-understand data. We'll help you use the insights to achieve greater business results.", hoverColor: 'text-purple-600', hoverBgColor: 'bg-purple-50', bg: 'bg-purple-100', border: 'border-purple-400', arrow: 'text-purple-600', arrowHover: 'group-hover:text-white', arrowBg: 'group-hover:bg-purple-600', arrowBorder: 'group-hover:border-white/20'
+                }
+              ].map((feature, index) => (
               <motion.div
+                  key={feature.title}
                 variants={{
                   hidden: { y: 20, opacity: 0 },
                   visible: { y: 0, opacity: 1, transition: { duration: 0.5 } }
                 }}
                 className="group relative"
               >
-                <div className="bg-white rounded-3xl p-8 border border-gray-400 transition-all duration-500 flex flex-col h-full group-hover:bg-green-50 group-hover:border-green-400 cursor-pointer">
+                  <div className="bg-white rounded-3xl p-8 border border-gray-400 transition-all duration-500 flex flex-col h-full hover:bg-gray-50 cursor-pointer">
                   <div className="mb-6">
-                <div className="flex-shrink-0 inline-flex p-4 rounded-2xl transition-all duration-500 bg-green-100 text-green-600 group-hover:bg-green-50 group-hover:text-green-700 group-hover:scale-110">
-                  <DollarSign className="h-8 w-8" />
+                      <div className={`flex-shrink-0 inline-flex p-4 rounded-2xl transition-all duration-500 bg-gray-300 text-gray-600 ${feature.bg} ${feature.border} group-hover:${feature.hoverBgColor} group-hover:${feature.hoverColor} group-hover:scale-110`}>
+                        {feature.icon}
                 </div>
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-black/70 mb-2" style={{ fontFamily: 'var(--font-inter)', fontWeight: 600 }}>
-                  Cash back on materials
+                      <h3 className="text-xl md:text-2xl font-semibold text-black font-plus-jakarta leading-tight mb-4 transition-colors duration-500">
+                        {feature.title}
                 </h3>
-              <p className="text-black/60 leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 500 }}>
-                Manage materials and earn rebates from brand names so you can add to your bottom line without hassle.
+                      <p className="text-black/70 font-semibold text-base leading-relaxed font-inter transition-colors duration-500">
+                        {feature.description}
               </p>
                   </div>
                   <div className="flex justify-end mt-4">
-                    <div className="w-8 h-8 bg-white rounded-full border border-green-400 shadow-md flex items-center justify-center group-hover:bg-green-600 group-hover:border-white/20 transition-all duration-500">
-                      <ArrowRight className="w-4 h-4 text-green-600 group-hover:text-white transition-colors duration-500" />
+                      <div className={`w-8 h-8 bg-white rounded-full border shadow-md flex items-center justify-center transition-all duration-500 ${feature.border} ${feature.arrowBg} ${feature.arrowBorder}`}>
+                        <ArrowRight className={`w-4 h-4 ${feature.arrow} ${feature.arrowHover} transition-colors duration-500`} />
                     </div>
                   </div>
                 </div>
             </motion.div>
-              {/* Card 2 */}
-            <motion.div 
-                variants={{
-                  hidden: { y: 20, opacity: 0 },
-                  visible: { y: 0, opacity: 1, transition: { duration: 0.5 } }
-                }}
-                className="group relative"
-              >
-                <div className="bg-white rounded-3xl p-8 border border-gray-400 transition-all duration-500 flex flex-col h-full group-hover:bg-blue-50 group-hover:border-blue-400 cursor-pointer">
-                  <div className="mb-6">
-                <div className="flex-shrink-0 inline-flex p-4 rounded-2xl transition-all duration-500 bg-blue-100 text-blue-600 group-hover:bg-blue-50 group-hover:text-blue-700 group-hover:scale-110">
-                  <CreditCard className="h-8 w-8" />
-                </div>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-black/70 mb-2" style={{ fontFamily: 'var(--font-inter)', fontWeight: 600 }}>
-                  Online payments
-                </h3>
-              <p className="text-black/60 leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 500 }}>
-                Payments between subs, clients and your business don't have to be messy. You can easily send and receive money online.
-              </p>
-                  </div>
-                  <div className="flex justify-end mt-4">
-                    <div className="w-8 h-8 bg-white rounded-full border border-blue-400 shadow-md flex items-center justify-center group-hover:bg-blue-600 group-hover:border-white/20 transition-all duration-500">
-                      <ArrowRight className="w-4 h-4 text-blue-600 group-hover:text-white transition-colors duration-500" />
-                    </div>
-                  </div>
-                </div>
-            </motion.div>
-              {/* Card 3 */}
-            <motion.div 
-                variants={{
-                  hidden: { y: 20, opacity: 0 },
-                  visible: { y: 0, opacity: 1, transition: { duration: 0.5 } }
-                }}
-                className="group relative"
-              >
-                <div className="bg-white rounded-3xl p-8 border border-gray-400 transition-all duration-500 flex flex-col h-full group-hover:bg-purple-50 group-hover:border-purple-400 cursor-pointer">
-                  <div className="mb-6">
-                <div className="flex-shrink-0 inline-flex p-4 rounded-2xl transition-all duration-500 bg-purple-100 text-purple-600 group-hover:bg-purple-50 group-hover:text-purple-700 group-hover:scale-110">
-                  <BarChart3 className="h-8 w-8" />
-                </div>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-black/70 mb-2" style={{ fontFamily: 'var(--font-inter)', fontWeight: 600 }}>
-                  Advanced reporting
-                </h3>
-              <p className="text-black/60 leading-relaxed" style={{ fontFamily: 'var(--font-inter)', fontWeight: 500 }}>
-                Make better business decisions with easy-to-understand data. We'll help you use the insights to achieve greater business results.
-              </p>
-                  </div>
-                  <div className="flex justify-end mt-4">
-                    <div className="w-8 h-8 bg-white rounded-full border border-purple-400 shadow-md flex items-center justify-center group-hover:bg-purple-600 group-hover:border-white/20 transition-all duration-500">
-                      <ArrowRight className="w-4 h-4 text-purple-600 group-hover:text-white transition-colors duration-500" />
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
+              ))}
             </motion.div>
           </div>
 
@@ -856,7 +807,7 @@ export default function SignupPage() {
           </motion.div>
         </div>
       </motion.section>
-    </div>
+    </>
   );
 } 
 
