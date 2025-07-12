@@ -3,8 +3,9 @@ import dbConnect from '@/utils/dbConnect';
 import Task from '@/models/Task';
 
 // GET /api/projects/[id]/tasks - List all tasks for a project
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, context: Promise<{ params: { id: string } }>) {
   await dbConnect();
+  const { params } = await context;
   const tasks = await Task.find({ projectId: params.id }).populate('assignee');
   return NextResponse.json(tasks);
 }

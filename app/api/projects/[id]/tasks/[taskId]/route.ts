@@ -5,9 +5,10 @@ import Task from '@/models/Task';
 // GET /api/projects/[id]/tasks/[taskId] - Get a specific task
 export async function GET(
   request: NextRequest, 
-  { params }: { params: { id: string; taskId: string } }
+  context: Promise<{ params: { id: string; taskId: string } }>
 ) {
   await dbConnect();
+  const { params } = await context;
   const task = await Task.findById(params.taskId).populate('assignee');
   if (!task) {
     return NextResponse.json({ error: 'Task not found' }, { status: 404 });
@@ -18,9 +19,10 @@ export async function GET(
 // PATCH /api/projects/[id]/tasks/[taskId] - Update a task
 export async function PATCH(
   request: NextRequest, 
-  { params }: { params: { id: string; taskId: string } }
+  context: Promise<{ params: { id: string; taskId: string } }>
 ) {
   await dbConnect();
+  const { params } = await context;
   const updateData = await request.json();
   
   // Validate the task exists and belongs to the project
@@ -46,9 +48,10 @@ export async function PATCH(
 // DELETE /api/projects/[id]/tasks/[taskId] - Delete a task
 export async function DELETE(
   request: NextRequest, 
-  { params }: { params: { id: string; taskId: string } }
+  context: Promise<{ params: { id: string; taskId: string } }>
 ) {
   await dbConnect();
+  const { params } = await context;
   
   // Validate the task exists and belongs to the project
   const task = await Task.findById(params.taskId);

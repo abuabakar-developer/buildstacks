@@ -181,18 +181,28 @@ export async function POST(request: NextRequest) {
       });
       // Only create a project if all required fields are present
       if (name && company && user) {
-        const project = await Project.create({
-          name,
-          desc: desc || '',
-          companyId: company._id,
-          owner: user._id,
-          members: [user._id]
-        });
-        await openai.chat.completions.create({
-          model: 'gpt-3.5-turbo',
-          messages: [{ role: 'user', content: `Summarize this project: ${desc}` }],
-          max_tokens: 60,
-        });
+        console.log('🚀 Signup: Creating initial project:', { name, desc });
+        
+        // Check if a project with the same name already exists for this company
+        const existingProject = await Project.findOne({ name: name.trim(), companyId: company._id });
+        if (existingProject) {
+          console.log('⚠️ Signup: Project with same name already exists:', name);
+        } else {
+          const project = await Project.create({
+            name,
+            desc: desc || '',
+            companyId: company._id,
+            owner: user._id,
+            members: [user._id]
+          });
+          console.log('✅ Signup: Initial project created successfully:', project.name, 'ID:', project._id);
+          
+          await openai.chat.completions.create({
+            model: 'gpt-3.5-turbo',
+            messages: [{ role: 'user', content: `Summarize this project: ${desc}` }],
+            max_tokens: 60,
+          });
+        }
       }
       return response;
     }

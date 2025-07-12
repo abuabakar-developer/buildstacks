@@ -409,6 +409,8 @@ export default function DashboardPage() {
     fetch(`/api/projects?companyId=${companyId}`)
       .then(res => res.json())
       .then(data => {
+        console.log('🔍 Dashboard: Loaded projects from API:', data.length, 'projects');
+        console.log('📋 Project names:', data.map((p: any) => p.name));
         setProjects(data);
         setIsLoading(false);
       })
@@ -425,7 +427,16 @@ export default function DashboardPage() {
     });
     const projectChannel = pusher.subscribe('projects');
     projectChannel.bind('project-created', (data: any) => {
-      setProjects(prev => [data.project, ...prev]);
+      console.log('🔔 Pusher: Project created event received:', data.project.name);
+      setProjects(prev => {
+        // Check if project already exists to prevent duplicates
+        const projectExists = prev.some(p => p._id === data.project._id);
+        if (projectExists) {
+          console.log('⚠️ Pusher: Project already exists in state, skipping:', data.project.name);
+          return prev;
+        }
+        return [data.project, ...prev];
+      });
     });
     const docChannel = pusher.subscribe('documents');
     docChannel.bind('document-uploaded', () => {
@@ -3126,14 +3137,17 @@ export default function DashboardPage() {
           open={modalOpen}
           onClose={() => setModalOpen(false)}
           onCreate={async project => {
-            const res = await fetch("/api/projects", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ ...project, companyId: companyId }),
+            console.log('🎯 Dashboard: Adding project to state:', project.name);
+            // The modal already handles the API call, just add to local state
+            setProjects(prev => {
+              // Check if project already exists to prevent duplicates
+              const projectExists = prev.some(p => p._id === project._id);
+              if (projectExists) {
+                console.log('⚠️ Dashboard: Project already exists in state, skipping:', project.name);
+                return prev;
+              }
+              return [project, ...prev];
             });
-            if (res.ok) {
-              setProjects(prev => [project, ...prev]);
-            }
           }}
         />
         <InviteTeamModal

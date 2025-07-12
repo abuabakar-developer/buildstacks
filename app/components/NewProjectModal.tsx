@@ -38,6 +38,7 @@ export default function NewProjectModal({ open, onClose, onCreate }: NewProjectM
     setLoading(true);
     setError("");
     try {
+      console.log('🚀 NewProjectModal: Creating project:', { name, desc, companyId });
       const res = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -45,11 +46,13 @@ export default function NewProjectModal({ open, onClose, onCreate }: NewProjectM
       });
       if (!res.ok) throw new Error("Failed to create project");
       const project = await res.json();
+      console.log('✅ NewProjectModal: Project created successfully:', project.name);
       onCreate(project);
       setName("");
       setDesc("");
       onClose();
     } catch (err: any) {
+      console.error('❌ NewProjectModal: Error creating project:', err);
       setError(err.message || "Something went wrong");
     } finally {
       setLoading(false);
