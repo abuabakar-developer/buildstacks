@@ -54,7 +54,7 @@ const Construct = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center max-w-4xl mx-auto mb-20"
+          className="text-center max-w-4xl mx-auto mb-20 mt-20"
         >
           <div className="inline-flex items-center gap-2 px-2 py-2 rounded-full bg-black/5 border border-black/10 text-black text-sm font-medium mb-6 font-inter">
             <Award className="w-4 h-4 text-black/70" />

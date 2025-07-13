@@ -625,7 +625,7 @@ export default function DashboardPage() {
       const response = await fetch(`/api/projects/${projectId}`, {
         method: 'DELETE',
       });
-      
+
       if (response.ok) {
         setProjects(projects.filter(project => project._id !== projectId));
         toast.success('Project deleted successfully');
@@ -814,6 +814,191 @@ export default function DashboardPage() {
                   <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{Object.values(tasksByProject).reduce((acc: number, t) => acc + (Array.isArray(t) ? t.length : 0), 0)}</span>
                   <span className="text-sm text-black/70 font-semibold">Total Tasks</span>
                   <span className="text-xs text-yellow-600 mt-1">In Progress</span>
+                </div>
+              </div>
+            </section>
+
+            {/* Project Analytics & Timeline */}
+            <section className="bg-white rounded-2xl border border-black/10 p-6">
+              <h3 className="text-xl font-bold text-black/80 mb-6 flex items-center gap-2 font-plus-jakarta">
+                <ChartBarIcon className="h-6 w-6 text-blue-600" /> Project Analytics & Timeline
+              </h3>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Overall Progress Chart */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+                  <h4 className="text-lg font-bold text-black/80 mb-4 flex items-center gap-2 font-plus-jakarta">
+                    <ChartBarIcon className="h-5 w-5 text-blue-600" /> Overall Progress
+                  </h4>
+                  
+                  {/* Progress Bars */}
+                  <div className="space-y-4">
+                    {projects.slice(0, 5).map((project, index) => {
+                      const progress = project.progress || 0;
+                      const getProgressColor = (progress: number) => {
+                        if (progress >= 80) return 'bg-green-500';
+                        if (progress >= 60) return 'bg-blue-500';
+                        if (progress >= 40) return 'bg-yellow-500';
+                        return 'bg-red-500';
+                      };
+                      
+                      return (
+                        <div key={project._id} className="group">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-semibold text-black/70 font-inter truncate">{project.name}</span>
+                            <span className="text-sm font-bold text-black/80 font-plus-jakarta">{progress}%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                            <div
+                              className={`h-2.5 rounded-full transition-all duration-700 ease-out ${getProgressColor(progress)}`}
+                              style={{ width: `${progress}%` }}
+                            >
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse" />
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between mt-1">
+                            <span className="text-xs text-black/50 font-inter">
+                              {progress === 100 ? 'Complete' : 
+                               progress >= 80 ? 'Almost Done' :
+                               progress >= 60 ? 'Good Progress' :
+                               progress >= 40 ? 'In Progress' : 'Getting Started'}
+                            </span>
+                            <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
+                              project.status === 'active' ? 'bg-green-100 text-green-700' :
+                              project.status === 'completed' ? 'bg-blue-100 text-blue-700' :
+                              project.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-gray-100 text-gray-700'
+                            }`}>
+                              {project.status}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  {/* Summary Stats */}
+                  <div className="mt-6 pt-4 border-t border-blue-200">
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                      <div>
+                        <div className="text-2xl font-bold text-blue-600 font-plus-jakarta">
+                          {projects.filter(p => p.progress >= 80).length}
+                        </div>
+                        <div className="text-xs text-black/60 font-inter">Near Complete</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-yellow-600 font-plus-jakarta">
+                          {projects.filter(p => p.progress >= 40 && p.progress < 80).length}
+                        </div>
+                        <div className="text-xs text-black/60 font-inter">In Progress</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-red-600 font-plus-jakarta">
+                          {projects.filter(p => p.progress < 40).length}
+                        </div>
+                        <div className="text-xs text-black/60 font-inter">Just Started</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Project Timeline */}
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100">
+                  <h4 className="text-lg font-bold text-black/80 mb-4 flex items-center gap-2 font-plus-jakarta">
+                    <ClockIcon className="h-5 w-5 text-purple-600" /> Project Timeline
+                  </h4>
+                  
+                  {/* Timeline */}
+                  <div className="space-y-4">
+                    {projects.slice(0, 6).map((project, index) => {
+                      const getPriorityColor = (priority: string) => {
+                        switch (priority) {
+                          case 'high': return 'bg-red-500';
+                          case 'medium': return 'bg-yellow-500';
+                          case 'low': return 'bg-green-500';
+                          default: return 'bg-gray-500';
+                        }
+                      };
+                      
+                      const getStatusColor = (status: string) => {
+                        switch (status) {
+                          case 'active': return 'border-green-500 bg-green-50';
+                          case 'completed': return 'border-blue-500 bg-blue-50';
+                          case 'pending': return 'border-yellow-500 bg-yellow-50';
+                          default: return 'border-gray-500 bg-gray-50';
+                        }
+                      };
+                      
+                      return (
+                        <div key={project._id} className="relative">
+                          {/* Timeline Line */}
+                          {index < projects.slice(0, 6).length - 1 && (
+                            <div className="absolute left-6 top-12 w-0.5 h-8 bg-gradient-to-b from-purple-300 to-transparent"></div>
+                          )}
+                          
+                          <div className={`flex items-start gap-4 p-3 rounded-xl border-l-4 ${getStatusColor(project.status)} transition-all duration-300 hover:shadow-md`}>
+                            {/* Timeline Dot */}
+                            <div className="relative">
+                              <div className={`w-3 h-3 rounded-full ${getPriorityColor(project.priority || 'medium')} shadow-sm`}></div>
+                              {project.priority === 'high' && (
+                                <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+                              )}
+                            </div>
+                            
+                            {/* Content */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between mb-1">
+                                <h5 className="font-semibold text-black/80 font-inter text-sm truncate">{project.name}</h5>
+                                <span className="text-xs text-black/50 font-inter">
+                                  {project.progress || 0}%
+                                </span>
+                              </div>
+                              <p className="text-xs text-black/60 font-inter line-clamp-2 mb-2">{project.desc}</p>
+                              
+                              {/* Progress Mini Bar */}
+                              <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden mb-2">
+                                <div
+                                  className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full transition-all duration-500"
+                                  style={{ width: `${project.progress || 0}%` }}
+                                ></div>
+                              </div>
+                              
+                              {/* Tags */}
+                              <div className="flex items-center gap-2">
+                                <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
+                                  project.status === 'active' ? 'bg-green-100 text-green-700' :
+                                  project.status === 'completed' ? 'bg-blue-100 text-blue-700' :
+                                  project.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                  'bg-gray-100 text-gray-700'
+                                }`}>
+                                  {project.status}
+                                </span>
+                                {project.priority && (
+                                  <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
+                                    project.priority === 'high' ? 'bg-red-100 text-red-700' :
+                                    project.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                                    'bg-green-100 text-green-700'
+                                  }`}>
+                                    {project.priority}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  {/* Timeline Summary */}
+                  <div className="mt-6 pt-4 border-t border-purple-200">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-black/60 font-inter">Total Projects: {projects.length}</span>
+                      <span className="text-purple-600 font-semibold font-inter">
+                        {projects.filter(p => p.status === 'active').length} Active
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </section>
@@ -1401,8 +1586,8 @@ export default function DashboardPage() {
                           >
                             <TrashIcon className="h-4 w-4" />
                           </button>
-                        </div>
-                        
+                      </div>
+                      
                         <div className="flex items-center gap-4 mb-4">
                           <div className="flex-shrink-0 inline-flex p-4 rounded-2xl bg-gray-200 text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:scale-110 transition-all duration-500">
                             <BuildingOfficeIcon className="h-6 w-6" />
@@ -1415,60 +1600,60 @@ export default function DashboardPage() {
                                 project.status === "completed" ? "bg-blue-100 text-blue-700 border border-blue-200" : 
                                 project.status === "pending" ? "bg-yellow-100 text-yellow-700 border border-yellow-200" : 
                                 "bg-gray-100 text-gray-700 border border-gray-200"
-                              }`}>
-                                {project.status}
-                              </span>
+                        }`}>
+                          {project.status}
+                        </span>
                               {project.priority && (
                                 <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
                                   project.priority === "high" ? "bg-red-100 text-red-700 border border-red-200" : 
                                   project.priority === "medium" ? "bg-yellow-100 text-yellow-700 border border-yellow-200" : 
                                   "bg-green-100 text-green-700 border border-green-200"
-                                }`}>
-                                  {project.priority}
-                                </span>
+                        }`}>
+                          {project.priority}
+                        </span>
                               )}
-                            </div>
+                      </div>
                             <p className="text-black/70 font-inter text-sm leading-relaxed transition-colors duration-500 truncate">{project.desc}</p>
                           </div>
                         </div>
                         <div className="flex-1 flex flex-col justify-between">
-                          {/* Progress Bar */}
-                          <div className="p-4 bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 mb-4 hover:shadow-md transition-all duration-300">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="text-sm font-semibold text-black font-inter">Progress</div>
-                              <div className="text-sm font-bold text-black font-plus-jakarta">{project.progress}%</div>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
-                              <div
-                                className="bg-black h-3 rounded-full transition-all duration-700 ease-out shadow-sm relative overflow-hidden"
-                                style={{ width: `${project.progress}%` }}
-                              >
-                                {/* Animated shine effect */}
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
-                              </div>
-                            </div>
-                            <div className="mt-2 text-xs text-black/60 font-medium">
-                              {project.progress === 100 ? 'Project Complete!' : 
-                               project.progress >= 75 ? 'Almost there!' :
-                               project.progress >= 50 ? 'Halfway done!' :
-                               project.progress >= 25 ? 'Getting started!' : 'Just beginning!'}
-                            </div>
+                      {/* Progress Bar */}
+                      <div className="p-4 bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 mb-4 hover:shadow-md transition-all duration-300">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="text-sm font-semibold text-black font-inter">Progress</div>
+                          <div className="text-sm font-bold text-black font-plus-jakarta">{project.progress}%</div>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
+                          <div
+                            className="bg-black h-3 rounded-full transition-all duration-700 ease-out shadow-sm relative overflow-hidden"
+                            style={{ width: `${project.progress}%` }}
+                          >
+                            {/* Animated shine effect */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
                           </div>
+                        </div>
+                        <div className="mt-2 text-xs text-black/60 font-medium">
+                          {project.progress === 100 ? 'Project Complete!' : 
+                           project.progress >= 75 ? 'Almost there!' :
+                           project.progress >= 50 ? 'Halfway done!' :
+                           project.progress >= 25 ? 'Getting started!' : 'Just beginning!'}
+                        </div>
+                      </div>
                           <div className="grid grid-cols-2 gap-2 text-xs text-black/60 mb-4">
                             <div className="bg-black/5 px-2 py-1 rounded-lg text-center">
                               <span className="font-semibold text-black/80">{project.documents}</span>
                               <div>Documents</div>
-                            </div>
+                        </div>
                             <div className="bg-black/5 px-2 py-1 rounded-lg text-center">
                               <span className="font-semibold text-black/80">{project.team}</span>
                               <div>Team</div>
-                            </div>
-                          </div>
                         </div>
+                        </div>
+                      </div>
                         <div className="flex gap-2 mt-4">
                           <button className="flex-1 bg-black text-white rounded-full px-4 py-2 text-xs font-semibold hover:bg-gray-900 transition-colors duration-200 shadow">
                             Documents
-                          </button>
+                        </button>
                           <button className="flex-1 bg-transparent border border-black text-black rounded-full px-4 py-2 text-xs font-semibold hover:bg-black hover:text-white transition-colors duration-200 shadow">
                             Team
                           </button>

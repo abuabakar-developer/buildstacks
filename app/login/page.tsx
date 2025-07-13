@@ -17,7 +17,10 @@ import {
   FileText,
   Users,
   Shield,
-  BarChart
+  BarChart,
+  Sparkles,
+  Zap,
+  Target
 } from 'lucide-react';
 import { Inter, Poppins } from 'next/font/google';
 import { toast } from 'react-hot-toast';
@@ -73,26 +76,128 @@ export default function LoginPage() {
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-white ${inter.variable} ${poppins.variable} relative overflow-hidden`}>
-      {/* Animated Background Elements */}
+    <div className={`min-h-screen bg-white ${inter.variable} ${poppins.variable} relative overflow-hidden`}>
+      {/* Split Layout Container */}
+      <div className="flex min-h-screen">
+        {/* Left Side - Image Section */}
+        <motion.div 
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-hidden"
+        >
+          {/* Background Image */}
       <div className="absolute inset-0">
-        {/* Gradient Mesh */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white opacity-90"></div>
-        
-        {/* Animated Grid Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `
-              linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)
-            `,
-            backgroundSize: '50px 50px'
-          }}></div>
+            <Image
+              src="/construction-3.jpg"
+              alt="Construction Site"
+              fill
+              className="object-cover opacity-40"
+              priority
+            />
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-transparent"></div>
+          </div>
+
+          {/* Content Overlay */}
+          <div className="relative z-10 flex flex-col justify-center px-12 py-16 text-white">
+            {/* Logo */}
+            <motion.div 
+              initial={{ opacity: 0, y: -30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="mb-12"
+            >
+              <Link href="/" className="inline-flex items-center space-x-3 text-white font-bold text-3xl group">
+                <motion.div 
+                  className="bg-white w-14 h-14 flex items-center justify-center rounded-2xl font-black text-black transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-white/20"
+                  whileHover={{ rotate: 5 }}
+                >
+                  <Building2 size={28} />
+                </motion.div>
+                <span className="tracking-wide font-semibold">BuildStack</span>
+              </Link>
+            </motion.div>
+
+            {/* Hero Content */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="max-w-md"
+            >
+              <h1 className="text-4xl font-bold mb-6 leading-tight">
+                Transform Your Construction Projects
+              </h1>
+              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+                Streamline project management, enhance team collaboration, and deliver exceptional results with our comprehensive construction SaaS platform.
+              </p>
+
+              {/* Feature Highlights */}
+              <div className="space-y-4">
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  className="flex items-center space-x-3"
+                >
+                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                    <Target className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-gray-200 font-medium">Project Management Excellence</span>
+                </motion.div>
+                
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.7 }}
+                  className="flex items-center space-x-3"
+                >
+                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                    <Users className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-gray-200 font-medium">Team Collaboration Tools</span>
+                </motion.div>
+                
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.8 }}
+                  className="flex items-center space-x-3"
+                >
+                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                    <Shield className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-gray-200 font-medium">Security & Compliance</span>
+                </motion.div>
+              </div>
+
+              {/* Stats */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1 }}
+                className="mt-12 grid grid-cols-3 gap-6 pt-8 border-t border-white/20"
+              >
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-white">500+</div>
+                  <div className="text-sm text-gray-300">Active Projects</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-white">10K+</div>
+                  <div className="text-sm text-gray-300">Team Members</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-white">99.9%</div>
+                  <div className="text-sm text-gray-300">Uptime</div>
+                </div>
+              </motion.div>
+            </motion.div>
         </div>
         
-        {/* Floating Orbs */}
+          {/* Floating Elements */}
         <motion.div
-          className="absolute top-20 left-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"
+            className="absolute top-20 right-20 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl"
           animate={{
             x: [0, 30, 0],
             y: [0, -20, 0],
@@ -105,7 +210,7 @@ export default function LoginPage() {
           }}
         />
         <motion.div
-          className="absolute top-40 right-20 w-24 h-24 bg-purple-500/10 rounded-full blur-3xl"
+            className="absolute bottom-20 left-20 w-24 h-24 bg-purple-500/20 rounded-full blur-3xl"
           animate={{
             x: [0, -25, 0],
             y: [0, 15, 0],
@@ -118,33 +223,24 @@ export default function LoginPage() {
             delay: 2
           }}
         />
-        <motion.div
-          className="absolute bottom-20 left-1/4 w-20 h-20 bg-green-500/10 rounded-full blur-3xl"
-          animate={{
-            x: [0, 20, 0],
-            y: [0, -10, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 7,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1
-          }}
-        />
-      </div>
+        </motion.div>
 
-      {/* Centered Login Form */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-8">
+        {/* Right Side - Login Form */}
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="flex-1 lg:w-1/2 flex items-center justify-center px-6 py-8 lg:px-12 lg:py-16"
+        >
         <div className="w-full max-w-md">
-          {/* Logo */}
+            {/* Mobile Logo */}
           <motion.div 
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-center mb-10"
+              className="text-center mb-8 lg:hidden"
           >
-            <Link href="/" className="inline-flex items-center space-x-3 text-black font-bold text-3xl md:text-3xl group">
+              <Link href="/" className="inline-flex items-center space-x-3 text-black font-bold text-3xl group">
               <motion.div 
                 className="bg-black w-14 h-14 flex items-center justify-center rounded-2xl font-black text-white transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-black/20"
                 whileHover={{ rotate: 5 }}
@@ -160,7 +256,7 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 30, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            className="bg-white border border-gray-300 p-8"
+              className="bg-white"
           >
             <div className="text-center mb-8">
               <motion.h1 
@@ -292,6 +388,7 @@ export default function LoginPage() {
             </p>
           </motion.div>
         </div>
+        </motion.div>
       </div>
     </div>
   );

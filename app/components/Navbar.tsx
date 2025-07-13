@@ -346,15 +346,15 @@ const Navbar = () => {
                   >
                     <div className="bg-black w-8 h-8 text-white flex items-center justify-center rounded-md">
                       <HardHat size={16} />
-                    </div>
-                    <span className="font-semibold">BuildStack</span>
-                  </Link>
-                  <button
-                    onClick={() => setIsOpen(false)}
+                      </div>
+                      <span className="font-semibold">BuildStack</span>
+                    </Link>
+                    <button
+                      onClick={() => setIsOpen(false)}
                     className="p-2 text-gray-500 hover:text-black hover:bg-gray-100 rounded-lg transition-colors"
-                  >
+                    >
                     <X size={20} />
-                  </button>
+                    </button>
                 </div>
 
                 {/* Main Navigation */}
@@ -403,25 +403,25 @@ const Navbar = () => {
                             exit={{ opacity: 0, height: 0 }}
                             className="ml-4 mt-2 space-y-1"
                           >
-                            {builderFeatures[selectedBuilder as keyof typeof builderFeatures].map((item: { title: string; description: string; icon: React.ReactNode }) => (
-                              <Link
-                                key={item.title}
+                              {builderFeatures[selectedBuilder as keyof typeof builderFeatures].map((item: { title: string; description: string; icon: React.ReactNode }) => (
+                                <Link
+                                  key={item.title}
                                 href={item.title === 'Project Management' ? '/solutions/project-management' : 
                                       item.title === 'Team Collaboration' ? '/solutions/team-collaboration' :
                                       item.title === 'Document Control' ? '/solutions/document-control' :
                                       item.title === 'Security & Compliance' ? '/solutions/security-compliance' : '#'}
                                 className="block px-4 py-3 text-sm text-gray-600 hover:text-black hover:bg-gray-50 rounded-lg transition-colors"
-                                onClick={() => setIsOpen(false)}
-                              >
+                                  onClick={() => setIsOpen(false)}
+                                  >
                                 <div className="flex items-center gap-3">
                                   <span className="text-gray-400">{item.icon}</span>
                                   <div>
                                     <div className="font-medium">{item.title}</div>
                                     <div className="text-xs text-gray-500 mt-1">{item.description}</div>
                                   </div>
-                                </div>
+                                  </div>
                               </Link>
-                            ))}
+                              ))}
                           </motion.div>
                         )}
                       </motion.div>
@@ -455,15 +455,15 @@ const Navbar = () => {
                 {/* Simple Action Buttons */}
                 <div className="p-6 border-t border-gray-200 space-y-3">
                   {isAuthenticated === false && (
-                    <button 
+                  <button 
                       onClick={() => {
                         router.push('/signup');
                         setIsOpen(false);
                       }}
                       className="w-full px-4 py-3 text-center text-gray-700 hover:text-black hover:bg-gray-50 rounded-lg transition-colors font-medium border border-gray-200"
-                    >
-                      Sign up
-                    </button>
+                  >
+                    Sign up
+                  </button>
                   )}
                   {isAuthenticated === true && (
                     <button 
@@ -481,7 +481,7 @@ const Navbar = () => {
                     className="block w-full px-4 py-3 bg-black text-white text-center rounded-lg font-medium hover:bg-gray-800 transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
-                    Get a Demo
+                      Get a Demo
                   </Link>
                 </div>
               </div>
