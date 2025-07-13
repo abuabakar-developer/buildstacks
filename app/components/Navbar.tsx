@@ -295,18 +295,18 @@ const Navbar = () => {
           <div className="md:hidden flex items-center z-50">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="relative p-2.5 rounded-lg hover:bg-black/5 active:bg-black/10 transition-colors duration-200"
+              className="relative p-3 rounded-xl hover:bg-black/5 active:bg-black/10 transition-all duration-300 group"
               aria-label="Toggle menu"
             >
               <div className="flex flex-col justify-center items-center w-6 h-6 space-y-1.5">
-                <span className={`block h-0.5 w-6 bg-black/80 transform transition-all duration-300 ease-out 
-                  ${isOpen ? 'rotate-45 translate-y-2' : ''}`}
+                <span className={`block h-0.5 w-6 bg-black/80 transform transition-all duration-500 ease-out rounded-full
+                  ${isOpen ? 'rotate-45 translate-y-2 bg-black' : 'group-hover:bg-black'}`}
                 />
-                <span className={`block h-0.5 w-5 bg-black/80 transform transition-all duration-200 ease-out
-                  ${isOpen ? 'opacity-0' : ''}`}
+                <span className={`block h-0.5 w-5 bg-black/80 transform transition-all duration-300 ease-out rounded-full
+                  ${isOpen ? 'opacity-0 scale-0' : 'group-hover:bg-black group-hover:w-6'}`}
                 />
-                <span className={`block h-0.5 w-6 bg-black/80 transform transition-all duration-300 ease-out
-                  ${isOpen ? '-rotate-45 -translate-y-2' : ''}`}
+                <span className={`block h-0.5 w-6 bg-black/80 transform transition-all duration-500 ease-out rounded-full
+                  ${isOpen ? '-rotate-45 -translate-y-2 bg-black' : 'group-hover:bg-black'}`}
                 />
               </div>
             </button>
@@ -318,140 +318,170 @@ const Navbar = () => {
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Backdrop */}
+            {/* Simple Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-black/20 z-40"
               onClick={() => setIsOpen(false)}
             />
 
-            {/* Menu Content */}
+            {/* Clean Mobile Menu */}
             <motion.div
               initial={{ opacity: 0, x: '100%' }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: '100%' }}
-              transition={{ type: 'spring', stiffness: 400, damping: 40 }}
-              className="fixed inset-y-0 right-0 w-full sm:w-96 bg-white/95 backdrop-blur-md z-50 overflow-y-auto font-inter"
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="fixed inset-y-0 right-0 w-full sm:w-80 bg-white z-50 overflow-hidden shadow-2xl"
             >
               <div className="flex flex-col h-full">
-                {/* Mobile Menu Header */}
-                <div className="p-6 border-b border-black/10">
-                  <div className="flex items-center justify-between">
-                    <Link href="/" className="flex items-center space-x-2 text-black font-bold text-xl cursor-pointer">
-                      <div className="bg-black w-10 h-10 text-white flex items-center justify-center rounded-md">
-                        <HardHat size={20} />
-                      </div>
-                      <span className="font-semibold">BuildStack</span>
-                    </Link>
-                    <button
-                      onClick={() => setIsOpen(false)}
-                      className="p-2 text-black/60 hover:text-black hover:bg-black/5 rounded-lg transition-colors duration-200 cursor-pointer"
-                    >
-                      <X size={24} />
-                    </button>
-                  </div>
+                {/* Simple Header */}
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                  <Link 
+                    href="/" 
+                    className="flex items-center space-x-2 text-black font-bold text-lg"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <div className="bg-black w-8 h-8 text-white flex items-center justify-center rounded-md">
+                      <HardHat size={16} />
+                    </div>
+                    <span className="font-semibold">BuildStack</span>
+                  </Link>
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="p-2 text-gray-500 hover:text-black hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
                 </div>
 
-                {/* Mobile Navigation Links */}
+                {/* Main Navigation */}
                 <div className="flex-1 overflow-y-auto p-6">
-                  <div className="space-y-2">
-                    {navLinks.map((link) => (
-                      <div key={link.name}>
+                  <nav className="space-y-2">
+                    {navLinks.map((link, index) => (
+                      <motion.div 
+                        key={link.name}
+                        initial={{ opacity: 0, x: 10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                      >
                         <button
-                          onClick={() => link.hasDropdown && setActiveDropdown(activeDropdown === link.name ? null : link.name)}
-                          className="w-full px-4 py-4 flex items-center justify-between text-black/70 hover:text-black hover:bg-black/5 rounded-xl transition-colors duration-200 font-inter font-semibold text-base cursor-pointer"
+                          onClick={() => {
+                            if (link.onClick) {
+                              link.onClick;
+                              setIsOpen(false);
+                            } else if (link.hasDropdown) {
+                              setActiveDropdown(activeDropdown === link.name ? null : link.name);
+                            } else {
+                              router.push(link.href);
+                              setIsOpen(false);
+                            }
+                          }}
+                          className="w-full px-4 py-3 flex items-center justify-between text-gray-700 hover:text-black hover:bg-gray-50 rounded-lg transition-colors font-medium"
                         >
                           <div className="flex items-center gap-3">
-                            {link.icon}
-                            <span className="text-base font-inter font-semibold">{link.name}</span>
+                            <span className="text-gray-500">{link.icon}</span>
+                            <span>{link.name}</span>
                           </div>
                           {link.hasDropdown && (
                             <ChevronDown 
-                              size={20} 
-                              className={`transform transition-transform duration-200 ${
+                              size={16} 
+                              className={`transition-transform duration-200 ${
                                 activeDropdown === link.name ? 'rotate-180' : ''
                               }`}
                             />
                           )}
                         </button>
 
-                        {/* Mobile Dropdown */}
+                        {/* Simple Dropdown */}
                         {link.hasDropdown && activeDropdown === link.name && (
                           <motion.div
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
-                            className="pl-4 pr-4 py-2"
+                            className="ml-4 mt-2 space-y-1"
                           >
-                            <div className="grid grid-cols-1 gap-2">
-                              {builderFeatures[selectedBuilder as keyof typeof builderFeatures].map((item: { title: string; description: string; icon: React.ReactNode }) => (
-                                item.title === 'Project Management' ? (
-                                <Link
-                                  key={item.title}
-                                    href="/solutions/project-management"
-                                    className="group flex items-start gap-3 p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-all duration-200 font-inter cursor-pointer border border-transparent hover:border-blue-200"
-                                  onClick={() => setIsOpen(false)}
-                                  >
-                                    <div className="text-black group-hover:text-blue-700 transition-colors">
-                                      {item.icon}
-                                    </div>
-                                    <div>
-                                      <span className="text-black text-base font-inter font-semibold group-hover:text-blue-700">{item.title}</span>
-                                      <p className="text-black/60 text-sm mt-1 font-inter font-semibold">{item.description}</p>
-                                    </div>
-                                  </Link>
-                                ) : (
-                                  <div
-                                    key={item.title}
-                                    className="group flex items-start gap-3 p-4 bg-black/5 rounded-xl hover:bg-black/10 transition-all duration-200 font-inter cursor-pointer"
-                                >
-                                  <div className="text-black group-hover:text-black/80 transition-colors">
-                                    {item.icon}
-                                  </div>
+                            {builderFeatures[selectedBuilder as keyof typeof builderFeatures].map((item: { title: string; description: string; icon: React.ReactNode }) => (
+                              <Link
+                                key={item.title}
+                                href={item.title === 'Project Management' ? '/solutions/project-management' : 
+                                      item.title === 'Team Collaboration' ? '/solutions/team-collaboration' :
+                                      item.title === 'Document Control' ? '/solutions/document-control' :
+                                      item.title === 'Security & Compliance' ? '/solutions/security-compliance' : '#'}
+                                className="block px-4 py-3 text-sm text-gray-600 hover:text-black hover:bg-gray-50 rounded-lg transition-colors"
+                                onClick={() => setIsOpen(false)}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <span className="text-gray-400">{item.icon}</span>
                                   <div>
-                                    <span className="text-black text-base font-inter font-semibold">{item.title}</span>
-                                    <p className="text-black/60 text-sm mt-1 font-inter font-semibold">{item.description}</p>
+                                    <div className="font-medium">{item.title}</div>
+                                    <div className="text-xs text-gray-500 mt-1">{item.description}</div>
                                   </div>
-                                  </div>
-                                )
-                              ))}
-                            </div>
+                                </div>
+                              </Link>
+                            ))}
                           </motion.div>
                         )}
-                      </div>
+                      </motion.div>
                     ))}
+                  </nav>
+
+                  {/* Quick Actions */}
+                  <div className="mt-8 pt-6 border-t border-gray-200">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                    <div className="space-y-2">
+                      <Link
+                        href="/book-demo"
+                        className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-black hover:bg-gray-50 rounded-lg transition-colors"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <Rocket size={16} className="text-gray-500" />
+                        <span className="font-medium">Get Demo</span>
+                      </Link>
+                      <Link
+                        href="/pricing"
+                        className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-black hover:bg-gray-50 rounded-lg transition-colors"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <HelpCircle size={16} className="text-gray-500" />
+                        <span className="font-medium">Pricing</span>
+                      </Link>
+                    </div>
                   </div>
                 </div>
 
-                {/* Mobile Action Buttons */}
-                <div className="sticky bottom-0 p-6 bg-white/95 backdrop-blur-sm border-t border-black/10 space-y-3">
+                {/* Simple Action Buttons */}
+                <div className="p-6 border-t border-gray-200 space-y-3">
                   {isAuthenticated === false && (
-                  <button 
-                    onClick={() => router.push('/signup')}
-                    className="block w-full px-4 py-4 text-center text-black/70 hover:text-black hover:bg-black/5 rounded-xl transition-colors duration-200 text-base font-inter font-semibold cursor-pointer"
-                  >
-                    Sign up
-                  </button>
+                    <button 
+                      onClick={() => {
+                        router.push('/signup');
+                        setIsOpen(false);
+                      }}
+                      className="w-full px-4 py-3 text-center text-gray-700 hover:text-black hover:bg-gray-50 rounded-lg transition-colors font-medium border border-gray-200"
+                    >
+                      Sign up
+                    </button>
                   )}
                   {isAuthenticated === true && (
                     <button 
-                      onClick={() => router.push('/login')}
-                      className="block w-full px-4 py-4 text-center text-black/70 hover:text-black hover:bg-black/5 rounded-xl transition-colors duration-200 text-base font-inter font-semibold cursor-pointer"
+                      onClick={() => {
+                        router.push('/login');
+                        setIsOpen(false);
+                      }}
+                      className="w-full px-4 py-3 text-center text-gray-700 hover:text-black hover:bg-gray-50 rounded-lg transition-colors font-medium border border-gray-200"
                     >
                       Sign in
                     </button>
                   )}
                   <Link
                     href="/book-demo"
-                    className="group relative block w-full px-4 py-4 bg-black text-white rounded-full font-inter font-semibold hover:bg-black/90 transition-all duration-200 text-center text-base shadow-md cursor-pointer"
+                    className="block w-full px-4 py-3 bg-black text-white text-center rounded-lg font-medium hover:bg-gray-800 transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      Get a Demo
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
-                    </span>
+                    Get a Demo
                   </Link>
                 </div>
               </div>

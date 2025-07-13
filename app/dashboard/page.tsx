@@ -46,6 +46,7 @@ import {
   Bars3Icon,
   XMarkIcon,
   ArrowRightOnRectangleIcon,
+  ArrowPathIcon,
 } from "@heroicons/react/24/outline";
 import LinePattern from "../components/LinePattern";
 import Pusher from 'pusher-js';
@@ -377,6 +378,7 @@ export default function DashboardPage() {
   const [removeError, setRemoveError] = useState("");
   const [roleError, setRoleError] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -588,6 +590,55 @@ export default function DashboardPage() {
     alert('JazzCash checkout coming soon!');
   };
 
+  const refreshDocuments = async () => {
+    if (companyId) {
+      try {
+        const res = await fetch(`/api/documents?companyId=${companyId}`);
+        const data = await res.json();
+        setDocuments(data);
+      } catch (error) {
+        console.error('Error refreshing documents:', error);
+      }
+    }
+  };
+
+  const deleteDocument = async (documentId: string) => {
+    try {
+      const response = await fetch(`/api/documents/${documentId}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        setDocuments(documents.filter(doc => doc._id !== documentId));
+        toast.success('Document deleted successfully');
+      } else {
+        toast.error('Failed to delete document');
+      }
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      toast.error('Error deleting document');
+    }
+  };
+
+  const deleteProject = async (projectId: string) => {
+    try {
+      const response = await fetch(`/api/projects/${projectId}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        setProjects(projects.filter(project => project._id !== projectId));
+        toast.success('Project deleted successfully');
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Failed to delete project');
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      toast.error('Error deleting project');
+    }
+  };
+
   if (isLoading) {
     return <DashboardLoading />;
   }
@@ -730,7 +781,7 @@ export default function DashboardPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {/* Active Projects */}
                 <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-blue-400 hover:bg-blue-50/40">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-blue-100 to-blue-200 group-hover:from-blue-200 group-hover:to-blue-300 transition-colors duration-300">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-blue-100 to-blue-200 group-hover:from-blue-200 group-hover:to-blue-300 transition-colors duration-300 shadow">
                     <BuildingOfficeIcon className="h-6 w-6 text-blue-600" />
                   </div>
                   <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{projects.length}</span>
@@ -739,7 +790,7 @@ export default function DashboardPage() {
                 </div>
                 {/* Documents */}
                 <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-green-400 hover:bg-green-50/40">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-green-100 to-green-200 group-hover:from-green-200 group-hover:to-green-300 transition-colors duration-300">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-green-100 to-green-200 group-hover:from-green-200 group-hover:to-green-300 transition-colors duration-300 shadow">
                     <DocumentIcon className="h-6 w-6 text-green-600" />
                   </div>
                   <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{documents.length}</span>
@@ -748,7 +799,7 @@ export default function DashboardPage() {
                 </div>
                 {/* Team Members */}
                 <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-purple-400 hover:bg-purple-50/40">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-purple-100 to-purple-200 group-hover:from-purple-200 group-hover:to-purple-300 transition-colors duration-300">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-purple-100 to-purple-200 group-hover:from-purple-200 group-hover:to-purple-300 transition-colors duration-300 shadow">
                     <UsersIcon className="h-6 w-6 text-purple-600" />
                   </div>
                   <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{teamMembers.length}</span>
@@ -757,7 +808,7 @@ export default function DashboardPage() {
                 </div>
                 {/* Total Tasks */}
                 <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-yellow-400 hover:bg-yellow-50/40">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-yellow-100 to-yellow-200 group-hover:from-yellow-200 group-hover:to-yellow-300 transition-colors duration-300">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-yellow-100 to-yellow-200 group-hover:from-yellow-200 group-hover:to-yellow-300 transition-colors duration-300 shadow">
                     <ClipboardDocumentListIcon className="h-6 w-6 text-yellow-600" />
                   </div>
                   <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{Object.values(tasksByProject).reduce((acc: number, t) => acc + (Array.isArray(t) ? t.length : 0), 0)}</span>
@@ -784,9 +835,25 @@ export default function DashboardPage() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {filteredProjects.slice(0, 4).map((project) => (
-                      <div key={project._id} onClick={() => setSelectedProject(project)} className="cursor-pointer group">
+                    {filteredProjects.map((project) => (
+                      <div key={project._id} onClick={() => setSelectedProject(project)} className="cursor-pointer group relative">
                         <div className="bg-white rounded-3xl p-6 border border-gray-400 transition-all duration-500 flex flex-col h-full group-hover:bg-gray-50 group-hover:border-blue-400">
+                          {/* Delete Button */}
+                          <div className="absolute top-3 right-3 z-10">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (confirm(`Are you sure you want to delete "${project.name}"? This action cannot be undone.`)) {
+                                  deleteProject(project._id);
+                                }
+                              }}
+                              className="p-2 bg-red-100 hover:bg-red-200 text-red-600 hover:text-red-700 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110"
+                              title="Delete Project"
+                            >
+                              <TrashIcon className="h-4 w-4" />
+                            </button>
+                          </div>
+                          
                           <div className="flex items-center gap-4 mb-4">
                             <div className="flex-shrink-0 inline-flex p-4 rounded-2xl bg-gray-200 text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:scale-110 transition-all duration-500">
                               <BuildingOfficeIcon className="h-6 w-6" />
@@ -1110,9 +1177,18 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="bg-white rounded-3xl p-6 border border-gray-400">
-                  <h4 className="text-lg font-bold text-black mb-4 flex items-center gap-2 font-plus-jakarta">
-                    <DocumentCheckIcon className="h-5 w-5 text-blue-600" /> Recent Documents
-                  </h4>
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-lg font-bold text-black flex items-center gap-2 font-plus-jakarta">
+                      <DocumentCheckIcon className="h-5 w-5 text-blue-600" /> Recent Documents
+                    </h4>
+                    <button
+                      onClick={refreshDocuments}
+                      className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-full transition-all duration-200"
+                      title="Refresh documents"
+                    >
+                      <ArrowPathIcon className="h-4 w-4" />
+                    </button>
+                  </div>
                   <div className="space-y-3">
                     {filteredDocuments.slice(0, 5).map((doc, idx) => (
                       <div key={doc._id || idx} className="group bg-white rounded-2xl border border-gray-300 transition-all duration-300 p-4 flex items-center gap-4">
@@ -1143,6 +1219,19 @@ export default function DashboardPage() {
                             <span className="text-black/50">{new Date(doc.date).toLocaleDateString()}</span>
                           </div>
                         </div>
+                        {/* Delete Button */}
+                        <button
+                          onClick={() => deleteDocument(doc._id)}
+                          disabled={deleteLoading === doc._id}
+                          className="flex-shrink-0 p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100 disabled:opacity-50"
+                          title="Delete document"
+                        >
+                          {deleteLoading === doc._id ? (
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-500 border-t-transparent"></div>
+                          ) : (
+                            <TrashIcon className="h-4 w-4" />
+                          )}
+                        </button>
                       </div>
                     ))}
                     {filteredDocuments.length === 0 && (
@@ -1286,115 +1375,104 @@ export default function DashboardPage() {
               </div>
               
               {filteredProjects.length === 0 ? (
-                <div className="text-center py-12 sm:py-16 lg:py-20">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                    <BuildingOfficeIcon className="h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 text-gray-400" />
+                <div className="text-center text-black/50 py-8 sm:py-12">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-black/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <BuildingOfficeIcon className="h-8 w-8 sm:h-10 sm:w-10 text-black/30" />
                   </div>
-                  <h4 className="text-lg sm:text-xl lg:text-2xl font-bold text-black/70 mb-2 font-plus-jakarta">No projects found</h4>
-                  <p className="text-black/50 font-inter text-sm sm:text-base">Create your first construction project to get started</p>
+                  <p className="text-sm sm:text-base font-semibold text-black/70 mb-1">No projects found</p>
+                  <p className="text-xs sm:text-sm text-black/50">Create your first project to get started</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {filteredProjects.map((project) => (
-                    <div key={project._id} className="group bg-white border-2 border-gray-200 rounded-3xl p-4 sm:p-6 lg:p-8 hover:border-black/30 hover:bg-black/5 transition-all duration-300 flex flex-col h-full">
-                      {/* Header */}
-                      <div className="flex items-start justify-between mb-4 sm:mb-6 gap-3">
-                        <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-black/10 to-black/20 rounded-2xl flex items-center justify-center group-hover:from-black/20 group-hover:to-black/30 transition-all duration-300 flex-shrink-0">
-                            <BuildingOfficeIcon className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-black/80" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <h4 className="font-bold text-black/80 text-base sm:text-lg lg:text-xl mb-1 sm:mb-2 font-plus-jakarta break-words leading-relaxed">{project.name}</h4>
-                            <p className="text-xs sm:text-sm lg:text-base text-black/60 font-inter break-words leading-relaxed">{project.desc}</p>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Status & Priority Badges */}
-                      <div className="flex flex-wrap items-center gap-2 mb-4 sm:mb-6">
-                        <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-bold border ${
-                          project.status === "active" ? "bg-green-100 text-green-700 border-green-200" : 
-                          project.status === "completed" ? "bg-blue-100 text-blue-700 border-blue-200" : 
-                          project.status === "pending" ? "bg-yellow-100 text-yellow-700 border-yellow-200" : 
-                          "bg-gray-100 text-gray-700 border-gray-200"
-                        }`}>
-                          {project.status}
-                        </span>
-                        <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-bold border ${
-                          project.priority === "high" ? "bg-red-100 text-red-700 border-red-200" : 
-                          project.priority === "medium" ? "bg-yellow-100 text-yellow-700 border-yellow-200" : 
-                          project.priority === "low" ? "bg-green-100 text-green-700 border-green-200" : 
-                          "bg-gray-100 text-gray-700 border-gray-200"
-                        }`}>
-                          {project.priority}
-                        </span>
-                      </div>
-                      
-                      {/* Progress Bar */}
-                      <div className="p-4 bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 mb-4 hover:shadow-md transition-all duration-300">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="text-sm font-semibold text-black font-inter">Progress</div>
-                          <div className="text-sm font-bold text-black font-plus-jakarta">{project.progress}%</div>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
-                          <div
-                            className="bg-black h-3 rounded-full transition-all duration-700 ease-out shadow-sm relative overflow-hidden"
-                            style={{ width: `${project.progress}%` }}
-                          >
-                            {/* Animated shine effect */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
-                          </div>
-                        </div>
-                        <div className="mt-2 text-xs text-black/60 font-medium">
-                          {project.progress === 100 ? 'Project Complete!' : 
-                           project.progress >= 75 ? 'Almost there!' :
-                           project.progress >= 50 ? 'Halfway done!' :
-                           project.progress >= 25 ? 'Getting started!' : 'Just beginning!'}
-                        </div>
-                      </div>
-                      
-                      {/* Project Stats */}
-                      <div className="space-y-3 mb-6">
-                        <div className="p-3 bg-gray-50 rounded-xl">
-                          <div className="text-xs text-black/60 font-inter font-semibold mb-1">Documents:</div>
-                          <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">{project.documents} files</div>
-                        </div>
-                        <div className="p-3 bg-gray-50 rounded-xl">
-                          <div className="text-xs text-black/60 font-inter font-semibold mb-1">Team Members:</div>
-                          <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">{project.team} members</div>
-                        </div>
-                        <div className="p-3 bg-gray-50 rounded-xl">
-                          <div className="text-xs text-black/60 font-inter font-semibold mb-1">Total Tasks:</div>
-                          <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">{tasksByProject[project._id]?.length || 0} tasks</div>
-                        </div>
-                      </div>
-                      
-                      {/* Owner Info */}
-                      {project.owner && (
-                        <div className="p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-200 mb-4">
-                          <div className="text-xs text-yellow-800 font-inter font-semibold mb-1">Project Owner:</div>
-                          <div className="font-semibold text-yellow-800 text-sm break-words leading-relaxed">
-                            {project.owner.firstName} {project.owner.lastName} {user?._id === project.owner._id ? '(You)' : ''}
-                          </div>
-                        </div>
-                      )}
-                      
-                      {/* Action Buttons */}
-                      <div className="flex flex-col gap-2 mt-auto">
-                        <button className="w-full bg-black text-white px-4 py-3 rounded-full text-sm font-semibold hover:bg-gray-900 hover:scale-105 transition-all duration-300 font-inter shadow-lg hover:shadow-xl">
-                          View Project
-                        </button>
-                        {user?._id === project.owner?._id && (
-                          <button 
-                            onClick={() => {
-                              setSelectedProject(project);
-                              setInviteModalOpen(true);
+                    <div key={project._id} onClick={() => setSelectedProject(project)} className="cursor-pointer group relative">
+                      <div className="bg-white rounded-3xl p-6 border border-gray-400 transition-all duration-500 flex flex-col h-full group-hover:bg-gray-50 group-hover:border-blue-400">
+                        {/* Delete Button */}
+                        <div className="absolute top-3 right-3 z-10">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (confirm(`Are you sure you want to delete "${project.name}"? This action cannot be undone.`)) {
+                                deleteProject(project._id);
+                              }
                             }}
-                            className="w-full bg-transparent border-2 border-black text-black px-4 py-3 rounded-full text-sm font-semibold hover:bg-black hover:text-white hover:scale-105 transition-all duration-300 font-inter shadow-lg hover:shadow-xl"
+                            className="p-2 bg-red-100 hover:bg-red-200 text-red-600 hover:text-red-700 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110"
+                            title="Delete Project"
                           >
-                            Invite Team
+                            <TrashIcon className="h-4 w-4" />
                           </button>
-                        )}
+                        </div>
+                        
+                        <div className="flex items-center gap-4 mb-4">
+                          <div className="flex-shrink-0 inline-flex p-4 rounded-2xl bg-gray-200 text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:scale-110 transition-all duration-500">
+                            <BuildingOfficeIcon className="h-6 w-6" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-xl font-semibold text-black font-plus-jakarta leading-tight mb-1 transition-colors duration-500 truncate">{project.name}</h4>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                                project.status === "active" ? "bg-green-100 text-green-700 border border-green-200" : 
+                                project.status === "completed" ? "bg-blue-100 text-blue-700 border border-blue-200" : 
+                                project.status === "pending" ? "bg-yellow-100 text-yellow-700 border border-yellow-200" : 
+                                "bg-gray-100 text-gray-700 border border-gray-200"
+                              }`}>
+                                {project.status}
+                              </span>
+                              {project.priority && (
+                                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                                  project.priority === "high" ? "bg-red-100 text-red-700 border border-red-200" : 
+                                  project.priority === "medium" ? "bg-yellow-100 text-yellow-700 border border-yellow-200" : 
+                                  "bg-green-100 text-green-700 border border-green-200"
+                                }`}>
+                                  {project.priority}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-black/70 font-inter text-sm leading-relaxed transition-colors duration-500 truncate">{project.desc}</p>
+                          </div>
+                        </div>
+                        <div className="flex-1 flex flex-col justify-between">
+                          {/* Progress Bar */}
+                          <div className="p-4 bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 mb-4 hover:shadow-md transition-all duration-300">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="text-sm font-semibold text-black font-inter">Progress</div>
+                              <div className="text-sm font-bold text-black font-plus-jakarta">{project.progress}%</div>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
+                              <div
+                                className="bg-black h-3 rounded-full transition-all duration-700 ease-out shadow-sm relative overflow-hidden"
+                                style={{ width: `${project.progress}%` }}
+                              >
+                                {/* Animated shine effect */}
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
+                              </div>
+                            </div>
+                            <div className="mt-2 text-xs text-black/60 font-medium">
+                              {project.progress === 100 ? 'Project Complete!' : 
+                               project.progress >= 75 ? 'Almost there!' :
+                               project.progress >= 50 ? 'Halfway done!' :
+                               project.progress >= 25 ? 'Getting started!' : 'Just beginning!'}
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 text-xs text-black/60 mb-4">
+                            <div className="bg-black/5 px-2 py-1 rounded-lg text-center">
+                              <span className="font-semibold text-black/80">{project.documents}</span>
+                              <div>Documents</div>
+                            </div>
+                            <div className="bg-black/5 px-2 py-1 rounded-lg text-center">
+                              <span className="font-semibold text-black/80">{project.team}</span>
+                              <div>Team</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex gap-2 mt-4">
+                          <button className="flex-1 bg-black text-white rounded-full px-4 py-2 text-xs font-semibold hover:bg-gray-900 transition-colors duration-200 shadow">
+                            Documents
+                          </button>
+                          <button className="flex-1 bg-transparent border border-black text-black rounded-full px-4 py-2 text-xs font-semibold hover:bg-black hover:text-white transition-colors duration-200 shadow">
+                            Team
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -1413,13 +1491,22 @@ export default function DashboardPage() {
                   <DocumentIcon className="h-7 w-7 text-blue-600" /> 
                   Document Management
                 </h2>
-                <button
-                  onClick={() => setModalOpen(true)}
-                  className="bg-black text-white px-6 py-3 rounded-full font-semibold transition-all duration-200 flex items-center gap-2 font-inter hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-black w-full sm:w-auto"
-                >
-                  <PlusIcon className="h-5 w-5" />
-                  Upload Document
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={refreshDocuments}
+                    className="bg-transparent border-2 border-black text-black px-6 py-3 rounded-full font-semibold transition-all duration-200 flex items-center gap-2 font-inter hover:bg-black hover:text-white focus:outline-none focus:ring-2 focus:ring-black w-full sm:w-auto"
+                  >
+                    <ArrowPathIcon className="h-5 w-5" />
+                    Refresh
+                  </button>
+                  <button
+                    onClick={() => setModalOpen(true)}
+                    className="bg-black text-white px-6 py-3 rounded-full font-semibold transition-all duration-200 flex items-center gap-2 font-inter hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-black w-full sm:w-auto"
+                  >
+                    <PlusIcon className="h-5 w-5" />
+                    Upload Document
+                  </button>
+                </div>
               </div>
             </section>
 
@@ -1588,6 +1675,18 @@ export default function DashboardPage() {
                         </button>
                         <button className="w-full bg-transparent border-2 border-black text-black px-4 py-3 rounded-full text-sm font-semibold hover:bg-black hover:text-white hover:scale-105 transition-all duration-300 font-inter shadow-lg hover:shadow-xl">
                           Download
+                        </button>
+                        <button 
+                          onClick={() => deleteDocument(doc._id)}
+                          disabled={deleteLoading === doc._id}
+                          className="w-full bg-red-50 border-2 border-red-200 text-red-600 px-4 py-3 rounded-full text-sm font-semibold hover:bg-red-100 hover:border-red-300 hover:text-red-700 hover:scale-105 transition-all duration-300 font-inter shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {deleteLoading === doc._id ? (
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent"></div>
+                          ) : (
+                            <TrashIcon className="h-4 w-4" />
+                          )}
+                          {deleteLoading === doc._id ? 'Deleting...' : 'Delete'}
                         </button>
                       </div>
                     </div>
