@@ -380,6 +380,39 @@ export default function DashboardPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
 
+  // Function to handle invite team button click with notification
+  const handleInviteTeamClick = () => {
+    if (projects.length === 0) {
+      toast.error(
+        <div className="flex items-start gap-3">
+          <div className="flex-shrink-0">
+            <ExclamationTriangleIcon className="h-5 w-5 text-red-500" />
+          </div>
+          <div>
+            <div className="font-semibold text-red-800">Create a Project First!</div>
+            <div className="text-sm text-red-700 mt-1">
+              You need to create a project before inviting team members. This is the best practice for organizing your construction work.
+            </div>
+            <div className="text-xs text-red-600 mt-2">
+              💡 Tip: Start by creating a project, then invite your team to collaborate on it.
+            </div>
+          </div>
+        </div>,
+        {
+          duration: 6000,
+          style: {
+            background: '#FEF2F2',
+            border: '1px solid #FECACA',
+            color: '#991B1B',
+            maxWidth: '400px',
+          },
+        }
+      );
+      return;
+    }
+    setInviteModalOpen(true);
+  };
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       // Try to get companyId from /api/auth/me for consistency with NewProjectModal
@@ -1892,10 +1925,20 @@ export default function DashboardPage() {
                   Team Management
                 </h2>
                 <button
-                  onClick={() => setInviteModalOpen(true)}
-                  className="px-6 py-3 rounded-full font-semibold border-2 border-black text-black bg-transparent hover:bg-black hover:text-white transition-all duration-200 flex items-center gap-2 font-inter focus:outline-none focus:ring-4 focus:ring-black/20"
+                  onClick={handleInviteTeamClick}
+                  className={`px-6 py-3 rounded-full font-semibold border-2 transition-all duration-200 flex items-center gap-2 font-inter focus:outline-none focus:ring-4 ${
+                    projects.length === 0 
+                      ? 'border-gray-300 text-gray-400 bg-gray-50 cursor-not-allowed hover:bg-gray-50 hover:text-gray-400 focus:ring-gray-200' 
+                      : 'border-black text-black bg-transparent hover:bg-black hover:text-white focus:ring-black/20'
+                  }`}
+                  title={projects.length === 0 ? "Create a project first to invite team members" : "Invite team members to collaborate"}
                 >
                   <UsersIcon className="h-5 w-5" /> Invite Team
+                  {projects.length === 0 && (
+                    <span className="ml-1 text-xs bg-gray-300 text-gray-600 px-2 py-1 rounded-full">
+                      No Projects
+                    </span>
+                  )}
                 </button>
               </div>
             </section>
@@ -3378,10 +3421,20 @@ export default function DashboardPage() {
                   <PlusIcon className="h-5 w-5" /> New Project
                 </button>
                 <button
-                  onClick={() => setInviteModalOpen(true)}
-                  className="px-6 py-3 rounded-full font-semibold border-2 border-black text-black bg-transparent hover:bg-black hover:text-white transition-all duration-200 flex items-center gap-2 font-inter focus:outline-none focus:ring-4 focus:ring-black/20"
+                  onClick={handleInviteTeamClick}
+                  className={`px-6 py-3 rounded-full font-semibold border-2 transition-all duration-200 flex items-center gap-2 font-inter focus:outline-none focus:ring-4 ${
+                    projects.length === 0 
+                      ? 'border-gray-300 text-gray-400 bg-gray-50 cursor-not-allowed hover:bg-gray-50 hover:text-gray-400 focus:ring-gray-200' 
+                      : 'border-black text-black bg-transparent hover:bg-black hover:text-white focus:ring-black/20'
+                  }`}
+                  title={projects.length === 0 ? "Create a project first to invite team members" : "Invite team members to collaborate"}
                 >
                   <UsersIcon className="h-5 w-5" /> Invite Team
+                  {projects.length === 0 && (
+                    <span className="ml-1 text-xs bg-gray-300 text-gray-600 px-2 py-1 rounded-full">
+                      No Projects
+                    </span>
+                  )}
                 </button>
               </div>
             </div>
@@ -3400,10 +3453,20 @@ export default function DashboardPage() {
                   <PlusIcon className="h-4 w-4" /> New Project
                 </button>
                 <button
-                  onClick={() => setInviteModalOpen(true)}
-                  className="flex-1 px-4 py-3 rounded-full font-semibold border-2 border-black text-black bg-transparent hover:bg-black hover:text-white transition-all duration-200 flex items-center justify-center gap-2 text-sm font-inter focus:outline-none focus:ring-4 focus:ring-black/20"
+                  onClick={handleInviteTeamClick}
+                  className={`flex-1 px-4 py-3 rounded-full font-semibold border-2 transition-all duration-200 flex items-center justify-center gap-2 text-sm font-inter focus:outline-none focus:ring-4 ${
+                    projects.length === 0 
+                      ? 'border-gray-300 text-gray-400 bg-gray-50 cursor-not-allowed hover:bg-gray-50 hover:text-gray-400 focus:ring-gray-200' 
+                      : 'border-black text-black bg-transparent hover:bg-black hover:text-white focus:ring-black/20'
+                  }`}
+                  title={projects.length === 0 ? "Create a project first to invite team members" : "Invite team members to collaborate"}
                 >
                   <UsersIcon className="h-4 w-4" /> Invite Team
+                  {projects.length === 0 && (
+                    <span className="ml-1 text-xs bg-gray-300 text-gray-600 px-1 py-0.5 rounded-full">
+                      No Projects
+                    </span>
+                  )}
                 </button>
               </div>
             </div>
@@ -3432,6 +3495,33 @@ export default function DashboardPage() {
               }
               return [project, ...prev];
             });
+            
+            // Show success notification with next step guidance
+            toast.success(
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0">
+                  <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                </div>
+                <div>
+                  <div className="font-semibold text-green-800">Project Created Successfully!</div>
+                  <div className="text-sm text-green-700 mt-1">
+                    "{project.name}" is now ready for collaboration.
+                  </div>
+                  <div className="text-xs text-green-600 mt-2">
+                    🎉 Great! Now you can invite team members to work on this project.
+                  </div>
+                </div>
+              </div>,
+              {
+                duration: 5000,
+                style: {
+                  background: '#F0FDF4',
+                  border: '1px solid #BBF7D0',
+                  color: '#166534',
+                  maxWidth: '400px',
+                },
+              }
+            );
           }}
         />
         <InviteTeamModal
