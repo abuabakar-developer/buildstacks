@@ -1043,110 +1043,106 @@ export default function DashboardPage() {
                 <h3 className="text-lg sm:text-xl font-bold text-black/80 mb-4 sm:mb-6 flex items-center gap-2 font-plus-jakarta">
                   <BuildingOfficeIcon className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" /> Recent Projects
                 </h3>
-                {filteredProjects.length === 0 ? (
-                  <div className="text-center text-black/50 py-8 sm:py-12">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-black/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <BuildingOfficeIcon className="h-8 w-8 sm:h-10 sm:w-10 text-black/30" />
+                {/* Table Headings */}
+                <div className="hidden lg:flex w-full bg-gray-50 rounded-2xl border border-gray-200 mb-2 overflow-x-auto">
+                  {['Name', 'Status', 'Priority', 'Progress', 'Documents', 'Team', 'Actions'].map((heading, idx, arr) => (
+                    <div
+                      key={heading}
+                      className={`flex-1 px-4 py-4 font-bold text-black/70 text-base font-plus-jakarta border-r border-gray-200 last:border-none ${idx === 0 ? 'rounded-l-2xl' : ''} ${idx === arr.length - 1 ? 'rounded-r-2xl text-center' : ''}`}
+                    >
+                      {heading}
                     </div>
-                    <p className="text-sm sm:text-base font-semibold text-black/70 mb-1">No projects found</p>
-                    <p className="text-xs sm:text-sm text-black/50">Create your first project to get started</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {filteredProjects.map((project) => (
-                      <div key={project._id} onClick={() => setSelectedProject(project)} className="cursor-pointer group relative">
-                        <div className="bg-white rounded-3xl p-6 border border-gray-400 transition-all duration-500 flex flex-col h-full group-hover:bg-gray-50 group-hover:border-blue-400">
-                          {/* Delete Button */}
-                          <div className="absolute top-3 right-3 z-10">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (confirm(`Are you sure you want to delete "${project.name}"? This action cannot be undone.`)) {
-                                  deleteProject(project._id);
-                                }
-                              }}
-                              className="p-2 bg-red-100 hover:bg-red-200 text-red-600 hover:text-red-700 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110"
-                              title="Delete Project"
-                            >
-                              <TrashIcon className="h-4 w-4" />
-                            </button>
+                  ))}
+                </div>
+                {/* Project Rows */}
+                <div className="flex flex-col gap-3">
+                  {filteredProjects.length === 0 ? (
+                    <div className="text-center text-black/50 py-8 sm:py-12">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-black/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <BuildingOfficeIcon className="h-8 w-8 sm:h-10 sm:w-10 text-black/30" />
+                      </div>
+                      <p className="text-sm sm:text-base font-semibold text-black/70 mb-1">No projects found</p>
+                      <p className="text-xs sm:text-sm text-black/50">Create your first project to get started</p>
+                    </div>
+                  ) : (
+                    filteredProjects.slice(0, 5).map((project) => (
+                      <div
+                        key={project._id}
+                        className="flex flex-col lg:flex-row items-stretch bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 group overflow-hidden cursor-pointer"
+                        onClick={() => setSelectedProject(project)}
+                      >
+                        {/* Name */}
+                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center gap-2 min-w-0">
+                          <BuildingOfficeIcon className="h-5 w-5 text-purple-500 flex-shrink-0" />
+                          <span className="font-semibold text-black/80 text-base truncate font-plus-jakarta">{project.name}</span>
+                        </div>
+                        {/* Status */}
+                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center justify-center">
+                          <span className={`px-3 py-1 rounded-full font-bold text-xs border ${
+                            project.status === 'active' ? 'bg-green-100 text-green-700 border-green-200' :
+                            project.status === 'completed' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                            project.status === 'pending' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' :
+                            'bg-gray-100 text-gray-700 border-gray-200'
+                          }`}>
+                            {project.status}
+                          </span>
+                        </div>
+                        {/* Priority */}
+                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center justify-center">
+                          <span className={`px-3 py-1 rounded-full font-bold text-xs border ${
+                            project.priority === 'high' ? 'bg-red-100 text-red-700 border-red-200' :
+                            project.priority === 'medium' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' :
+                            project.priority === 'low' ? 'bg-green-100 text-green-700 border-green-200' :
+                            'bg-gray-100 text-gray-700 border-gray-200'
+                          }`}>
+                            {project.priority}
+                          </span>
+                        </div>
+                        {/* Progress */}
+                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center gap-2 min-w-0">
+                          <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                            <div
+                              className={`h-2.5 rounded-full transition-all duration-700 ease-out ${
+                                project.progress >= 80 ? 'bg-green-500' :
+                                project.progress >= 60 ? 'bg-blue-500' :
+                                project.progress >= 40 ? 'bg-yellow-500' :
+                                'bg-red-500'
+                              }`}
+                              style={{ width: `${project.progress || 0}%` }}
+                            />
                           </div>
-                          
-                          <div className="flex items-center gap-4 mb-4">
-                            <div className="flex-shrink-0 inline-flex p-4 rounded-2xl bg-gray-200 text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:scale-110 transition-all duration-500">
-                              <BuildingOfficeIcon className="h-6 w-6" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h4 className="text-xl font-semibold text-black font-plus-jakarta leading-tight mb-1 transition-colors duration-500 truncate">{project.name}</h4>
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                                  project.status === "active" ? "bg-green-100 text-green-700 border border-green-200" : 
-                                  project.status === "completed" ? "bg-blue-100 text-blue-700 border border-blue-200" : 
-                                  project.status === "pending" ? "bg-yellow-100 text-yellow-700 border border-yellow-200" : 
-                                  "bg-gray-100 text-gray-700 border border-gray-200"
-                                }`}>
-                                  {project.status}
-                                </span>
-                                {project.priority && (
-                                  <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                                    project.priority === "high" ? "bg-red-100 text-red-700 border border-red-200" : 
-                                    project.priority === "medium" ? "bg-yellow-100 text-yellow-700 border border-yellow-200" : 
-                                    "bg-green-100 text-green-700 border border-green-200"
-                                  }`}>
-                                    {project.priority}
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-black/70 font-inter text-sm leading-relaxed transition-colors duration-500 truncate">{project.desc}</p>
-                            </div>
-                          </div>
-                          <div className="flex-1 flex flex-col justify-between">
-                            {/* Progress Bar */}
-                            <div className="p-4 bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 mb-4 hover:shadow-md transition-all duration-300">
-                              <div className="flex items-center justify-between mb-3">
-                                <div className="text-sm font-semibold text-black font-inter">Progress</div>
-                                <div className="text-sm font-bold text-black font-plus-jakarta">{project.progress}%</div>
-                              </div>
-                              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
-                                <div
-                                  className="bg-black h-3 rounded-full transition-all duration-700 ease-out shadow-sm relative overflow-hidden"
-                                  style={{ width: `${project.progress}%` }}
-                                >
-                                  {/* Animated shine effect */}
-                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
-                                </div>
-                              </div>
-                              <div className="mt-2 text-xs text-black/60 font-medium">
-                                {project.progress === 100 ? 'Project Complete!' : 
-                                 project.progress >= 75 ? 'Almost there!' :
-                                 project.progress >= 50 ? 'Halfway done!' :
-                                 project.progress >= 25 ? 'Getting started!' : 'Just beginning!'}
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-2 text-xs text-black/60 mb-4">
-                              <div className="bg-black/5 px-2 py-1 rounded-lg text-center">
-                                <span className="font-semibold text-black/80">{project.documents}</span>
-                                <div>Documents</div>
-                              </div>
-                              <div className="bg-black/5 px-2 py-1 rounded-lg text-center">
-                                <span className="font-semibold text-black/80">{project.team}</span>
-                                <div>Team</div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex gap-2 mt-4">
-                            <button className="flex-1 bg-black text-white rounded-full px-4 py-2 text-xs font-semibold hover:bg-gray-900 transition-colors duration-200 shadow">
-                              Documents
-                            </button>
-                            <button className="flex-1 bg-transparent border border-black text-black rounded-full px-4 py-2 text-xs font-semibold hover:bg-black hover:text-white transition-colors duration-200 shadow">
-                              Team
-                            </button>
-                          </div>
+                          <span className="text-xs font-bold text-black/80 font-plus-jakarta ml-2">{project.progress || 0}%</span>
+                        </div>
+                        {/* Documents */}
+                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center justify-center">
+                          <span className="font-semibold text-black/80 text-sm font-inter">{project.documents ?? documents.filter(d => d.projectId === project._id).length}</span>
+                        </div>
+                        {/* Team */}
+                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center justify-center">
+                          <span className="font-semibold text-black/80 text-sm font-inter">{project.team ?? (teamMembers.filter(m => m.projectId === project._id).length || 0)}</span>
+                        </div>
+                        {/* Actions */}
+                        <div className="flex-1 px-4 py-4 flex items-center justify-center gap-2">
+                          <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-800 transition-colors duration-200" title="View">
+                            <EyeIcon className="h-5 w-5" />
+                          </button>
+                          <button
+                            onClick={e => {
+                              e.stopPropagation();
+                              if (confirm(`Are you sure you want to delete \"${project.name}\"? This action cannot be undone.`)) {
+                                deleteProject(project._id);
+                              }
+                            }}
+                            className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-800 transition-colors duration-200"
+                            title="Delete"
+                          >
+                            <TrashIcon className="h-5 w-5" />
+                          </button>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                )}
+                    ))
+                  )}
+                </div>
               </section>
 
               {/* Team Members Section */}
@@ -1591,111 +1587,106 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </div>
-              
-              {filteredProjects.length === 0 ? (
-                <div className="text-center text-black/50 py-8 sm:py-12">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-black/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <BuildingOfficeIcon className="h-8 w-8 sm:h-10 sm:w-10 text-black/30" />
+              {/* Table Headings */}
+              <div className="hidden lg:flex w-full bg-gray-50 rounded-2xl border border-gray-200 mb-2 overflow-x-auto">
+                {['Name', 'Status', 'Priority', 'Progress', 'Documents', 'Team', 'Actions'].map((heading, idx, arr) => (
+                  <div
+                    key={heading}
+                    className={`flex-1 px-4 py-4 font-bold text-black/70 text-base font-plus-jakarta border-r border-gray-200 last:border-none ${idx === 0 ? 'rounded-l-2xl' : ''} ${idx === arr.length - 1 ? 'rounded-r-2xl text-center' : ''}`}
+                  >
+                    {heading}
                   </div>
-                  <p className="text-sm sm:text-base font-semibold text-black/70 mb-1">No projects found</p>
-                  <p className="text-xs sm:text-sm text-black/50">Create your first project to get started</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {filteredProjects.map((project) => (
-                    <div key={project._id} onClick={() => setSelectedProject(project)} className="cursor-pointer group relative">
-                      <div className="bg-white rounded-3xl p-6 border border-gray-400 transition-all duration-500 flex flex-col h-full group-hover:bg-gray-50 group-hover:border-blue-400">
-                        {/* Delete Button */}
-                        <div className="absolute top-3 right-3 z-10">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (confirm(`Are you sure you want to delete "${project.name}"? This action cannot be undone.`)) {
-                                deleteProject(project._id);
-                              }
-                            }}
-                            className="p-2 bg-red-100 hover:bg-red-200 text-red-600 hover:text-red-700 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110"
-                            title="Delete Project"
-                          >
-                            <TrashIcon className="h-4 w-4" />
-                          </button>
+                ))}
+              </div>
+              {/* Project Rows */}
+              <div className="flex flex-col gap-3">
+                {filteredProjects.length === 0 ? (
+                  <div className="text-center py-12 sm:py-16 lg:py-20">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                      <BuildingOfficeIcon className="h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 text-gray-400" />
+                    </div>
+                    <h4 className="text-lg sm:text-xl lg:text-2xl font-bold text-black/70 mb-2 font-plus-jakarta">No projects found</h4>
+                    <p className="text-black/50 font-inter text-sm sm:text-base">Create your first project to get started</p>
+                  </div>
+                ) : (
+                  filteredProjects.map((project) => (
+                    <div
+                      key={project._id}
+                      className="flex flex-col lg:flex-row items-stretch bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 group overflow-hidden cursor-pointer"
+                      onClick={() => setSelectedProject(project)}
+                    >
+                      {/* Name */}
+                      <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center gap-2 min-w-0">
+                        <BuildingOfficeIcon className="h-5 w-5 text-purple-500 flex-shrink-0" />
+                        <span className="font-semibold text-black/80 text-base truncate font-plus-jakarta">{project.name}</span>
                       </div>
-                      
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="flex-shrink-0 inline-flex p-4 rounded-2xl bg-gray-200 text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:scale-110 transition-all duration-500">
-                            <BuildingOfficeIcon className="h-6 w-6" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="text-xl font-semibold text-black font-plus-jakarta leading-tight mb-1 transition-colors duration-500 truncate">{project.name}</h4>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                                project.status === "active" ? "bg-green-100 text-green-700 border border-green-200" : 
-                                project.status === "completed" ? "bg-blue-100 text-blue-700 border border-blue-200" : 
-                                project.status === "pending" ? "bg-yellow-100 text-yellow-700 border border-yellow-200" : 
-                                "bg-gray-100 text-gray-700 border border-gray-200"
+                      {/* Status */}
+                      <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center justify-center">
+                        <span className={`px-3 py-1 rounded-full font-bold text-xs border ${
+                          project.status === 'active' ? 'bg-green-100 text-green-700 border-green-200' :
+                          project.status === 'completed' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                          project.status === 'pending' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' :
+                          'bg-gray-100 text-gray-700 border-gray-200'
                         }`}>
                           {project.status}
                         </span>
-                              {project.priority && (
-                                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                                  project.priority === "high" ? "bg-red-100 text-red-700 border border-red-200" : 
-                                  project.priority === "medium" ? "bg-yellow-100 text-yellow-700 border border-yellow-200" : 
-                                  "bg-green-100 text-green-700 border border-green-200"
+                      </div>
+                      {/* Priority */}
+                      <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center justify-center">
+                        <span className={`px-3 py-1 rounded-full font-bold text-xs border ${
+                          project.priority === 'high' ? 'bg-red-100 text-red-700 border-red-200' :
+                          project.priority === 'medium' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' :
+                          project.priority === 'low' ? 'bg-green-100 text-green-700 border-green-200' :
+                          'bg-gray-100 text-gray-700 border-gray-200'
                         }`}>
                           {project.priority}
                         </span>
-                              )}
                       </div>
-                            <p className="text-black/70 font-inter text-sm leading-relaxed transition-colors duration-500 truncate">{project.desc}</p>
-                          </div>
-                        </div>
-                        <div className="flex-1 flex flex-col justify-between">
-                      {/* Progress Bar */}
-                      <div className="p-4 bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 mb-4 hover:shadow-md transition-all duration-300">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="text-sm font-semibold text-black font-inter">Progress</div>
-                          <div className="text-sm font-bold text-black font-plus-jakarta">{project.progress}%</div>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
+                      {/* Progress */}
+                      <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center gap-2 min-w-0">
+                        <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
                           <div
-                            className="bg-black h-3 rounded-full transition-all duration-700 ease-out shadow-sm relative overflow-hidden"
-                            style={{ width: `${project.progress}%` }}
-                          >
-                            {/* Animated shine effect */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
-                          </div>
+                            className={`h-2.5 rounded-full transition-all duration-700 ease-out ${
+                              project.progress >= 80 ? 'bg-green-500' :
+                              project.progress >= 60 ? 'bg-blue-500' :
+                              project.progress >= 40 ? 'bg-yellow-500' :
+                              'bg-red-500'
+                            }`}
+                            style={{ width: `${project.progress || 0}%` }}
+                          />
                         </div>
-                        <div className="mt-2 text-xs text-black/60 font-medium">
-                          {project.progress === 100 ? 'Project Complete!' : 
-                           project.progress >= 75 ? 'Almost there!' :
-                           project.progress >= 50 ? 'Halfway done!' :
-                           project.progress >= 25 ? 'Getting started!' : 'Just beginning!'}
-                        </div>
+                        <span className="text-xs font-bold text-black/80 font-plus-jakarta ml-2">{project.progress || 0}%</span>
                       </div>
-                          <div className="grid grid-cols-2 gap-2 text-xs text-black/60 mb-4">
-                            <div className="bg-black/5 px-2 py-1 rounded-lg text-center">
-                              <span className="font-semibold text-black/80">{project.documents}</span>
-                              <div>Documents</div>
-                        </div>
-                            <div className="bg-black/5 px-2 py-1 rounded-lg text-center">
-                              <span className="font-semibold text-black/80">{project.team}</span>
-                              <div>Team</div>
-                        </div>
-                        </div>
+                      {/* Documents */}
+                      <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center justify-center">
+                        <span className="font-semibold text-black/80 text-sm font-inter">{project.documents ?? documents.filter(d => d.projectId === project._id).length}</span>
                       </div>
-                        <div className="flex gap-2 mt-4">
-                          <button className="flex-1 bg-black text-white rounded-full px-4 py-2 text-xs font-semibold hover:bg-gray-900 transition-colors duration-200 shadow">
-                            Documents
+                      {/* Team */}
+                      <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center justify-center">
+                        <span className="font-semibold text-black/80 text-sm font-inter">{project.team ?? (teamMembers.filter(m => m.projectId === project._id).length || 0)}</span>
+                      </div>
+                      {/* Actions */}
+                      <div className="flex-1 px-4 py-4 flex items-center justify-center gap-2">
+                        <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-800 transition-colors duration-200" title="View">
+                          <EyeIcon className="h-5 w-5" />
                         </button>
-                          <button className="flex-1 bg-transparent border border-black text-black rounded-full px-4 py-2 text-xs font-semibold hover:bg-black hover:text-white transition-colors duration-200 shadow">
-                            Team
-                          </button>
-                        </div>
+                        <button
+                          onClick={e => {
+                            e.stopPropagation();
+                            if (confirm(`Are you sure you want to delete \"${project.name}\"? This action cannot be undone.`)) {
+                              deleteProject(project._id);
+                            }
+                          }}
+                          className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-800 transition-colors duration-200"
+                          title="Delete"
+                        >
+                          <TrashIcon className="h-5 w-5" />
+                        </button>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                  ))
+                )}
+              </div>
             </section>
           </div>
         );
@@ -1834,83 +1825,90 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </div>
-              
-              {filteredDocuments.length === 0 ? (
-                <div className="text-center py-12 sm:py-16 lg:py-20">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                    <DocumentIcon className="h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 text-gray-400" />
+              {/* Table Headings */}
+              <div className="hidden lg:flex w-full bg-gray-50 rounded-2xl border border-gray-200 mb-2 overflow-x-auto">
+                {['Name', 'Type', 'Project', 'Uploaded By', 'Date', 'Status', 'Actions'].map((heading, idx, arr) => (
+                  <div
+                    key={heading}
+                    className={`flex-1 px-4 py-4 font-bold text-black/70 text-base font-plus-jakarta border-r border-gray-200 last:border-none ${idx === 0 ? 'rounded-l-2xl' : ''} ${idx === arr.length - 1 ? 'rounded-r-2xl text-center' : ''}`}
+                  >
+                    {heading}
                   </div>
-                  <h4 className="text-lg sm:text-xl lg:text-2xl font-bold text-black/70 mb-2 font-plus-jakarta">No documents found</h4>
-                  <p className="text-black/50 font-inter text-sm sm:text-base">Upload your first construction document to get started</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-                  {filteredDocuments.map((doc, idx) => (
-                    <div key={doc._id || idx} className="group bg-white border-2 border-gray-200 rounded-3xl p-4 sm:p-6 lg:p-8 hover:border-black/30 hover:bg-black/5 transition-all duration-300 flex flex-col h-full">
-                      {/* Header */}
-                      <div className="flex items-start justify-between mb-4 sm:mb-6 gap-3">
-                        <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-black/10 to-black/20 rounded-2xl flex items-center justify-center group-hover:from-black/20 group-hover:to-black/30 transition-all duration-300 flex-shrink-0">
-                            <DocumentIcon className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-black/80" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <h4 className="font-bold text-black/80 text-base sm:text-lg lg:text-xl mb-1 sm:mb-2 font-plus-jakarta truncate">{doc.name}</h4>
-                            <p className="text-xs sm:text-sm lg:text-base text-black/60 font-inter truncate">{doc.type}</p>
-                          </div>
-                        </div>
-                        <span className={`text-xs sm:text-sm lg:text-base font-bold px-2 sm:px-3 py-1 sm:py-2 rounded-full border flex-shrink-0 ${
-                          doc.status === "approved" ? "bg-green-100 text-green-700 border-green-200" : 
-                          doc.status === "pending" ? "bg-yellow-100 text-yellow-700 border-yellow-200" : 
-                          doc.status === "rejected" ? "bg-red-100 text-red-700 border-red-200" : 
-                          "bg-gray-100 text-gray-700 border-gray-200"
+                ))}
+              </div>
+              {/* Document Rows */}
+              <div className="flex flex-col gap-3">
+                {filteredDocuments.length === 0 ? (
+                  <div className="text-center py-12 sm:py-16 lg:py-20">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                      <DocumentIcon className="h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 text-gray-400" />
+                    </div>
+                    <h4 className="text-lg sm:text-xl lg:text-2xl font-bold text-black/70 mb-2 font-plus-jakarta">No documents found</h4>
+                    <p className="text-black/50 font-inter text-sm sm:text-base">Upload your first construction document to get started</p>
+                  </div>
+                ) : (
+                  filteredDocuments.map((doc, idx) => (
+                    <div
+                      key={doc._id || idx}
+                      className="flex flex-col lg:flex-row items-stretch bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 group overflow-hidden"
+                    >
+                      {/* Name */}
+                      <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center gap-2 min-w-0">
+                        <DocumentIcon className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                        <span className="font-semibold text-black/80 text-base truncate font-plus-jakarta">{doc.name}</span>
+                      </div>
+                      {/* Type */}
+                      <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center text-black/60 font-inter text-sm min-w-0">
+                        {doc.type}
+                      </div>
+                      {/* Project */}
+                      <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center text-black/60 font-inter text-sm min-w-0">
+                        {projects.find(p => p._id === (doc.projectId?._id || doc.projectId))?.name || 'Unknown'}
+                      </div>
+                      {/* Uploaded By */}
+                      <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center text-black/60 font-inter text-sm min-w-0">
+                        {doc.uploadedBy}
+                      </div>
+                      {/* Date */}
+                      <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center text-black/60 font-inter text-sm min-w-0">
+                        {new Date(doc.date).toLocaleDateString()}
+                      </div>
+                      {/* Status */}
+                      <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center justify-center">
+                        <span className={`px-3 py-1 rounded-full font-bold text-xs border ${
+                          doc.status === 'approved' ? 'bg-green-100 text-green-700 border-green-200' :
+                          doc.status === 'pending' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' :
+                          doc.status === 'rejected' ? 'bg-red-100 text-red-700 border-red-200' :
+                          'bg-gray-100 text-gray-700 border-gray-200'
                         }`}>
                           {doc.status}
                         </span>
                       </div>
-                      
-                      {/* Document Info */}
-                      <div className="space-y-3 mb-6">
-                        <div className="p-3 bg-gray-50 rounded-xl">
-                          <div className="text-xs text-black/60 font-inter font-semibold mb-1">Project:</div>
-                          <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">
-                            {projects.find(p => p._id === (doc.projectId?._id || doc.projectId))?.name || 'Unknown'}
-                          </div>
-                        </div>
-                        <div className="p-3 bg-gray-50 rounded-xl">
-                          <div className="text-xs text-black/60 font-inter font-semibold mb-1">Uploaded by:</div>
-                          <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">{doc.uploadedBy}</div>
-                        </div>
-                        <div className="p-3 bg-gray-50 rounded-xl">
-                          <div className="text-xs text-black/60 font-inter font-semibold mb-1">Date:</div>
-                          <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">{doc.date}</div>
-                        </div>
-                      </div>
-                      
-                      {/* Action Buttons */}
-                      <div className="flex flex-col gap-2 mt-auto">
-                        <button className="w-full bg-black text-white px-4 py-3 rounded-full text-sm font-semibold hover:bg-gray-900 hover:scale-105 transition-all duration-300 font-inter shadow-lg hover:shadow-xl">
-                          View Document
+                      {/* Actions */}
+                      <div className="flex-1 px-4 py-4 flex items-center justify-center gap-2">
+                        <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-800 transition-colors duration-200" title="View">
+                          <EyeIcon className="h-5 w-5" />
                         </button>
-                        <button className="w-full bg-transparent border-2 border-black text-black px-4 py-3 rounded-full text-sm font-semibold hover:bg-black hover:text-white hover:scale-105 transition-all duration-300 font-inter shadow-lg hover:shadow-xl">
-                          Download
+                        <button className="p-2 rounded-full bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-800 transition-colors duration-200" title="Edit">
+                          <PencilIcon className="h-5 w-5" />
                         </button>
-                        <button 
+                        <button
                           onClick={() => deleteDocument(doc._id)}
                           disabled={deleteLoading === doc._id}
-                          className="w-full bg-red-50 border-2 border-red-200 text-red-600 px-4 py-3 rounded-full text-sm font-semibold hover:bg-red-100 hover:border-red-300 hover:text-red-700 hover:scale-105 transition-all duration-300 font-inter shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Delete"
                         >
                           {deleteLoading === doc._id ? (
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent"></div>
+                            <div className="h-5 w-5 animate-spin rounded-full border-2 border-red-600 border-t-transparent"></div>
                           ) : (
-                            <TrashIcon className="h-4 w-4" />
+                            <TrashIcon className="h-5 w-5" />
                           )}
-                          {deleteLoading === doc._id ? 'Deleting...' : 'Delete'}
                         </button>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                  ))
+                )}
+              </div>
             </section>
           </div>
         );
@@ -2936,12 +2934,21 @@ export default function DashboardPage() {
           {user && (
             <div className="mb-4 p-3 bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-500 to-red-500 flex items-center justify-center text-white text-sm font-bold shadow-lg">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-500 to-red-500 flex items-center justify-center text-white text-sm font-bold shadow-md group-hover:shadow-lg transition-all duration-200 flex-shrink-0">
                   {user.firstName?.[0]?.toUpperCase()}{user.lastName?.[0]?.toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-black text-sm truncate">{user.firstName} {user.lastName}</p>
-                  <p className="text-black/60 text-xs truncate">{user.email}</p>
+                  <p className="font-semibold text-black/80 text-sm truncate mb-1">{user.firstName} {user.lastName}</p>
+                  <div className="flex flex-wrap gap-1 text-xs text-black/60 mb-2">
+                    <span className="bg-black/5 px-2 py-1 rounded-full capitalize">
+                      {user.role || 'Member'}
+                    </span>
+                    {user.email && (
+                      <span className="bg-black/5 px-2 py-1 rounded-full truncate">
+                        {user.email}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -4040,4 +4047,5 @@ async function handleLogout(setLogoutLoading: (b: boolean) => void) {
   }
   setLogoutLoading(false);
 }
+
 
