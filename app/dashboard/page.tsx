@@ -2001,24 +2001,32 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </div>
-              
-              {teamMembers.length === 0 ? (
-                <div className="text-center py-12 sm:py-16 lg:py-20">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                    <UsersIcon className="h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 text-gray-400" />
+              {/* Table Headings */}
+              <div className="hidden lg:flex w-full bg-gray-50 rounded-2xl border border-gray-200 mb-2 overflow-x-auto">
+                {["Name", "Role", "Email", "Status", "Projects", "Documents", "Actions"].map((heading, idx, arr) => (
+                  <div
+                    key={heading}
+                    className={`flex-1 px-4 py-4 font-bold text-black/70 text-base font-plus-jakarta border-r border-gray-200 last:border-none ${idx === 0 ? 'rounded-l-2xl' : ''} ${idx === arr.length - 1 ? 'rounded-r-2xl text-center' : ''}`}
+                  >
+                    {heading}
                   </div>
-                  <h4 className="text-lg sm:text-xl lg:text-2xl font-bold text-black/70 mb-2 font-plus-jakarta">No team members found</h4>
-                  <p className="text-black/50 font-inter text-sm sm:text-base">Invite your first team member to get started</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-                  {teamMembers.map((member, idx) => {
-                    // Create full name from firstName and lastName, or use name if available
+                ))}
+              </div>
+              {/* Team Member Rows */}
+              <div className="flex flex-col gap-3">
+                {teamMembers.length === 0 ? (
+                  <div className="text-center py-12 sm:py-16 lg:py-20">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                      <UsersIcon className="h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 text-gray-400" />
+                    </div>
+                    <h4 className="text-lg sm:text-xl lg:text-2xl font-bold text-black/70 mb-2 font-plus-jakarta">No team members found</h4>
+                    <p className="text-black/50 font-inter text-sm sm:text-base">Invite your first team member to get started</p>
+                  </div>
+                ) : (
+                  teamMembers.map((member, idx) => {
                     const fullName = member.firstName && member.lastName 
                       ? `${member.firstName} ${member.lastName}` 
                       : member.name || `${member.firstName || ''} ${member.lastName || ''}`.trim() || 'Unknown User';
-                    
-                    // Get initials for avatar
                     const getInitials = () => {
                       if (member.firstName && member.lastName) {
                         return `${member.firstName[0]}${member.lastName[0]}`.toUpperCase();
@@ -2031,120 +2039,62 @@ export default function DashboardPage() {
                       }
                       return '?';
                     };
-
-                    // Only owner/admin can remove/update others, and cannot remove self
-                    const isCurrentUser = user?._id === member._id;
-                    const isOwnerOrAdmin = user?.role === 'admin' || user?._id === selectedProject?.owner?._id;
                     return (
-                      <div key={idx} className="group bg-white border-2 border-gray-200 rounded-3xl p-4 sm:p-6 lg:p-8 hover:border-black/30 hover:bg-black/5 transition-all duration-300 flex flex-col h-full">
-                        {/* Header */}
-                        <div className="flex items-start justify-between mb-4 sm:mb-6 gap-3">
-                          <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-gradient-to-tr from-orange-500 to-red-500 rounded-2xl flex items-center justify-center text-white text-sm sm:text-base lg:text-lg font-bold shadow-lg group-hover:shadow-xl transition-all duration-300 flex-shrink-0">
-                              {getInitials()}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <h4 className="font-bold text-black/80 text-base sm:text-lg lg:text-xl mb-1 sm:mb-2 font-plus-jakarta break-words leading-relaxed">{fullName}</h4>
-                              <p className="text-xs sm:text-sm lg:text-base text-black/60 font-inter break-words leading-relaxed">{member.email}</p>
-                            </div>
+                      <div
+                        key={idx}
+                        className="flex flex-col lg:flex-row items-stretch bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 group overflow-hidden"
+                      >
+                        {/* Name */}
+                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center gap-2 min-w-0">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-500 to-red-500 flex items-center justify-center text-white text-xs font-bold shadow-md group-hover:shadow-lg transition-all duration-200 flex-shrink-0">
+                            {getInitials()}
                           </div>
+                          <span className="font-semibold text-black/80 text-base truncate font-plus-jakarta">{fullName}</span>
                         </div>
-                        {/* Role Management */}
-                        {isOwnerOrAdmin && !isCurrentUser && (
-                          <div className="space-y-3 mb-6">
-                            <div className="p-3 bg-red-50 rounded-xl border border-red-200">
-                              <div className="text-xs text-red-800 font-inter font-semibold mb-2">Manage Role:</div>
-                              <div className="flex flex-col sm:flex-row gap-2">
-                                <select
-                                  value={member.role || 'member'}
-                                  onChange={async (e) => {
-                                    setRoleUpdateLoading(member._id);
-                                    setRoleError("");
-                                    try {
-                                      const res = await fetch(`/api/projects/${selectedProject?._id}/members/${member._id}`, {
-                                        method: 'PATCH',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ role: e.target.value }),
-                                      });
-                                      if (!res.ok) {
-                                        const data = await res.json();
-                                        setRoleError(data.error || 'Failed to update role');
-                                      } else {
-                                        // Refetch team members
-                                        fetch(`/api/projects/${selectedProject?._id}`)
-                                          .then(res => res.json())
-                                          .then(data => setTeamMembers(data.members || []));
-                                      }
-                                    } catch (err) {
-                                      setRoleError('Failed to update role');
-                                    }
-                                    setRoleUpdateLoading(null);
-                                  }}
-                                  className="flex-1 border border-red-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
-                                  disabled={roleUpdateLoading === member._id}
-                                >
-                                  <option value="admin">Admin</option>
-                                  <option value="member">Member</option>
-                                </select>
-                                <button
-                                  className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold hover:bg-red-600 transition-colors disabled:opacity-60"
-                                  onClick={() => setRemoveMemberModal({open: true, member})}
-                                  disabled={removeLoading}
-                                >
-                                  Remove
-                                </button>
-                              </div>
-                            </div>
-                            {roleError && <div className="text-red-500 text-xs p-2 bg-red-50 rounded-lg">{roleError}</div>}
-                          </div>
-                        )}
-                        {/* Member Info */}
-                        <div className="space-y-3 mb-6">
-                          <div className="p-3 bg-gray-50 rounded-xl">
-                            <div className="text-xs text-black/60 font-inter font-semibold mb-1">Role:</div>
-                            <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">
-                              {member.role || 'Member'}
-                            </div>
-                          </div>
-                          <div className="p-3 bg-gray-50 rounded-xl">
-                            <div className="text-xs text-black/60 font-inter font-semibold mb-1">Status:</div>
-                            <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">
-                              <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                                member.status === 'online' ? 'bg-green-100 text-green-700' :
-                                member.status === 'busy' ? 'bg-yellow-100 text-yellow-700' :
-                                'bg-gray-100 text-gray-700'
-                              }`}>
-                                {member.status || 'offline'}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="p-3 bg-gray-50 rounded-xl">
-                            <div className="text-xs text-black/60 font-inter font-semibold mb-1">Active Projects:</div>
-                            <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">
-                              {projects.filter(p => p.members?.some((m: any) => m._id === member._id || m.email === member.email)).length} projects
-                            </div>
-                          </div>
-                          <div className="p-3 bg-gray-50 rounded-xl">
-                            <div className="text-xs text-black/60 font-inter font-semibold mb-1">Documents Uploaded:</div>
-                            <div className="font-semibold text-black/80 text-sm break-words leading-relaxed">
-                              {documents.filter(d => d.uploadedBy === fullName || d.uploadedBy === member.email).length} documents
-                            </div>
-                          </div>
+                        {/* Role */}
+                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center text-black/60 font-inter text-sm min-w-0">
+                          <span className="capitalize px-2 py-1 rounded-full bg-black/5">{member.role || 'Member'}</span>
                         </div>
-                        {/* Action Buttons */}
-                        <div className="flex flex-col gap-2 mt-auto">
-                          <button className="w-full bg-black text-white px-4 py-3 rounded-full text-sm font-semibold hover:bg-gray-900 hover:scale-105 transition-all duration-300 font-inter shadow-lg hover:shadow-xl">
-                            View Profile
+                        {/* Email */}
+                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center text-black/60 font-inter text-sm min-w-0">
+                          {member.email}
+                        </div>
+                        {/* Status */}
+                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center justify-center">
+                          <span className={`px-3 py-1 rounded-full font-bold text-xs border ${
+                            member.status === 'online' ? 'bg-green-100 text-green-700 border-green-200' :
+                            member.status === 'busy' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' :
+                            'bg-gray-100 text-gray-700 border-gray-200'
+                          }`}>
+                            {member.status || 'offline'}
+                          </span>
+                        </div>
+                        {/* Projects */}
+                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center justify-center">
+                          <span className="font-semibold text-black/80 text-sm font-inter">{projects.filter(p => p.members?.some((m: any) => m._id === member._id || m.email === member.email)).length}</span>
+                        </div>
+                        {/* Documents */}
+                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center justify-center">
+                          <span className="font-semibold text-black/80 text-sm font-inter">{documents.filter(d => d.uploadedBy === fullName || d.uploadedBy === member.email).length}</span>
+                        </div>
+                        {/* Actions */}
+                        <div className="flex-1 px-4 py-4 flex items-center justify-center gap-2">
+                          <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-800 transition-colors duration-200" title="View">
+                            <EyeIcon className="h-5 w-5" />
                           </button>
-                          <button className="w-full bg-transparent border-2 border-black text-black px-4 py-3 rounded-full text-sm font-semibold hover:bg-black hover:text-white hover:scale-105 transition-all duration-300 font-inter shadow-lg hover:shadow-xl">
-                            Message
+                          <button
+                            onClick={() => setRemoveMemberModal({open: true, member})}
+                            className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-800 transition-colors duration-200"
+                            title="Remove"
+                          >
+                            <TrashIcon className="h-5 w-5" />
                           </button>
                         </div>
                       </div>
                     );
-                  })}
-                </div>
-              )}
+                  })
+                )}
+              </div>
             </section>
             {/* Remove Member Modal */}
             {removeMemberModal.open && (
