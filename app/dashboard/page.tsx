@@ -210,11 +210,18 @@ function AddTaskModal({ open, onClose, onAdd, projectId, teamMembers }: AddTaskM
   const [priority, setPriority] = useState("medium");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
+    if (!title.trim()) {
+      setError("Task title is required");
+      setLoading(false);
+      return;
+    }
     const res = await fetch(`/api/projects/${projectId}/tasks`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -228,7 +235,11 @@ function AddTaskModal({ open, onClose, onAdd, projectId, teamMembers }: AddTaskM
       setAssignee("");
       setDueDate("");
       setPriority("medium");
-      onClose();
+      setSuccess("Task added!");
+      setTimeout(() => {
+        setSuccess("");
+        onClose();
+      }, 900);
     } else {
       const data = await res.json();
       setError(data.error || "Failed to add task");
@@ -238,25 +249,87 @@ function AddTaskModal({ open, onClose, onAdd, projectId, teamMembers }: AddTaskM
 
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
-        <h3 className="text-lg font-bold mb-4">Add Task</h3>
-        {error && <div className="text-red-500 mb-2">{error}</div>}
-        <input className="w-full border p-2 rounded mb-2" placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} required />
-        <textarea className="w-full border p-2 rounded mb-2" placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} />
-        <select className="w-full border p-2 rounded mb-2" value={assignee} onChange={e => setAssignee(e.target.value)}>
-          <option value="">Assign to...</option>
-          {teamMembers.map((member: any) => <option key={member._id} value={member._id}>{member.name}</option>)}
-        </select>
-        <input type="date" className="w-full border p-2 rounded mb-2" value={dueDate} onChange={e => setDueDate(e.target.value)} />
-        <div className="flex gap-2 mb-4">
-          <label className={`px-3 py-1 rounded cursor-pointer ${priority === 'high' ? 'bg-red-500 text-white' : 'bg-gray-200 text-black'}`}> <input type="radio" className="hidden" value="high" checked={priority==='high'} onChange={()=>setPriority('high')} /> High </label>
-          <label className={`px-3 py-1 rounded cursor-pointer ${priority === 'medium' ? 'bg-yellow-400 text-white' : 'bg-gray-200 text-black'}`}> <input type="radio" className="hidden" value="medium" checked={priority==='medium'} onChange={()=>setPriority('medium')} /> Medium </label>
-          <label className={`px-3 py-1 rounded cursor-pointer ${priority === 'low' ? 'bg-green-500 text-white' : 'bg-gray-200 text-black'}`}> <input type="radio" className="hidden" value="low" checked={priority==='low'} onChange={()=>setPriority('low')} /> Low </label>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-2">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md animate-fade-in border border-black/10 flex flex-col gap-4"
+        aria-modal="true"
+        role="dialog"
+      >
+        <h3 className="text-xl font-bold mb-2 text-black flex items-center gap-2 font-plus-jakarta">
+          <PlusIcon className="h-5 w-5 text-blue-600" /> Add New Task
+        </h3>
+        {error && <div className="text-red-600 bg-red-50 p-2 rounded-lg text-sm">{error}</div>}
+        {success && <div className="text-green-600 bg-green-50 p-2 rounded-lg text-sm">{success}</div>}
+        <input
+          className="w-full border border-black/10 p-3 rounded-xl mb-1 focus:ring-2 focus:ring-blue-200 text-base font-inter"
+          placeholder="Task Title *"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          required
+          autoFocus
+        />
+        <textarea
+          className="w-full border border-black/10 p-3 rounded-xl mb-1 focus:ring-2 focus:ring-blue-200 text-base font-inter resize-none min-h-[60px]"
+          placeholder="Description (optional)"
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+        />
+        <div className="flex flex-col sm:flex-row gap-2">
+          <select
+            className="flex-1 border border-black/10 p-3 rounded-xl focus:ring-2 focus:ring-blue-200 text-base font-inter"
+            value={assignee}
+            onChange={e => setAssignee(e.target.value)}
+          >
+            <option value="">Assign to...</option>
+            {teamMembers.map((member: any) => (
+              <option key={member._id} value={member._id}>{member.name || member.firstName + ' ' + member.lastName}</option>
+            ))}
+          </select>
+          <input
+            type="date"
+            className="flex-1 border border-black/10 p-3 rounded-xl focus:ring-2 focus:ring-blue-200 text-base font-inter"
+            value={dueDate}
+            onChange={e => setDueDate(e.target.value)}
+          />
         </div>
-        <div className="flex justify-end gap-2">
-          <button type="button" onClick={onClose} className="px-4 py-2 rounded bg-gray-200">Cancel</button>
-          <button type="submit" disabled={loading} className="px-4 py-2 rounded bg-black text-white hover:bg-gray-800">{loading ? "Adding..." : "Add Task"}</button>
+        <div className="flex gap-2 mb-2">
+          {['high', 'medium', 'low'].map((level) => (
+            <label
+              key={level}
+              className={`flex-1 px-3 py-2 rounded-xl cursor-pointer text-center font-semibold transition-all duration-200 border-2 ${
+                priority === level
+                  ? level === 'high'
+                    ? 'bg-red-500 text-white border-red-500'
+                    : level === 'medium'
+                    ? 'bg-yellow-400 text-white border-yellow-400'
+                    : 'bg-green-500 text-white border-green-500'
+                  : 'bg-gray-100 text-black border-transparent hover:bg-gray-200'
+              }`}
+            >
+              <input
+                type="radio"
+                className="hidden"
+                value={level}
+                checked={priority === level}
+                onChange={() => setPriority(level)}
+              />
+              {level.charAt(0).toUpperCase() + level.slice(1)}
+            </label>
+          ))}
+        </div>
+        <div className="flex justify-end gap-2 mt-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 rounded-xl bg-gray-100 text-black font-semibold hover:bg-gray-200 transition-all duration-200"
+            disabled={loading}
+          >Cancel</button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="px-6 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-all duration-200 shadow disabled:opacity-60"
+          >{loading ? "Adding..." : "Add Task"}</button>
         </div>
       </form>
     </div>
@@ -271,9 +344,9 @@ type KanbanBoardProps = {
 };
 function KanbanBoard({ tasks, onStatusChange, teamMembers }: KanbanBoardProps) {
   const columns = [
-    { id: 'todo', title: 'To Do', color: 'bg-gray-50' },
-    { id: 'in-progress', title: 'In Progress', color: 'bg-blue-50' },
-    { id: 'done', title: 'Done', color: 'bg-green-50' },
+    { id: 'todo', title: 'To Do', color: 'bg-gray-50', accent: 'border-gray-300' },
+    { id: 'in-progress', title: 'In Progress', color: 'bg-blue-50', accent: 'border-blue-300' },
+    { id: 'done', title: 'Done', color: 'bg-green-50', accent: 'border-green-300' },
   ];
   const tasksByStatus: { [key: string]: any[] } = columns.reduce((acc, col) => {
     acc[col.id] = tasks.filter((t: any) => t.status === col.id);
@@ -288,39 +361,101 @@ function KanbanBoard({ tasks, onStatusChange, teamMembers }: KanbanBoardProps) {
     }
   };
 
+  // Responsive scroll for columns on mobile
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex gap-6 min-w-[700px] sm:min-w-0">
+      <div className="flex gap-6 overflow-x-auto pb-2 min-w-[700px] sm:min-w-0">
         {columns.map(col => (
           <Droppable droppableId={col.id} key={col.id}>
             {(provided: any, snapshot: any) => (
               <div
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                className={`w-80 min-h-[320px] rounded-2xl p-4 ${col.color} border border-black/10 shadow-sm flex flex-col transition-all duration-200`}
+                className={`w-80 min-h-[340px] rounded-2xl p-4 ${col.color} ${col.accent} border-2 shadow-sm flex flex-col transition-all duration-200 relative`}
+                style={{ minWidth: 320, maxWidth: 340 }}
               >
-                <h4 className="font-bold mb-3 text-black/70 text-lg font-plus-jakarta">{col.title}</h4>
+                <h4 className="font-bold mb-3 text-black/80 text-lg font-plus-jakarta flex items-center gap-2">
+                  {col.title}
+                  <span className="ml-2 px-2 py-0.5 rounded-full bg-black/10 text-xs font-semibold">{tasksByStatus[col.id].length}</span>
+                </h4>
+                {tasksByStatus[col.id].length === 0 && (
+                  <div className="flex-1 flex flex-col items-center justify-center text-black/30 text-sm py-8">
+                    <DocumentIcon className="h-8 w-8 mb-2" />
+                    No tasks
+                  </div>
+                )}
                 {tasksByStatus[col.id].map((task: any, idx: number) => (
                   <Draggable draggableId={task._id} index={idx} key={task._id}>
                     {(provided: any, snapshot: any) => (
-                      <div
+                      <motion.div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className={`mb-4 p-4 rounded-2xl bg-white shadow border-l-4 flex flex-col gap-2 border-black/10 hover:shadow-md transition-all duration-200 ${task.priority === 'high' ? 'border-red-500' : task.priority === 'medium' ? 'border-yellow-400' : 'border-green-500'}`}
+                        className={`mb-4 p-4 rounded-2xl bg-white shadow-lg border-l-4 flex flex-col gap-2 border-black/10 hover:shadow-xl transition-all duration-200 relative group ${
+                          task.priority === 'high' ? 'border-red-500' : task.priority === 'medium' ? 'border-yellow-400' : 'border-green-500'
+                        } ${snapshot.isDragging ? 'scale-105 ring-2 ring-blue-200 z-20' : ''}`}
                         style={{ touchAction: 'manipulation' }}
+                        whileHover={{ y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                        tabIndex={0}
+                        aria-label={`Task: ${task.title}`}
                       >
-                        <div className="flex justify-between items-center">
-                          <span className="font-semibold text-black/80 text-base truncate">{task.title}</span>
-                          <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${task.status === 'done' ? 'bg-green-200 text-green-800' : task.status === 'in-progress' ? 'bg-blue-200 text-blue-800' : 'bg-gray-200 text-gray-800'}`}>{task.status.replace('-', ' ')}</span>
+                        <div className="flex justify-between items-center gap-2">
+                          <span className="font-semibold text-black/80 text-base truncate font-plus-jakarta">{task.title}</span>
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-bold capitalize ${
+                            task.status === 'done' ? 'bg-green-200 text-green-800' :
+                            task.status === 'in-progress' ? 'bg-blue-200 text-blue-800' :
+                            'bg-gray-200 text-gray-800'
+                          }`}>{task.status.replace('-', ' ')}</span>
                         </div>
-                        {task.description && <div className="text-xs text-black/50 line-clamp-2">{task.description}</div>}
+                        {task.description && <div className="text-xs text-black/50 line-clamp-2 mb-1">{task.description}</div>}
                         <div className="flex items-center gap-2 text-xs flex-wrap">
-                          {task.assignee && <span className="flex items-center gap-1"><UsersIcon className="h-4 w-4 text-blue-400" />{teamMembers.find((m: any) => m._id === task.assignee?._id)?.name || 'Unassigned'}</span>}
-                          {task.dueDate && <span className="flex items-center gap-1"><CalendarIcon className="h-4 w-4 text-gray-400" />{new Date(task.dueDate).toLocaleDateString()}</span>}
-                          <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${task.priority === 'high' ? 'bg-red-100 text-red-700' : task.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>{task.priority}</span>
+                          {task.assignee && (
+                            <span className="flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
+                              <UsersIcon className="h-4 w-4" />
+                              {teamMembers.find((m: any) => m._id === task.assignee?._id || m._id === task.assignee)?.name || 'Unassigned'}
+                            </span>
+                          )}
+                          {task.dueDate && (
+                            <span className="flex items-center gap-1 bg-yellow-50 text-yellow-700 px-2 py-0.5 rounded-full">
+                              <CalendarIcon className="h-4 w-4" />
+                              {new Date(task.dueDate).toLocaleDateString()}
+                            </span>
+                          )}
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-bold capitalize ${
+                            task.priority === 'high' ? 'bg-red-100 text-red-700' :
+                            task.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-green-100 text-green-700'
+                          }`}>{task.priority}</span>
                         </div>
-                      </div>
+                        {/* Quick Actions */}
+                        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <button
+                            className="p-1 rounded-full bg-green-50 hover:bg-green-100 text-green-600 hover:text-green-800"
+                            title="Mark as Done"
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              if (task.status !== 'done') await onStatusChange(task._id, 'done');
+                            }}
+                          >
+                            <CheckCircleIcon className="h-4 w-4" />
+                          </button>
+                          <button
+                            className="p-1 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-800"
+                            title="Edit Task"
+                            // TODO: Implement edit modal
+                          >
+                            <PencilIcon className="h-4 w-4" />
+                          </button>
+                          <button
+                            className="p-1 rounded-full bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-800"
+                            title="Delete Task"
+                            // TODO: Implement delete logic
+                          >
+                            <TrashIcon className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </motion.div>
                     )}
                   </Draggable>
                 ))}
@@ -3997,5 +4132,6 @@ async function handleLogout(setLogoutLoading: (b: boolean) => void) {
   }
   setLogoutLoading(false);
 }
+
 
 
