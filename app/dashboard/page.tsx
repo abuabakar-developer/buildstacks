@@ -47,6 +47,10 @@ import {
   XMarkIcon,
   ArrowRightOnRectangleIcon,
   ArrowPathIcon,
+  AcademicCapIcon,
+  BeakerIcon,
+  TruckIcon,
+  MapIcon,
 } from "@heroicons/react/24/outline";
 import LinePattern from "../components/LinePattern";
 import Pusher from 'pusher-js';
@@ -57,6 +61,7 @@ import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer, L
 import CalendarView from "../components/CalendarView";
 import toast from 'react-hot-toast';
 import OverallProgressHalfCircle from '../components/OverallProgressHalfCircle';
+import ProjectTimelineGraph from "@/app/components/ProjectTimelineGraph";
 
 // Color palette for projects
 const PROJECT_COLORS = [
@@ -1115,23 +1120,26 @@ export default function DashboardPage() {
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {/* Projects Section */}
-              <section className="lg:col-span-2 bg-white rounded-2xl shadow border border-black/10 p-4 sm:p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-black/80 mb-4 sm:mb-6 flex items-center gap-2 font-plus-jakarta">
-                  <BuildingOfficeIcon className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" /> Recent Projects
-                </h3>
-                {/* Table Headings */}
-                <div className="hidden lg:flex w-full bg-gray-50 rounded-2xl border border-gray-200 mb-2 overflow-x-auto">
-                  {['Name', 'Status', 'Priority', 'Progress', 'Documents', 'Team', 'Actions'].map((heading, idx, arr) => (
-                    <div
-                      key={heading}
-                      className={`flex-1 px-4 py-4 font-bold text-black/70 text-base font-plus-jakarta border-r border-gray-200 last:border-none ${idx === 0 ? 'rounded-l-2xl' : ''} ${idx === arr.length - 1 ? 'rounded-r-2xl text-center' : ''}`}
-                    >
-                      {heading}
-                    </div>
-                  ))}
+              <section className="lg:col-span-2 bg-white rounded-2xl border border-black/10 p-4 sm:p-6">
+                {/* Header with title and New button */}
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg sm:text-xl font-bold text-black/80 flex items-center gap-2 font-plus-jakarta">
+                    <BuildingOfficeIcon className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" /> Recent Projects
+                  </h3>
+                  <button
+                    onClick={() => {
+                      setModalOpen(true);
+                      setMobileMenuOpen(false);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-xl font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
+                  >
+                    <PlusIcon className="h-4 w-4" />
+                    New
+                  </button>
                 </div>
-                {/* Project Rows */}
-                <div className="flex flex-col gap-3">
+
+                {/* Project Cards */}
+                <div className="space-y-4">
                   {filteredProjects.length === 0 ? (
                     <div className="text-center text-black/50 py-8 sm:py-12">
                       <div className="w-16 h-16 sm:w-20 sm:h-20 bg-black/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -1141,88 +1149,142 @@ export default function DashboardPage() {
                       <p className="text-xs sm:text-sm text-black/50">Create your first project to get started</p>
                     </div>
                   ) : (
-                    filteredProjects.slice(0, 5).map((project) => (
-                      <div
-                        key={project._id}
-                        className="flex flex-col lg:flex-row items-stretch bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 group overflow-hidden cursor-pointer"
-                        onClick={() => setSelectedProject(project)}
-                      >
-                        {/* Name */}
-                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center gap-2 min-w-0">
-                          <BuildingOfficeIcon className="h-5 w-5 text-purple-500 flex-shrink-0" />
-                          <span className="font-semibold text-black/80 text-base truncate font-plus-jakarta">{project.name}</span>
-                        </div>
-                        {/* Status */}
-                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center justify-center">
-                          <span className={`px-3 py-1 rounded-full font-bold text-xs border ${
-                            project.status === 'active' ? 'bg-green-100 text-green-700 border-green-200' :
-                            project.status === 'completed' ? 'bg-blue-100 text-blue-700 border-blue-200' :
-                            project.status === 'pending' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' :
-                            'bg-gray-100 text-gray-700 border-gray-200'
-                          }`}>
-                            {project.status}
-                          </span>
-                        </div>
-                        {/* Priority */}
-                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center justify-center">
-                          <span className={`px-3 py-1 rounded-full font-bold text-xs border ${
-                            project.priority === 'high' ? 'bg-red-100 text-red-700 border-red-200' :
-                            project.priority === 'medium' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' :
-                            project.priority === 'low' ? 'bg-green-100 text-green-700 border-green-200' :
-                            'bg-gray-100 text-gray-700 border-gray-200'
-                          }`}>
-                            {project.priority}
-                          </span>
-                        </div>
-                        {/* Progress */}
-                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center gap-2 min-w-0">
-                          <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-                            <div
-                              className={`h-2.5 rounded-full transition-all duration-700 ease-out ${
-                                project.progress >= 80 ? 'bg-green-500' :
-                                project.progress >= 60 ? 'bg-blue-500' :
-                                project.progress >= 40 ? 'bg-yellow-500' :
-                                'bg-red-500'
-                              }`}
-                              style={{ width: `${project.progress || 0}%` }}
-                            />
+                    filteredProjects.slice(0, 5).map((project) => {
+                      // Get project icon based on project type or name
+                      const getProjectIcon = (projectName: string) => {
+                        const name = projectName.toLowerCase();
+                        if (name.includes('tower') || name.includes('skyscraper')) {
+                          return <BuildingOfficeIcon className="h-6 w-6" />;
+                        } else if (name.includes('mall') || name.includes('plaza') || name.includes('shopping')) {
+                          return <BuildingOfficeIcon className="h-6 w-6" />;
+                        } else if (name.includes('house') || name.includes('home') || name.includes('residential')) {
+                          return <HomeIcon className="h-6 w-6" />;
+                        } else if (name.includes('road') || name.includes('highway') || name.includes('bridge')) {
+                          return <MapIcon className="h-6 w-6" />;
+                        } else if (name.includes('office') || name.includes('commercial')) {
+                          return <BuildingOfficeIcon className="h-6 w-6" />;
+                        } else if (name.includes('hotel') || name.includes('resort')) {
+                          return <BuildingOfficeIcon className="h-6 w-6" />;
+                        } else if (name.includes('school') || name.includes('university') || name.includes('education')) {
+                          return <AcademicCapIcon className="h-6 w-6" />;
+                        } else if (name.includes('hospital') || name.includes('medical') || name.includes('clinic')) {
+                          return <BuildingOfficeIcon className="h-6 w-6" />;
+                        } else if (name.includes('park') || name.includes('garden') || name.includes('landscape')) {
+                          return <MapIcon className="h-6 w-6" />;
+                        } else if (name.includes('factory') || name.includes('industrial') || name.includes('warehouse')) {
+                          return <TruckIcon className="h-6 w-6" />;
+                        } else if (name.includes('lab') || name.includes('research') || name.includes('science')) {
+                          return <BeakerIcon className="h-6 w-6" />;
+                        } else {
+                          return <BuildingOfficeIcon className="h-6 w-6" />;
+                        }
+                      };
+
+                      // Get project color based on status and type
+                      const getProjectColor = (status: string, projectName: string) => {
+                        const name = projectName.toLowerCase();
+                        
+                        // First check status
+                        switch (status) {
+                          case 'active': 
+                            if (name.includes('tower') || name.includes('skyscraper')) return 'from-purple-500 to-purple-600';
+                            if (name.includes('house') || name.includes('home')) return 'from-green-500 to-green-600';
+                            if (name.includes('school') || name.includes('education')) return 'from-blue-500 to-blue-600';
+                            if (name.includes('factory') || name.includes('industrial')) return 'from-orange-500 to-orange-600';
+                            return 'from-green-500 to-green-600';
+                          case 'completed': 
+                            if (name.includes('tower') || name.includes('skyscraper')) return 'from-indigo-500 to-indigo-600';
+                            if (name.includes('house') || name.includes('home')) return 'from-teal-500 to-teal-600';
+                            if (name.includes('school') || name.includes('education')) return 'from-cyan-500 to-cyan-600';
+                            return 'from-blue-500 to-blue-600';
+                          case 'pending': 
+                            if (name.includes('tower') || name.includes('skyscraper')) return 'from-amber-500 to-amber-600';
+                            if (name.includes('house') || name.includes('home')) return 'from-yellow-500 to-yellow-600';
+                            if (name.includes('school') || name.includes('education')) return 'from-orange-500 to-orange-600';
+                            return 'from-yellow-500 to-yellow-600';
+                          default: 
+                            return 'from-gray-500 to-gray-600';
+                        }
+                      };
+
+                      // Format date
+                      const formatDate = (dateString: string) => {
+                        const date = new Date(dateString);
+                        const now = new Date();
+                        const diffTime = Math.abs(now.getTime() - date.getTime());
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        
+                        if (diffDays === 1) return '1 day ago';
+                        if (diffDays < 7) return `${diffDays} days ago`;
+                        if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+                        return date.toLocaleDateString();
+                      };
+
+                      return (
+                        <div
+                          key={project._id}
+                          className="group bg-white border border-gray-200 rounded-2xl p-4 transition-all duration-200 cursor-pointer hover:border-purple-300"
+                          onClick={() => setSelectedProject(project)}
+                        >
+                          <div className="flex items-start gap-4">
+                            {/* Left side - Project Icon */}
+                            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${getProjectColor(project.status, project.name)} flex items-center justify-center text-white transition-all duration-200 flex-shrink-0`}>
+                              {getProjectIcon(project.name)}
+                            </div>
+                            
+                            {/* Right side - Project Details */}
+                            <div className="flex-1 min-w-0">
+                              {/* Project Name */}
+                              <h4 className="font-semibold text-black/80 text-base mb-1 truncate font-plus-jakarta">
+                                {project.name}
+                              </h4>
+                              
+                              {/* Time */}
+                              <p className="text-sm text-black/50 mb-2">
+                                {formatDate(project.createdAt || new Date().toISOString())}
+                              </p>
+                              
+                              {/* Status and Progress */}
+                              <div className="flex items-center gap-3">
+                                <span className={`px-3 py-1 rounded-full font-bold text-xs border ${
+                                  project.status === 'active' ? 'bg-green-100 text-green-700 border-green-200' :
+                                  project.status === 'completed' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                                  project.status === 'pending' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' :
+                                  'bg-gray-100 text-gray-700 border-gray-200'
+                                }`}>
+                                  {project.status}
+                                </span>
+                                
+                                {/* Progress Bar */}
+                                <div className="flex-1 max-w-32">
+                                  <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                    <div
+                                      className={`h-2 rounded-full transition-all duration-700 ease-out ${
+                                        project.progress >= 80 ? 'bg-green-500' :
+                                        project.progress >= 60 ? 'bg-blue-500' :
+                                        project.progress >= 40 ? 'bg-yellow-500' :
+                                        'bg-red-500'
+                                      }`}
+                                      style={{ width: `${project.progress || 0}%` }}
+                                    />
+                                  </div>
+                                </div>
+                                
+                                <span className="text-xs font-bold text-black/60">
+                                  {project.progress || 0}%
+                                </span>
+                              </div>
+                            </div>
                           </div>
-                          <span className="text-xs font-bold text-black/80 font-plus-jakarta ml-2">{project.progress || 0}%</span>
                         </div>
-                        {/* Documents */}
-                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center justify-center">
-                          <span className="font-semibold text-black/80 text-sm font-inter">{project.documents ?? documents.filter(d => d.projectId === project._id).length}</span>
-                        </div>
-                        {/* Team */}
-                        <div className="flex-1 px-4 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center justify-center">
-                          <span className="font-semibold text-black/80 text-sm font-inter">{project.team ?? (teamMembers.filter(m => m.projectId === project._id).length || 0)}</span>
-                        </div>
-                        {/* Actions */}
-                        <div className="flex-1 px-4 py-4 flex items-center justify-center gap-2">
-                          <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-800 transition-colors duration-200" title="View">
-                            <EyeIcon className="h-5 w-5" />
-                          </button>
-                          <button
-                            onClick={e => {
-                              e.stopPropagation();
-                              if (confirm(`Are you sure you want to delete \"${project.name}\"? This action cannot be undone.`)) {
-                                deleteProject(project._id);
-                              }
-                            }}
-                            className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-800 transition-colors duration-200"
-                            title="Delete"
-                          >
-                            <TrashIcon className="h-5 w-5" />
-                          </button>
-                        </div>
-                      </div>
-                    ))
+                      );
+                    })
                   )}
                 </div>
               </section>
 
               {/* Team Members Section */}
-              <section className="lg:col-span-1 bg-white rounded-2xl shadow border border-black/10 p-4 sm:p-6">
+              <section className="lg:col-span-1 bg-white rounded-2xl border border-black/10 p-4 sm:p-6">
                 <h3 className="text-lg sm:text-xl font-bold text-black/80 mb-4 sm:mb-6 flex items-center gap-2 font-plus-jakarta">
                   <UsersIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" /> Team Members
                 </h3>
@@ -4073,6 +4135,9 @@ async function handleLogout(setLogoutLoading: (b: boolean) => void) {
   }
   setLogoutLoading(false);
 }
+
+
+
 
 
 
