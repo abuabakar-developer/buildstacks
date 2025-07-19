@@ -62,6 +62,7 @@ import CalendarView from "../components/CalendarView";
 import toast from 'react-hot-toast';
 import OverallProgressHalfCircle from '../components/OverallProgressHalfCircle';
 import ProjectTimelineGraph from "@/app/components/ProjectTimelineGraph";
+import QuickStatsCards from "../components/QuickStatsCards";
 
 // Color palette for projects
 const PROJECT_COLORS = [
@@ -950,46 +951,14 @@ export default function DashboardPage() {
             {/* Quick Stats Overview */}
             <section className="bg-white rounded-2xl border border-black/10 p-6">
               <h3 className="text-xl font-bold text-black/80 mb-6 flex items-center gap-2 font-plus-jakarta">
-                <ChartBarIcon className="h-6 w-6 text-purple-600" /> Quick Stats
+                <ChartBarIcon className="h-6 w-6 text-purple-600" /> Quick Stats Overview
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                {/* Active Projects */}
-                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-blue-400 hover:bg-blue-50/40">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-blue-100 to-blue-200 group-hover:from-blue-200 group-hover:to-blue-300 transition-colors duration-300 shadow">
-                    <BuildingOfficeIcon className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{projects.length}</span>
-                  <span className="text-sm text-black/70 font-semibold">Active Projects</span>
-                  <span className="text-xs text-blue-600 mt-1">{projects.filter(p => p.status === 'completed').length} Completed</span>
-                </div>
-                {/* Documents */}
-                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-green-400 hover:bg-green-50/40">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-green-100 to-green-200 group-hover:from-green-200 group-hover:to-green-300 transition-colors duration-300 shadow">
-                    <DocumentIcon className="h-6 w-6 text-green-600" />
-                  </div>
-                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{documents.length}</span>
-                  <span className="text-sm text-black/70 font-semibold">Documents</span>
-                  <span className="text-xs text-green-600 mt-1">{documents.filter(d => d.status === 'approved').length} Approved</span>
-                </div>
-                {/* Team Members */}
-                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-purple-400 hover:bg-purple-50/40">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-purple-100 to-purple-200 group-hover:from-purple-200 group-hover:to-purple-300 transition-colors duration-300 shadow">
-                    <UsersIcon className="h-6 w-6 text-purple-600" />
-                  </div>
-                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{teamMembers.length}</span>
-                  <span className="text-sm text-black/70 font-semibold">Team Members</span>
-                  <span className="text-xs text-purple-600 mt-1">Active Users</span>
-                </div>
-                {/* Total Tasks */}
-                <div className="group bg-white border-2 border-gray-300 rounded-3xl p-6 flex flex-col items-center transition-all duration-300 hover:border-yellow-400 hover:bg-yellow-50/40">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-tr from-yellow-100 to-yellow-200 group-hover:from-yellow-200 group-hover:to-yellow-300 transition-colors duration-300 shadow">
-                    <ClipboardDocumentListIcon className="h-6 w-6 text-yellow-600" />
-                  </div>
-                  <span className="text-3xl font-extrabold text-black mb-1 font-plus-jakarta">{Object.values(tasksByProject).reduce((acc: number, t) => acc + (Array.isArray(t) ? t.length : 0), 0)}</span>
-                  <span className="text-sm text-black/70 font-semibold">Total Tasks</span>
-                  <span className="text-xs text-yellow-600 mt-1">In Progress</span>
-                </div>
-              </div>
+              <QuickStatsCards 
+                projects={projects}
+                documents={documents}
+                teamMembers={teamMembers}
+                tasksByProject={tasksByProject}
+              />
             </section>
 
             {/* Project Analytics & Timeline */}
@@ -1016,102 +985,13 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                {/* Project Timeline */}
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100">
+                {/* Project Timeline Graph */}
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100 flex flex-col">
                   <h4 className="text-lg font-bold text-black/80 mb-4 flex items-center gap-2 font-plus-jakarta">
                     <ClockIcon className="h-5 w-5 text-purple-600" /> Project Timeline
                   </h4>
-                  
-                  {/* Timeline */}
-                  <div className="space-y-4">
-                    {projects.slice(0, 6).map((project, index) => {
-                      const getPriorityColor = (priority: string) => {
-                        switch (priority) {
-                          case 'high': return 'bg-red-500';
-                          case 'medium': return 'bg-yellow-500';
-                          case 'low': return 'bg-green-500';
-                          default: return 'bg-gray-500';
-                        }
-                      };
-                      
-                      const getStatusColor = (status: string) => {
-                        switch (status) {
-                          case 'active': return 'border-green-500 bg-green-50';
-                          case 'completed': return 'border-blue-500 bg-blue-50';
-                          case 'pending': return 'border-yellow-500 bg-yellow-50';
-                          default: return 'border-gray-500 bg-gray-50';
-                        }
-                      };
-                      
-                      return (
-                        <div key={project._id} className="relative">
-                          {/* Timeline Line */}
-                          {index < projects.slice(0, 6).length - 1 && (
-                            <div className="absolute left-6 top-12 w-0.5 h-8 bg-gradient-to-b from-purple-300 to-transparent"></div>
-                          )}
-                          
-                          <div className={`flex items-start gap-4 p-3 rounded-xl border-l-4 ${getStatusColor(project.status)} transition-all duration-300 hover:shadow-md`}>
-                            {/* Timeline Dot */}
-                            <div className="relative">
-                              <div className={`w-3 h-3 rounded-full ${getPriorityColor(project.priority || 'medium')} shadow-sm`}></div>
-                              {project.priority === 'high' && (
-                                <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
-                              )}
-                            </div>
-                            
-                            {/* Content */}
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between mb-1">
-                                <h5 className="font-semibold text-black/80 font-inter text-sm truncate">{project.name}</h5>
-                                <span className="text-xs text-black/50 font-inter">
-                                  {project.progress || 0}%
-                                </span>
-                              </div>
-                              <p className="text-xs text-black/60 font-inter line-clamp-2 mb-2">{project.desc}</p>
-                              
-                              {/* Progress Mini Bar */}
-                              <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden mb-2">
-                                <div
-                                  className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full transition-all duration-500"
-                                  style={{ width: `${project.progress || 0}%` }}
-                                ></div>
-                              </div>
-                              
-                              {/* Tags */}
-                              <div className="flex items-center gap-2">
-                                <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
-                                  project.status === 'active' ? 'bg-green-100 text-green-700' :
-                                  project.status === 'completed' ? 'bg-blue-100 text-blue-700' :
-                                  project.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                  'bg-gray-100 text-gray-700'
-                                }`}>
-                                  {project.status}
-                                </span>
-                                {project.priority && (
-                                  <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
-                                    project.priority === 'high' ? 'bg-red-100 text-red-700' :
-                                    project.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                                    'bg-green-100 text-green-700'
-                                  }`}>
-                                    {project.priority}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  
-                  {/* Timeline Summary */}
-                  <div className="mt-6 pt-4 border-t border-purple-200">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-black/60 font-inter">Total Projects: {projects.length}</span>
-                      <span className="text-purple-600 font-semibold font-inter">
-                        {projects.filter(p => p.status === 'active').length} Active
-                      </span>
-                    </div>
+                  <div className="flex-1 flex items-center">
+                    <ProjectTimelineGraph />
                   </div>
                 </div>
               </div>
@@ -4135,6 +4015,8 @@ async function handleLogout(setLogoutLoading: (b: boolean) => void) {
   }
   setLogoutLoading(false);
 }
+
+
 
 
 
