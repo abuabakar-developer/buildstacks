@@ -978,7 +978,7 @@ export default function DashboardPage() {
                     const total = projects.length;
                     const sum = projects.reduce((acc, p) => acc + (p.progress || 0), 0);
                     const overallProgress = total > 0 ? Math.round(sum / total) : 0;
-                    return <OverallProgressHalfCircle progress={overallProgress} size={180} color="#fff" />;
+                    return <OverallProgressHalfCircle progress={overallProgress} size={180} />;
                   })()}
                   <div className="mt-4 text-sm text-white/80 font-plus-jakarta text-center">
                     Team's overall project completion
@@ -4015,6 +4015,8 @@ async function handleLogout(setLogoutLoading: (b: boolean) => void) {
   }
   setLogoutLoading(false);
 }
+
+
 
 
 
