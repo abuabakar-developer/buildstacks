@@ -969,18 +969,18 @@ export default function DashboardPage() {
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Overall Progress Chart */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100 flex flex-col items-center justify-center">
-                  <h4 className="text-lg font-bold text-black/80 mb-4 flex items-center gap-2 font-plus-jakarta">
-                    <ChartBarIcon className="h-5 w-5 text-blue-600" /> Overall Progress
+                <div className="rounded-2xl p-6 border border-white/10 bg-black/70 backdrop-blur-md shadow-xl flex flex-col items-center justify-center transition-all duration-300">
+                  <h4 className="text-lg font-bold text-white mb-4 flex items-center gap-2 font-plus-jakarta">
+                    <ChartBarIcon className="h-5 w-5 text-white" /> Overall Progress
                   </h4>
                   {/* Circular Progress Indicator */}
                   {(() => {
                     const total = projects.length;
                     const sum = projects.reduce((acc, p) => acc + (p.progress || 0), 0);
                     const overallProgress = total > 0 ? Math.round(sum / total) : 0;
-                    return <OverallProgressHalfCircle progress={overallProgress} size={180} />;
+                    return <OverallProgressHalfCircle progress={overallProgress} size={180} color="#fff" />;
                   })()}
-                  <div className="mt-4 text-sm text-black/60 font-plus-jakarta text-center">
+                  <div className="mt-4 text-sm text-white/80 font-plus-jakarta text-center">
                     Team's overall project completion
                   </div>
                 </div>
