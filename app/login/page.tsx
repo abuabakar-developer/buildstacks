@@ -12,18 +12,9 @@ import {
   EyeOff,
   Building2,
   Loader2,
-  ArrowRight,
-  CheckCircle2,
-  FileText,
-  Users,
-  Shield,
-  BarChart,
-  Sparkles,
-  Zap,
-  Target
+  ArrowRight
 } from 'lucide-react';
 import { Inter, Poppins } from 'next/font/google';
-import { toast } from 'react-hot-toast';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const poppins = Poppins({
@@ -31,9 +22,6 @@ const poppins = Poppins({
   subsets: ['latin'],
   variable: '--font-poppins'
 });
-
-// Add a helper class for body text
-const bodyTextClass = "font-inter text-sm font-semibold text-gray-700";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -47,7 +35,6 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      // Validate email
       if (!email) {
         throw new Error('Email is required');
       }
@@ -66,204 +53,60 @@ export default function LoginPage() {
         throw new Error(data.error || 'Login failed');
       }
 
-      // Redirect to dashboard
       router.push('/dashboard');
     } catch (error: any) {
-      // Optionally handle error UI here, but no toast
+      // Handle error silently
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className={`min-h-screen bg-white ${inter.variable} ${poppins.variable} relative overflow-hidden`}>
-      {/* Split Layout Container */}
-      <div className="flex min-h-screen">
-        {/* Left Side - Image Section */}
-        <motion.div 
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-hidden"
-        >
-          {/* Background Image */}
+    <div className={`min-h-screen relative overflow-hidden ${inter.variable} ${poppins.variable}`}>
+      {/* Background Image */}
       <div className="absolute inset-0">
-            <Image
-              src="/construction-3.jpg"
-              alt="Construction Site"
-              fill
-              className="object-cover opacity-40"
-              priority
-            />
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-transparent"></div>
-          </div>
-
-          {/* Content Overlay */}
-          <div className="relative z-10 flex flex-col justify-center px-12 py-16 text-white">
-            {/* Logo */}
-            <motion.div 
-              initial={{ opacity: 0, y: -30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="mb-12"
-            >
-              <Link href="/" className="inline-flex items-center space-x-3 text-white font-bold text-3xl group">
-                <motion.div 
-                  className="bg-white w-14 h-14 flex items-center justify-center rounded-2xl font-black text-black transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-white/20"
-                  whileHover={{ rotate: 5 }}
-                >
-                  <Building2 size={28} />
-                </motion.div>
-                <span className="tracking-wide font-semibold">BuildStack</span>
-              </Link>
-            </motion.div>
-
-            {/* Hero Content */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="max-w-md"
-            >
-              <h1 className="text-4xl font-bold mb-6 leading-tight">
-                Transform Your Construction Projects
-              </h1>
-              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-                Streamline project management, enhance team collaboration, and deliver exceptional results with our comprehensive construction SaaS platform.
-              </p>
-
-              {/* Feature Highlights */}
-              <div className="space-y-4">
-                <motion.div 
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.6 }}
-                  className="flex items-center space-x-3"
-                >
-                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                    <Target className="w-4 h-4 text-white" />
-                  </div>
-                  <span className="text-gray-200 font-medium">Project Management Excellence</span>
-                </motion.div>
-                
-                <motion.div 
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.7 }}
-                  className="flex items-center space-x-3"
-                >
-                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                    <Users className="w-4 h-4 text-white" />
-                  </div>
-                  <span className="text-gray-200 font-medium">Team Collaboration Tools</span>
-                </motion.div>
-                
-                <motion.div 
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.8 }}
-                  className="flex items-center space-x-3"
-                >
-                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                    <Shield className="w-4 h-4 text-white" />
-                  </div>
-                  <span className="text-gray-200 font-medium">Security & Compliance</span>
-                </motion.div>
-              </div>
-
-              {/* Stats */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 1 }}
-                className="mt-12 grid grid-cols-3 gap-6 pt-8 border-t border-white/20"
-              >
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-white">500+</div>
-                  <div className="text-sm text-gray-300">Active Projects</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-white">10K+</div>
-                  <div className="text-sm text-gray-300">Team Members</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-white">99.9%</div>
-                  <div className="text-sm text-gray-300">Uptime</div>
-                </div>
-              </motion.div>
-            </motion.div>
-        </div>
-        
-          {/* Floating Elements */}
-        <motion.div
-            className="absolute top-20 right-20 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl"
-          animate={{
-            x: [0, 30, 0],
-            y: [0, -20, 0],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
+        <Image
+          src="/construction-3.jpg"
+          alt="Construction Site Background"
+          fill
+          className="object-cover"
+          priority
         />
-        <motion.div
-            className="absolute bottom-20 left-20 w-24 h-24 bg-purple-500/20 rounded-full blur-3xl"
-          animate={{
-            x: [0, -25, 0],
-            y: [0, 15, 0],
-            scale: [1, 0.9, 1],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 2
-          }}
-        />
-        </motion.div>
+        {/* Dark overlay for better readability */}
+        <div className="absolute inset-0 bg-black/40"></div>
+      </div>
 
-        {/* Right Side - Login Form */}
+      {/* Top Left Logo */}
+      <div className="hidden lg:block fixed top-6 left-6 z-20">
+        <Link href="/" className="inline-flex items-center space-x-3 text-white font-bold text-2xl group">
+          <span className="bg-white w-12 h-12 flex items-center justify-center rounded-xl font-black text-black transition-all duration-300 group-hover:scale-110">
+            <Building2 size={24} />
+          </span>
+          <span className="tracking-wide font-semibold">BuildStack</span>
+        </Link>
+      </div>
+
+      {/* Login Form Container */}
+      <div className="relative z-10 min-h-screen flex items-center justify-end px-6 py-4 lg:px-12 lg:py-8">
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className="flex-1 lg:w-1/2 flex items-center justify-center px-6 py-8 lg:px-12 lg:py-16"
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="w-full max-w-sm"
         >
-        <div className="w-full max-w-md">
-            {/* Mobile Logo */}
-          <motion.div 
-            initial={{ opacity: 0, y: -30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-              className="text-center mb-8 lg:hidden"
-          >
-              <Link href="/" className="inline-flex items-center space-x-3 text-black font-bold text-3xl group">
-              <motion.div 
-                className="bg-black w-14 h-14 flex items-center justify-center rounded-2xl font-black text-white transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-black/20"
-                whileHover={{ rotate: 5 }}
-              >
-                <Building2 size={28} />
-              </motion.div>
-              <span className="tracking-wide font-semibold">BuildStack</span>
-            </Link>
-          </motion.div>
-
           {/* Login Form */}
           <motion.div
             initial={{ opacity: 0, y: 30, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-              className="bg-white"
+            className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6"
           >
-            <div className="text-center mb-8">
+            <div className="text-center mb-6">
               <motion.h1 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="text-3xl font-bold text-gray-900 mb-3"
+                className="text-2xl font-bold text-white mb-2"
               >
                 Welcome Back
               </motion.h1>
@@ -271,32 +114,32 @@ export default function LoginPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.5 }}
-                className="text-gray-600 font-semibold text-base font-inter"
+                className="text-white/80 font-medium text-sm font-inter"
               >
-                Sign in to your account to continue
+                Sign in to your account
               </motion.p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               {/* Email Field */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
               >
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-3 font-inter">
+                <label htmlFor="email" className="block text-sm font-semibold text-white mb-2 font-inter">
                   Email
                 </label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-4 w-4 text-white/60 group-focus-within:text-white transition-colors duration-200" />
                   </div>
                   <input
                     id="email"
                     type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    className="block w-full pl-12 pr-4 py-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 font-semibold text-base font-inter hover:bg-white"
+                    className="block w-full pl-10 pr-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-all duration-300 font-medium text-sm font-inter backdrop-blur-sm"
                     placeholder="Enter your email"
                     required
                   />
@@ -309,29 +152,29 @@ export default function LoginPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.7 }}
               >
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-3 font-inter">
+                <label htmlFor="password" className="block text-sm font-semibold text-white mb-2 font-inter">
                   Password
                 </label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-4 w-4 text-white/60 group-focus-within:text-white transition-colors duration-200" />
                   </div>
                   <input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={e => setPassword(e.target.value)}
-                    className="block w-full pl-12 pr-12 py-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 font-semibold text-base font-inter hover:bg-white"
+                    className="block w-full pl-10 pr-10 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-all duration-300 font-medium text-sm font-inter backdrop-blur-sm"
                     placeholder="Enter your password"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-white/60 hover:text-white transition-colors duration-200"
                     tabIndex={-1}
                   >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </motion.div>
@@ -341,18 +184,19 @@ export default function LoginPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.8 }}
+                className="pt-2"
               >
                 <button
                   type="submit"
-                  className="w-full py-4 px-6 bg-black text-white rounded-full font-semibold text-base shadow-lg hover:shadow-blue-500/25 transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed font-inter group transform hover:scale-105 active:scale-95"
+                  className="w-full py-3 px-6 bg-black text-white rounded-lg font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed font-inter group transform hover:bg-gray-900 active:scale-95 focus:outline-none focus:ring-2 focus:ring-black/30"
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <Loader2 className="animate-spin w-5 h-5" />
+                    <Loader2 className="animate-spin w-4 h-4" />
                   ) : (
                     <>
                       Sign In
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
                     </>
                   )}
                 </button>
@@ -363,31 +207,14 @@ export default function LoginPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.9 }}
-              className="mt-8 text-center"
+              className="mt-6 text-center"
             >
-              <span className="text-gray-500 font-semibold text-base font-inter">Don't have an account?</span>{' '}
-              <Link href="/signup" className="text-gray-600 font-semibold hover:text-gray-900 hover:underline font-inter transition-colors duration-200">
+              <span className="text-white/80 font-medium text-sm font-inter">Don't have an account?</span>{' '}
+              <Link href="/signup" className="text-white font-semibold hover:text-white/80 hover:underline font-inter transition-colors duration-200 text-sm">
                 Sign up
               </Link>
             </motion.div>
           </motion.div>
-
-          {/* Modern Footer */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1 }}
-            className="mt-8 text-center"
-          >
-            <p className="text-black text-base font-bold font-inter tracking-wide flex items-center justify-center gap-2">
-              <span>Secure</span>
-              <span className="text-gray-400">•</span>
-              <span>Fast</span>
-              <span className="text-gray-400">•</span>
-              <span>Reliable</span>
-            </p>
-          </motion.div>
-        </div>
         </motion.div>
       </div>
     </div>
